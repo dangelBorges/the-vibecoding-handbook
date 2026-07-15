@@ -11,8 +11,12 @@ interface CheckResult {
   message: string;
 }
 
-export async function checkCommand(): Promise<void> {
+export async function checkCommand(options: { strict?: boolean } = {}): Promise<void> {
   console.log(`\n${pc.cyan('🔍 Vibe Coding Project Check')}\n`);
+
+  if (options.strict) {
+    console.log(pc.yellow('⚠ Strict mode enabled — warnings count as failures\n'));
+  }
 
   const cwd = process.cwd();
   const spinner = ora('Analyzing project...').start();
@@ -159,8 +163,12 @@ export async function checkCommand(): Promise<void> {
   console.log(`\n${pc.bold('Score:')} ${score >= 80 ? pc.green(`${score}%`) : score >= 50 ? pc.yellow(`${score}%`) : pc.red(`${score}%`)}`);
   console.log(`  ${pc.green(`${passCount} passed`)} · ${pc.yellow(`${warnCount} warnings`)} · ${pc.red(`${failCount} failed`)}\n`);
 
-  if (failCount > 0) {
-    console.log(pc.yellow('Run "vibe init" to fix missing files.\n'));
+  if (failCount > 0 || (options.strict && warnCount > 0)) {
+    if (options.strict && failCount === 0) {
+      console.log(pc.yellow('Strict mode: failing due to warnings.\n'));
+    } else {
+      console.log(pc.yellow('Run "vibe init" to fix missing files.\n'));
+    }
     process.exit(1);
   }
 }

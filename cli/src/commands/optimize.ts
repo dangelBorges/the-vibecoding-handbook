@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import pc from 'picocolors';
 import ora from 'ora';
-import { input, select, confirm } from '@inquirer/prompts';
+import { input, confirm } from '@inquirer/prompts';
 import { printSuccess, printInfo, printDivider } from '../utils/prompts.js';
 import { isInteractive } from '../utils/ui.js';
 
@@ -94,15 +94,33 @@ function optimize(raw: string, context?: string): OptimizedResult {
   return { original: raw, optimized, intent, confidence, improvements };
 }
 
-export async function optimizeCommand(arg?: string | string[]): Promise<void> {
+interface OptimizeOptions {
+  file?: string;
+  context?: string;
+  output?: string;
+}
+
+function extractContextSections(content: string): string {
+  const stackMatch = content.match(/## Tech Stack[\s\S]*?(?=\n## |$)/);
+  const standardsMatch = content.match(/## Coding Standards[\s\S]*?(?=\n## |$)/);
+  const sections = [stackMatch, standardsMatch].filter(Boolean).join('\n\n');
+  // Fall back to the whole file when the expected sections are not present
+  return (sections || content).slice(0, 2000);
+}
+
+export async function optimizeCommand(prompt: string | undefined, options: OptimizeOptions): Promise<void> {
   console.log(`\n${pc.cyan('⚡ Prompt Optimizer')}\n`);
 
-  // Normalize args from Commander.js (string when positional arg, array otherwise)
-  let rawPrompt = '';
-  if (typeof arg === 'string' && arg.length > 0 && !arg.startsWith('--')) {
-    rawPrompt = arg;
-  } else if (Array.isArray(arg) && arg.length > 0 && !arg[0].startsWith('--')) {
-    rawPrompt = arg.join(' ');
+  let rawPrompt = typeof prompt === 'string' ? prompt.trim() : '';
+
+  // --file takes precedence over the positional argument
+  if (options.file) {
+    const filePath = path.resolve(options.file);
+    if (!fs.existsSync(filePath)) {
+      console.error(pc.red(`Error: Prompt file not found: ${filePath}`));
+      process.exit(1);
+    }
+    rawPrompt = fs.readFileSync(filePath, 'utf-8').trim();
   }
 
   // Non-interactive: require prompt as argument
@@ -119,23 +137,32 @@ export async function optimizeCommand(arg?: string | string[]): Promise<void> {
     });
   }
 
-  // Check for AGENTS.md context
-  const agentsPath = path.join(process.cwd(), 'AGENTS.md');
+  // Context: --context file wins; otherwise auto-detect AGENTS.md
   let context: string | undefined;
 
-  if (fs.existsSync(agentsPath)) {
-    // Non-interactive: auto-include context
-    const useContext = isInteractive()
-      ? await confirm({ message: 'Include AGENTS.md context?', default: true })
-      : true;
+  if (options.context) {
+    const contextPath = path.resolve(options.context);
+    if (!fs.existsSync(contextPath)) {
+      console.error(pc.red(`Error: Context file not found: ${contextPath}`));
+      process.exit(1);
+    }
+    const spinner = ora('Reading context file...').start();
+    context = extractContextSections(fs.readFileSync(contextPath, 'utf-8'));
+    spinner.succeed('Context loaded');
+  } else {
+    const agentsPath = path.join(process.cwd(), 'AGENTS.md');
 
-    if (useContext) {
-      const spinner = ora('Reading AGENTS.md...').start();
-      const agentsContent = fs.readFileSync(agentsPath, 'utf-8');
-      const stackMatch = agentsContent.match(/## Tech Stack[\s\S]*?(?=\n## |$)/);
-      const standardsMatch = agentsContent.match(/## Coding Standards[\s\S]*?(?=\n## |$)/);
-      context = [stackMatch, standardsMatch].filter(Boolean).join('\n\n').slice(0, 2000);
-      spinner.succeed('Context loaded');
+    if (fs.existsSync(agentsPath)) {
+      // Non-interactive: auto-include context
+      const useContext = isInteractive()
+        ? await confirm({ message: 'Include AGENTS.md context?', default: true })
+        : true;
+
+      if (useContext) {
+        const spinner = ora('Reading AGENTS.md...').start();
+        context = extractContextSections(fs.readFileSync(agentsPath, 'utf-8'));
+        spinner.succeed('Context loaded');
+      }
     }
   }
 
@@ -161,7 +188,7 @@ export async function optimizeCommand(arg?: string | string[]): Promise<void> {
 
   // Non-interactive: auto-save and skip clipboard questions
   if (!isInteractive()) {
-    const autoFile = path.join(process.cwd(), 'optimized-prompt.md');
+    const autoFile = options.output ? path.resolve(options.output) : path.join(process.cwd(), 'optimized-prompt.md');
     fs.writeFileSync(autoFile, result.optimized);
     printSuccess(`Saved to ${autoFile}`);
     return;
@@ -194,7 +221,7 @@ export async function optimizeCommand(arg?: string | string[]): Promise<void> {
   if (shouldSave) {
     const fileName = await input({
       message: 'File name:',
-      default: 'optimized-prompt.md',
+      default: options.output || 'optimized-prompt.md',
     });
     fs.writeFileSync(path.join(process.cwd(), fileName), result.optimized);
     printSuccess(`Saved to ${fileName}`);

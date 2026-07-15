@@ -104,28 +104,3 @@ export function detectStack(projectPath: string = process.cwd()): DetectedStack 
 
   return result;
 }
-
-export function detectProjectType(projectPath: string = process.cwd()): string {
-  const pkgPath = path.join(projectPath, 'package.json');
-  if (!fs.existsSync(pkgPath)) return 'unknown';
-
-  try {
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-    const name = (pkg.name || '').toLowerCase();
-
-    if (name.includes('api') || name.includes('backend')) return 'api';
-    if (name.includes('dashboard') || name.includes('admin')) return 'dashboard';
-    if (name.includes('blog') || name.includes('cms')) return 'content';
-    if (name.includes('shop') || name.includes('store') || name.includes('ecommerce')) return 'ecommerce';
-    if (name.includes('app')) return 'saas';
-
-    // Check dependencies
-    const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-    if (deps.stripe || deps['@stripe/stripe-js']) return 'saas';
-    if (deps['@auth/core'] || deps['next-auth']) return 'saas';
-
-    return 'saas';
-  } catch {
-    return 'unknown';
-  }
-}

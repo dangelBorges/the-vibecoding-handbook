@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { prompt } from 'enquirer';
-import { header, section, success, info, fileTree, spinner } from '../utils/ui.js';
+import { header, section, success, info, fileTree, spinner, isInteractive } from '../utils/ui.js';
 import { scanProject, generateSmartAgentsMd, generateCursorRules } from '../utils/scanner.js';
 
 export async function initCommand(options: { yes?: boolean; type?: string }): Promise<void> {
@@ -15,6 +15,21 @@ export async function initCommand(options: { yes?: boolean; type?: string }): Pr
   if (scan.hasDatabase) info(`Database: ${scan.database}`);
   if (scan.hasAuth) info(`Auth: ${scan.authProvider}`);
   console.log();
+
+  // Confirm before overwriting existing AGENTS.md (interactive only; CI always proceeds)
+  if (!options.yes && isInteractive() && fs.existsSync(path.join(cwd, 'AGENTS.md'))) {
+    const overwriteRes = await prompt<{ overwrite: boolean }>({
+      type: 'confirm',
+      name: 'overwrite',
+      message: 'AGENTS.md already exists. Overwrite?',
+      initial: false,
+    });
+    if (!overwriteRes.overwrite) {
+      info('Aborted. Existing files were left untouched.');
+      return;
+    }
+    console.log();
+  }
 
   // Interactive or defaults
   let projectName = scan.name;

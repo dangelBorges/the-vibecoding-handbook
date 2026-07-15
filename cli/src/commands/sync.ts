@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { select, confirm, input } from '@inquirer/prompts';
-import { section, success, info, warn, divider, c } from '../utils/ui.js';
+import { section, success, info, warn, divider, c, isInteractive } from '../utils/ui.js';
 
 // Built-in template library (can be expanded)
 const TEMPLATES = {
@@ -454,6 +454,12 @@ const PROMPTS_LIBRARY = {
 };
 
 export async function syncCommand(options: { templates?: boolean; prompts?: boolean }): Promise<void> {
+  // sync is fully interactive (template/prompt pickers) — bail out early in CI/pipes
+  if (!isInteractive()) {
+    console.error(c.error('Error: vibe sync requires an interactive terminal.'));
+    process.exit(1);
+  }
+
   console.log();
   console.log(c.cyan('╔' + '═'.repeat(54) + '╗'));
   console.log(c.cyan('║') + '  ' + c.bold('Vibe Sync — Template & Prompt Library').padEnd(52) + c.cyan('║'));

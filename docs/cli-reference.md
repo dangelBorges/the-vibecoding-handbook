@@ -87,7 +87,6 @@ Review code against your project's `.cursorrules` and `AGENTS.md`.
 vibe review            # Review modified files
 vibe review -s         # Review staged files only
 vibe review -f src/... # Review specific file
-vibe review --fix      # Attempt auto-fixes
 ```
 
 **Options:**
@@ -95,7 +94,6 @@ vibe review --fix      # Attempt auto-fixes
 |--------|-------------|
 | `-s, --staged` | Review only git staged files |
 | `-f, --file <file>` | Review a specific file |
-| `--fix` | Auto-fix issues where possible |
 
 **Checks performed:**
 - console.log statements in production code
@@ -113,15 +111,15 @@ Optimize a prompt for AI agents with intent detection and context injection.
 ```bash
 vibe optimize "create a login form"
 vibe optimize -f prompt.txt
-vibe optimize "fix the bug" -c -o output.md
+vibe optimize "fix the bug" -c context.md -o output.md
 ```
 
 **Options:**
 | Option | Description |
 |--------|-------------|
-| `-f, --file <file>` | Read prompt from file |
-| `-c, --context` | Include AGENTS.md context |
-| `-o, --output <file>` | Write result to file |
+| `-f, --file <file>` | Read prompt from file (takes precedence over the positional argument) |
+| `-c, --context <file>` | Read context from file instead of AGENTS.md |
+| `-o, --output <file>` | Write result to file (default: `optimized-prompt.md`) |
 
 **Features:**
 - Intent detection (feature, bugfix, refactor, test, docs)
@@ -161,7 +159,7 @@ vibe check --strict
 **Options:**
 | Option | Description |
 |--------|-------------|
-| `--strict` | Fail on warnings too |
+| `--strict` | Exit with code 1 on warnings too (not just failures) |
 
 **Validations:**
 - AGENTS.md exists
@@ -207,7 +205,7 @@ vibe sync --prompts    # Prompts only
 | Variable | Description |
 |----------|-------------|
 | `OPENAI_API_KEY` | For future AI-powered features |
-| `ANTHROPIC_API_KEY` | For Claude integration |
+| `ANTHROPIC_API_KEY` | For future Claude integration |
 
 ## Exit Codes
 

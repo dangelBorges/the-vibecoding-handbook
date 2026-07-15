@@ -41,7 +41,6 @@ program
   .description('Review staged or specified files against project policies')
   .option('-s, --staged', 'Review only git staged files')
   .option('-f, --file <file>', 'Review a specific file')
-  .option('--fix', 'Auto-fix issues where possible')
   .action(reviewCommand);
 
 // ─── vibe optimize ───
@@ -50,16 +49,15 @@ program
   .description('Optimize a prompt for AI agents')
   .argument('[prompt]', 'The prompt to optimize')
   .option('-f, --file <file>', 'Read prompt from file')
-  .option('-c, --context', 'Include AGENTS.md context')
+  .option('-c, --context <file>', 'Read context from file instead of AGENTS.md')
   .option('-o, --output <file>', 'Write result to file')
-  .action(optimizeCommand);
+  .action((prompt: string | undefined, opts: { file?: string; context?: string; output?: string }) => optimizeCommand(prompt, opts));
 
 // ─── vibe chat ───
 program
   .command('chat')
   .description('Start an interactive REPL session with project context')
   .argument('[task]', 'Task description (e.g. "create a dashboard")')
-  .option('-m, --model <model>', 'AI model to use (openai, anthropic, ollama)', 'openai')
   .action(chatCommand);
 
 // ─── vibe check ───
@@ -67,7 +65,7 @@ program
   .command('check')
   .description('Validate project against vibe coding policies')
   .option('--strict', 'Fail on warnings too')
-  .action(checkCommand);
+  .action((opts: { strict?: boolean }) => checkCommand(opts));
 
 // ─── vibe sync ───
 program

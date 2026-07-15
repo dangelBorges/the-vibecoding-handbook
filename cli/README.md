@@ -59,7 +59,6 @@ Review code against your project's `.cursorrules` and `AGENTS.md`:
 vibe review            # Review modified files
 vibe review -s         # Review staged files only
 vibe review -f src/... # Review specific file
-vibe review --fix      # Attempt auto-fixes
 ```
 
 Checks:
@@ -76,7 +75,7 @@ Transform vague prompts into structured AI instructions:
 ```bash
 vibe optimize "create a login form"
 vibe optimize -f prompt.txt
-vibe optimize "fix the bug" -c -o output.md
+vibe optimize "fix the bug" -c context.md -o output.md
 ```
 
 Features:
@@ -154,7 +153,7 @@ Prompt library:
 | Variable | Description |
 |----------|-------------|
 | `OPENAI_API_KEY` | For future AI-powered features |
-| `ANTHROPIC_API_KEY` | For Claude integration |
+| `ANTHROPIC_API_KEY` | For future Claude integration |
 
 ## License
 

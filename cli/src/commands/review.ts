@@ -12,7 +12,7 @@ interface ReviewIssue {
   rule: string;
 }
 
-export async function reviewCommand(options: { staged?: boolean; file?: string; fix?: boolean }): Promise<void> {
+export async function reviewCommand(options: { staged?: boolean; file?: string }): Promise<void> {
   section('Vibe Code Review');
 
   const issues: ReviewIssue[] = [];
@@ -140,11 +140,6 @@ export async function reviewCommand(options: { staged?: boolean; file?: string; 
   const totalScore = Math.max(0, 100 - errors.length * 15 - warnings.length * 5);
   console.log(`Score: ${score(totalScore)}`);
   console.log(`  ${errors.length} errors · ${warnings.length} warnings · ${infos.length} suggestions`);
-
-  if (options.fix && (errors.length > 0 || warnings.length > 0)) {
-    console.log();
-    warn('Auto-fix not yet implemented. Run with --fix to attempt automatic fixes in future versions.');
-  }
 
   console.log();
 }
