@@ -18,7 +18,7 @@ const features = [
     icon: Terminal,
     title: 'CLI Tool',
     description: 'npm install -g @vibecoding/cli. Run vibe init, vibe check, vibe context, and vibe optimize from your terminal.',
-    href: 'https://github.com/you/the-vibecoding-handbook/tree/main/cli',
+    href: 'https://github.com/dangelBorges/the-vibecoding-handbook/tree/main/cli',
     color: '#58A6B2',
   },
   {

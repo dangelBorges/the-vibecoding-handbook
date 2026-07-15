@@ -80,7 +80,7 @@ export default function KonamiEasterEgg() {
 
         <div className="flex flex-col gap-3">
           <a
-            href="https://github.com/you/the-vibecoding-handbook"
+            href="https://github.com/dangelBorges/the-vibecoding-handbook"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 transition-all"

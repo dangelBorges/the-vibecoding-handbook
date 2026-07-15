@@ -9,10 +9,10 @@ const footerLinks = [
 ];
 
 const communityLinks = [
-  { label: 'Contributing Guide', href: 'https://github.com/you/the-vibecoding-handbook/blob/main/CONTRIBUTING.md', external: true },
-  { label: 'Changelog', href: 'https://github.com/you/the-vibecoding-handbook/blob/main/CHANGELOG.md', external: true },
-  { label: 'Issues', href: 'https://github.com/you/the-vibecoding-handbook/issues', external: true },
-  { label: 'Discussions', href: 'https://github.com/you/the-vibecoding-handbook/discussions', external: true },
+  { label: 'Contributing Guide', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/CONTRIBUTING.md', external: true },
+  { label: 'Changelog', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/CHANGELOG.md', external: true },
+  { label: 'Issues', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/issues', external: true },
+  { label: 'Discussions', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/discussions', external: true },
 ];
 
 export default function Footer() {
@@ -33,7 +33,7 @@ export default function Footer() {
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://github.com/you/the-vibecoding-handbook"
+            href="https://github.com/dangelBorges/the-vibecoding-handbook"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 transition-all duration-300"

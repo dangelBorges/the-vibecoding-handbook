@@ -6,10 +6,10 @@
 <br />
 
 <!-- Badges -->
-<a href="https://github.com/you/the-vibecoding-handbook/stargazers"><img src="https://img.shields.io/github/stars/you/the-vibecoding-handbook?style=for-the-badge&logo=github&color=FFD700&labelColor=1a1a2e" alt="Stars" /></a>
-<a href="https://github.com/you/the-vibecoding-handbook/network/members"><img src="https://img.shields.io/github/forks/you/the-vibecoding-handbook?style=for-the-badge&logo=github&color=0EA5E9&labelColor=1a1a2e" alt="Forks" /></a>
-<a href="https://github.com/you/the-vibecoding-handbook/issues"><img src="https://img.shields.io/github/issues/you/the-vibecoding-handbook?style=for-the-badge&logo=github&color=F43F5E&labelColor=1a1a2e" alt="Issues" /></a>
-<a href="./LICENSE"><img src="https://img.shields.io/github/license/you/the-vibecoding-handbook?style=for-the-badge&color=10B981&labelColor=1a1a2e" alt="License" /></a>
+<a href="https://github.com/dangelBorges/the-vibecoding-handbook/stargazers"><img src="https://img.shields.io/github/stars/dangelBorges/the-vibecoding-handbook?style=for-the-badge&logo=github&color=FFD700&labelColor=1a1a2e" alt="Stars" /></a>
+<a href="https://github.com/dangelBorges/the-vibecoding-handbook/network/members"><img src="https://img.shields.io/github/forks/dangelBorges/the-vibecoding-handbook?style=for-the-badge&logo=github&color=0EA5E9&labelColor=1a1a2e" alt="Forks" /></a>
+<a href="https://github.com/dangelBorges/the-vibecoding-handbook/issues"><img src="https://img.shields.io/github/issues/dangelBorges/the-vibecoding-handbook?style=for-the-badge&logo=github&color=F43F5E&labelColor=1a1a2e" alt="Issues" /></a>
+<a href="./LICENSE"><img src="https://img.shields.io/github/license/dangelBorges/the-vibecoding-handbook?style=for-the-badge&color=10B981&labelColor=1a1a2e" alt="License" /></a>
 
 <br />
 
@@ -18,8 +18,8 @@
 <a href="./cli/README.md"><strong>CLI Docs</strong></a> ·
 <a href="./vscode-extension/README.md"><strong>VS Code Extension</strong></a> ·
 <a href="./docs/"><strong>Handbook</strong></a> ·
-<a href="https://github.com/you/the-vibecoding-handbook/issues">Report Bug</a> ·
-<a href="https://github.com/you/the-vibecoding-handbook/issues">Request Feature</a>
+<a href="https://github.com/dangelBorges/the-vibecoding-handbook/issues">Report Bug</a> ·
+<a href="https://github.com/dangelBorges/the-vibecoding-handbook/issues">Request Feature</a>
 
 <br /><br />
 
@@ -271,7 +271,7 @@ A 9-step interactive wizard that helps you decide:
 
 ## Roadmap
 
-See the [open issues](https://github.com/you/the-vibecoding-handbook/issues) for a full list of proposed features and known issues.
+See the [open issues](https://github.com/dangelBorges/the-vibecoding-handbook/issues) for a full list of proposed features and known issues.
 
 ### Phase 1 — Foundation (Current)
 
@@ -306,8 +306,8 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ### Top Contributors
 
-<a href="https://github.com/you/the-vibecoding-handbook/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=you/the-vibecoding-handbook" alt="Contributors" />
+<a href="https://github.com/dangelBorges/the-vibecoding-handbook/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=dangelBorges/the-vibecoding-handbook" alt="Contributors" />
 </a>
 
 ---
@@ -330,6 +330,6 @@ Distributed under the MIT License. See [LICENSE](./LICENSE) for more information
 
 **If this project helped you, please give it a star!** ⭐
 
-[![Star History Chart](https://api.star-history.com/svg?repos=you/the-vibecoding-handbook&type=Date)](https://star-history.com/#you/the-vibecoding-handbook&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=dangelBorges/the-vibecoding-handbook&type=Date)](https://star-history.com/#dangelBorges/the-vibecoding-handbook&Date)
 
 </div>

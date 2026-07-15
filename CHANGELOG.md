@@ -37,4 +37,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Context preview webview panel
 - Initialize, Check, and Optimize commands
 
-[1.0.0]: https://github.com/you/the-vibecoding-handbook/releases/tag/v1.0.0
+[1.0.0]: https://github.com/dangelBorges/the-vibecoding-handbook/releases/tag/v1.0.0

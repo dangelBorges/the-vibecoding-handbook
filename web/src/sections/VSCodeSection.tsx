@@ -167,7 +167,7 @@ export default function VSCodeSection() {
             </div>
 
             <a
-              href="https://github.com/you/the-vibecoding-handbook/tree/main/vscode-extension"
+              href="https://github.com/dangelBorges/the-vibecoding-handbook/tree/main/vscode-extension"
               target="_blank"
               rel="noopener noreferrer"
               className="group mt-8 inline-flex items-center gap-2 text-cyan font-heading text-sm hover:underline"

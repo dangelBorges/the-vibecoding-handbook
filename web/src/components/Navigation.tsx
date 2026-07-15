@@ -68,7 +68,7 @@ export default function Navigation() {
         {/* CTA Button */}
         <div className="hidden md:block">
           <a
-            href="https://github.com/you/the-vibecoding-handbook"
+            href="https://github.com/dangelBorges/the-vibecoding-handbook"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2 border border-cyan/60 text-cyan text-sm font-heading rounded-full hover:bg-cyan/10 hover:glow-cyan transition-all duration-300"
@@ -105,7 +105,7 @@ export default function Navigation() {
               </Link>
             ))}
             <a
-              href="https://github.com/you/the-vibecoding-handbook"
+              href="https://github.com/dangelBorges/the-vibecoding-handbook"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2 border border-cyan/60 text-cyan text-sm font-heading rounded-full hover:bg-cyan/10 transition-all w-fit"

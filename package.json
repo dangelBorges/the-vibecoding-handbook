@@ -34,10 +34,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/you/the-vibecoding-handbook.git"
+    "url": "https://github.com/dangelBorges/the-vibecoding-handbook.git"
   },
   "bugs": {
-    "url": "https://github.com/you/the-vibecoding-handbook/issues"
+    "url": "https://github.com/dangelBorges/the-vibecoding-handbook/issues"
   },
   "homepage": "https://vibecoding.guide"
 }
