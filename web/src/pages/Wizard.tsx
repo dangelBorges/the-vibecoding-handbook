@@ -8,6 +8,7 @@ import {
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useWizard } from '../hooks/useWizard';
+import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
 import { questions, steps, comparisons, getRecommendedStack } from '../data/wizard';
 
 const stepIcons: Record<string, React.ReactNode> = {
@@ -78,6 +79,15 @@ export default function Wizard() {
             <p className="mt-2 text-[#8B92A8]">
               Answer a few questions and we&apos;ll generate your complete project governance setup.
             </p>
+            <Alert className="mt-4 border-cyan/20 bg-cyan/5">
+              <Info className="h-4 w-4 text-cyan" />
+              <AlertTitle className="text-cyan font-heading">Generated from your answers, not your repo</AlertTitle>
+              <AlertDescription className="text-[#8B92A8]">
+                This wizard doesn&apos;t analyze your code — it builds governance from what you tell it.
+                Answer for the project you actually have (or plan), and review the generated files
+                before committing them: they&apos;re a starting point to adapt, not gospel.
+              </AlertDescription>
+            </Alert>
           </div>
 
           {/* Progress Bar */}

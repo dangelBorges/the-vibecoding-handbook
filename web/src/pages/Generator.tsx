@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import {
   ArrowLeft, Download, Check, Copy, FileCode, Shield,
   ClipboardCheck, GitBranch, Server, FileText,
-  ChevronRight, Sparkles, FolderOpen,
+  ChevronRight, Sparkles, FolderOpen, Info,
 } from 'lucide-react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -174,6 +174,10 @@ export default function Generator() {
                 <p className="mt-2 text-[#8B92A8]">
                   <span className="text-cyan font-heading">{answers.projectName}</span> — 
                   Complete governance package generated.
+                </p>
+                <p className="mt-3 text-xs text-[#8B92A8]/80 flex items-center gap-1.5">
+                  <Info size={12} className="text-cyan shrink-0" />
+                  Generated from your wizard answers, not an analysis of your repo — review and adapt before committing.
                 </p>
               </div>
 

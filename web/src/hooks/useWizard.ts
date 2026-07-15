@@ -18,8 +18,8 @@ const initialAnswers: WizardAnswers = {
   email: 'none',
   storage: 'none',
   realtime: false,
-  testing: 'vitest-playwright',
-  monitoring: 'sentry',
+  testing: 'minimal',
+  monitoring: 'none',
 };
 
 export function useWizard() {
