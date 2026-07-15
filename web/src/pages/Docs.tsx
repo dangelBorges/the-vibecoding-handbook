@@ -48,8 +48,16 @@ export default function Docs() {
     }
   }, [currentChapter]);
 
-  useEffect(() => {
+  const [prevSlug, setPrevSlug] = useState(slug);
+
+  // Close the sidebar on chapter change (adjust state during render
+  // instead of in an effect — see react.dev "adjusting state when a prop changes")
+  if (prevSlug !== slug) {
+    setPrevSlug(slug);
     setSidebarOpen(false);
+  }
+
+  useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = 0;
     }
@@ -82,7 +90,7 @@ export default function Docs() {
           inCodeBlock = false;
         } else {
           inCodeBlock = true;
-          // eslint-disable-next-line no-empty
+           
         }
         return;
       }

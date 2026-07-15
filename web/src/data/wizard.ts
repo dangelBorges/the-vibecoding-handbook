@@ -605,7 +605,7 @@ ${hasUploads ? `| Storage | ${getTechLabel('storage', answers.storage)} | File u
 
 ## Architecture Decisions
 
-${hasMultiTenant ? '- **Multi-tenancy**: Organizations are implemented via row-level security (RLS) policies. Each table has an \`org_id\` column.' : ''}
+${hasMultiTenant ? '- **Multi-tenancy**: Organizations are implemented via row-level security (RLS) policies. Each table has an `org_id` column.' : ''}
 ${hasRealtime ? '- **Real-time**: Using database subscriptions for live updates. WebSocket connections managed by the database provider.' : ''}
 ${hasApi ? '- **Public API**: REST API with API key authentication. Rate limiting applied per key.' : ''}
 ${hasAi ? '- **AI Integration**: LLM features use streaming responses. All AI calls are logged for monitoring.' : ''}

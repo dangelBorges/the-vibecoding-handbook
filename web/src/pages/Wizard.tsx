@@ -486,7 +486,7 @@ function TechSelectStep({
   questions: qs,
 }: {
   wizard: ReturnType<typeof useWizard>;
-  questions: typeof wizardQuestions;
+  questions: typeof questions;
 }) {
   const answerKey = qs[0]?.id as keyof typeof wizard.answers;
   const selected = wizard.answers[answerKey] as string;
@@ -545,7 +545,7 @@ function ExtrasStep({
   questions: qs,
 }: {
   wizard: ReturnType<typeof useWizard>;
-  questions: typeof wizardQuestions;
+  questions: typeof questions;
 }) {
   return (
     <div className="space-y-8">
@@ -640,4 +640,3 @@ function ComparisonCard({ comparison }: { comparison: typeof comparisons[0] }) {
 }
 
 // Type helper
-const wizardQuestions = questions;

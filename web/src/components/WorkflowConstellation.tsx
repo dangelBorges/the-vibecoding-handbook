@@ -35,7 +35,7 @@ export default function WorkflowConstellation() {
     if (!ctx) return;
 
     let nodes: Node[] = [];
-    let particles: Particle[] = [];
+    const particles: Particle[] = [];
     let time = 0;
     let w = 0;
     let h = 0;

@@ -25,9 +25,14 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+
+  // Close the mobile menu on route change (adjust state during render
+  // instead of in an effect — see react.dev "adjusting state when a prop changes")
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname);
     setMobileOpen(false);
-  }, [location.pathname]);
+  }
 
   const isActive = (href: string) => {
     if (href === '/') return location.pathname === '/';

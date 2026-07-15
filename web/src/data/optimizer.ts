@@ -144,7 +144,7 @@ function generateRicePrompt(raw: string, intent: IntentType, context?: string): 
   const constraints = getConstraints(intent);
   const expectations = getExpectations(intent);
 
-  let prompt = `# ${role}
+  const prompt = `# ${role}
 
 ## Context
 ${context || 'You are working on a modern web application.'}
