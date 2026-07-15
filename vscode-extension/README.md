@@ -8,7 +8,7 @@
 - **📋 Architecture Decisions** — View ADRs (Architecture Decision Records) 
 - **⚡ Stack Detection** — Auto-detect your framework, language, auth, database
 - **🚀 Initialize Project** — Generate AGENTS.md, .cursorrules, and policies with one command
-- **🔍 Check Project** — Validate governance setup (12 checks)
+- **🔍 Check Project** — Validate governance setup (6 checks)
 - **🔄 Refresh Context** — Auto-update AGENTS.md from current codebase
 - **✨ Optimize Prompt** — Transform vague prompts into structured instructions
 - **📖 Context Panel** — Rich webview with project overview, AGENTS.md, and .cursorrules
@@ -18,7 +18,7 @@
 | Command | Description |
 |---------|-------------|
 | `Vibe: Initialize Project` | Generate governance files |
-| `Vibe: Check Project` | Run 12 validation checks |
+| `Vibe: Check Project` | Run 6 validation checks |
 | `Vibe: Refresh Context` | Update AGENTS.md from codebase |
 | `Vibe: Optimize Prompt` | Optimize a prompt for AI agents |
 | `Vibe: Show Project Context` | Open context webview panel |

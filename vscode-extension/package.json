@@ -33,7 +33,7 @@
         {
           "id": "vibecoding-sidebar",
           "title": "Vibe Coding",
-          "icon": "$(sparkle)"
+          "icon": "media/icon.svg"
         }
       ]
     },
@@ -98,6 +98,12 @@
         "title": "Open .cursorrules",
         "category": "Vibe Coding",
         "icon": "$(file-code)"
+      },
+      {
+        "command": "vibecoding.refreshContext",
+        "title": "Refresh Context",
+        "category": "Vibe Coding",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
@@ -144,19 +150,6 @@
           "type": "boolean",
           "default": false,
           "description": "Run vibe check on file save"
-        },
-        "vibecoding.optimizePattern": {
-          "type": "string",
-          "enum": [
-            "auto",
-            "rice",
-            "star",
-            "chain-of-thought",
-            "few-shot",
-            "structured"
-          ],
-          "default": "auto",
-          "description": "Default prompt optimization pattern"
         }
       }
     }
@@ -164,8 +157,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "lint": "eslint src --ext ts"
+    "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

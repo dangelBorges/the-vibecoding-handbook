@@ -1,11 +1,23 @@
 import * as vscode from 'vscode';
 import { detectStack, writeVibeFile, getWorkspacePath } from '../utils/fileReader';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export async function initCommand(): Promise<void> {
   const wsPath = getWorkspacePath();
   if (!wsPath) {
     vscode.window.showErrorMessage('No workspace folder open.');
     return;
+  }
+
+  // Confirm before overwriting an existing AGENTS.md
+  if (fs.existsSync(path.join(wsPath, 'AGENTS.md'))) {
+    const choice = await vscode.window.showWarningMessage(
+      'AGENTS.md already exists. Overwrite it?',
+      'Overwrite',
+      'Cancel'
+    );
+    if (choice !== 'Overwrite') return;
   }
 
   // Quick picks for project configuration
@@ -53,14 +65,17 @@ export async function initCommand(): Promise<void> {
     }
   );
 
-  vscode.window.showInformationMessage(
-    `Vibe Coding governance initialized for ${projectName}!`,
-    'Open AGENTS.md'
-  ).then((selection) => {
-    if (selection === 'Open AGENTS.md') {
-      vscode.commands.executeCommand('vibecoding.openAgents');
-    }
-  });
+  const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
+  if (showNotifications) {
+    vscode.window.showInformationMessage(
+      `Vibe Coding governance initialized for ${projectName}!`,
+      'Open AGENTS.md'
+    ).then((selection) => {
+      if (selection === 'Open AGENTS.md') {
+        vscode.commands.executeCommand('vibecoding.openAgents');
+      }
+    });
+  }
 }
 
 function generateAgentsMd(projectName: string, stack: { framework: string; language: string }): string {

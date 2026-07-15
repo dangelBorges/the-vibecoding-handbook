@@ -118,6 +118,11 @@ export function parseAgentsMd(): { key: string; value: string }[] {
 
   const sections: { key: string; value: string }[] = [];
 
+  // Match a "## <header>" line and capture its body until the next section
+  // (or the real end of the file).
+  const sectionPattern = (header: string) =>
+    new RegExp(`^## ${header}\\s*$[\\s\\S]*?(?=\\n## |$(?![\\s\\S]))`, 'm');
+
   // Extract key sections
   const extractSection = (title: string, pattern: RegExp) => {
     const match = content.match(pattern);
@@ -126,11 +131,11 @@ export function parseAgentsMd(): { key: string; value: string }[] {
     }
   };
 
-  extractSection('Tech Stack', /## Tech Stack[\s\S]*?(?=\n## |$)/);
-  extractSection('Architecture', /## Architecture[\s\S]*?(?=\n## |$)/);
-  extractSection('Coding Standards', /## Coding Standards[\s\S]*?(?=\n## |$)/);
-  extractSection('Security', /## Security Rules[\s\S]*?(?=\n## |$)/);
-  extractSection('Git Workflow', /## Git Workflow[\s\S]*?(?=\n## |$)/);
+  extractSection('Tech Stack', sectionPattern('Tech Stack'));
+  extractSection('Architecture', sectionPattern('(Architecture|Overview)'));
+  extractSection('Coding Standards', sectionPattern('Coding Standards'));
+  extractSection('Security', sectionPattern('Security( Rules)?'));
+  extractSection('Git Workflow', sectionPattern('Git Workflow'));
 
   return sections;
 }

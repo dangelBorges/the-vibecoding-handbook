@@ -110,11 +110,28 @@ export function activate(context: vscode.ExtensionContext) {
       decisionProvider.refresh();
       stackProvider.refresh();
     });
+    watcher.onDidDelete(() => {
+      vscode.commands.executeCommand('setContext', 'vibecoding.hasSetup', checkVibeSetup());
+      policyProvider.refresh();
+      decisionProvider.refresh();
+      stackProvider.refresh();
+    });
     context.subscriptions.push(watcher);
   }
 
+  // ─── Auto check on save ───
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument(() => {
+      const autoCheck = vscode.workspace.getConfiguration('vibecoding').get('autoCheckOnSave', false);
+      if (autoCheck && checkVibeSetup()) {
+        checkCommand(true);
+      }
+    })
+  );
+
   // ─── Welcome message ───
-  if (!hasSetup && workspaceFolders) {
+  const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
+  if (!hasSetup && workspaceFolders && showNotifications) {
     vscode.window.showInformationMessage(
       'This project doesn\'t have Vibe Coding governance yet. Initialize it?',
       'Initialize',
