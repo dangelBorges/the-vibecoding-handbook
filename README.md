@@ -264,7 +264,7 @@ A 9-step interactive wizard that helps you decide:
 
 - [CLI Documentation](./cli/README.md) — All 7 commands with examples
 - [VS Code Extension](./vscode-extension/README.md) — Installation and usage
-- [Contributing Guide](./CONTRIBUTING.md) — How to contribute
+- [Contributing Guide](./.github/CONTRIBUTING.md) — How to contribute
 - [Changelog](./CHANGELOG.md) — Version history
 
 ---
@@ -302,7 +302,7 @@ See the [open issues](https://github.com/dangelBorges/the-vibecoding-handbook/is
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for guidelines.
 
 ### Top Contributors
 

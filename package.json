@@ -13,7 +13,7 @@
     "build:web": "cd web && npm run build",
     "build:cli": "cd cli && npm run build",
     "build:vscode": "cd vscode-extension && npm run compile",
-    "build:all": "npm run build:cli && npm run build:web",
+    "build:all": "npm run build:cli && npm run build:web && npm run build:vscode",
     "test:cli": "cd cli && npm test",
     "lint": "cd web && npm run lint",
     "typecheck": "cd web && npm run typecheck"
