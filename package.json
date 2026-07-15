@@ -1,0 +1,43 @@
+{
+  "name": "the-vibecoding-handbook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The most complete guide for vibe coding — AI-first development from prompt to production",
+  "workspaces": [
+    "web",
+    "cli",
+    "vscode-extension"
+  ],
+  "scripts": {
+    "dev:web": "cd web && npm run dev",
+    "build:web": "cd web && npm run build",
+    "build:cli": "cd cli && npm run build",
+    "build:vscode": "cd vscode-extension && npm run compile",
+    "build:all": "npm run build:cli && npm run build:web",
+    "test:cli": "cd cli && npm test",
+    "lint": "cd web && npm run lint",
+    "typecheck": "cd web && npm run typecheck"
+  },
+  "keywords": [
+    "vibe-coding",
+    "ai",
+    "cli",
+    "cursor",
+    "agents",
+    "prompt-engineering",
+    "productivity",
+    "ai-agents",
+    "code-review",
+    "open-source"
+  ],
+  "author": "The Vibe Coding Handbook",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/you/the-vibecoding-handbook.git"
+  },
+  "bugs": {
+    "url": "https://github.com/you/the-vibecoding-handbook/issues"
+  },
+  "homepage": "https://vibecoding.guide"
+}

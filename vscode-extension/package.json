@@ -1,0 +1,175 @@
+{
+  "name": "vibecoding",
+  "displayName": "Vibe Coding",
+  "description": "AI-first project governance — context, policies, and prompt optimization for vibe coding",
+  "version": "1.0.0",
+  "publisher": "vibecoding",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Snippets",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "vibe coding",
+    "ai",
+    "cursor",
+    "agents",
+    "prompt",
+    "context",
+    "governance"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecoding-sidebar",
+          "title": "Vibe Coding",
+          "icon": "$(sparkle)"
+        }
+      ]
+    },
+    "views": {
+      "vibecoding-sidebar": [
+        {
+          "id": "vibecoding.policies",
+          "name": "Policies",
+          "when": "vibecoding.hasSetup"
+        },
+        {
+          "id": "vibecoding.decisions",
+          "name": "Decisions",
+          "when": "vibecoding.hasSetup"
+        },
+        {
+          "id": "vibecoding.stack",
+          "name": "Stack",
+          "when": "vibecoding.hasSetup"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vibecoding.init",
+        "title": "Vibe: Initialize Project",
+        "category": "Vibe Coding",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "vibecoding.check",
+        "title": "Vibe: Check Project",
+        "category": "Vibe Coding",
+        "icon": "$(check)"
+      },
+      {
+        "command": "vibecoding.context",
+        "title": "Vibe: Refresh Context",
+        "category": "Vibe Coding",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecoding.optimize",
+        "title": "Vibe: Optimize Prompt",
+        "category": "Vibe Coding",
+        "icon": "$(wand)"
+      },
+      {
+        "command": "vibecoding.showContext",
+        "title": "Vibe: Show Project Context",
+        "category": "Vibe Coding",
+        "icon": "$(book)"
+      },
+      {
+        "command": "vibecoding.openAgents",
+        "title": "Open AGENTS.md",
+        "category": "Vibe Coding",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "vibecoding.openCursorRules",
+        "title": "Open .cursorrules",
+        "category": "Vibe Coding",
+        "icon": "$(file-code)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "vibecoding.init"
+        },
+        {
+          "command": "vibecoding.check"
+        },
+        {
+          "command": "vibecoding.context"
+        },
+        {
+          "command": "vibecoding.optimize"
+        },
+        {
+          "command": "vibecoding.showContext"
+        },
+        {
+          "command": "vibecoding.openAgents"
+        },
+        {
+          "command": "vibecoding.openCursorRules"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vibecoding.refreshContext",
+          "when": "view == vibecoding.policies",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Vibe Coding",
+      "properties": {
+        "vibecoding.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show status notifications"
+        },
+        "vibecoding.autoCheckOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run vibe check on file save"
+        },
+        "vibecoding.optimizePattern": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "rice",
+            "star",
+            "chain-of-thought",
+            "few-shot",
+            "structured"
+          ],
+          "default": "auto",
+          "description": "Default prompt optimization pattern"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.7.0"
+  }
+}

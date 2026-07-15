@@ -1,0 +1,52 @@
+{
+  "name": "@vibecoding/cli",
+  "version": "1.0.0",
+  "description": "AI-first project governance CLI — context generation, prompt optimization, code review",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "vibe": "./bin/vibe.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "vibe-coding",
+    "ai",
+    "cli",
+    "cursor",
+    "agents",
+    "prompt-engineering",
+    "productivity",
+    "ai-agents",
+    "code-review"
+  ],
+  "author": "The Vibe Coding Handbook",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "enquirer": "^2.4.1",
+    "ora": "^8.0.0",
+    "fs-extra": "^11.0.0",
+    "@inquirer/prompts": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/fs-extra": "^11.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/",
+    "bin/",
+    "README.md"
+  ]
+}

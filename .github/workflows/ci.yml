@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─── CLI Build & Test ───
+  cli:
+    name: CLI — Build & Functional Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install CLI dependencies
+        run: cd cli && npm ci
+
+      - name: Build CLI
+        run: cd cli && npm run build
+
+      - name: Test CLI help
+        run: node cli/dist/index.js --help
+
+      - name: Test vibe check on sample project
+        run: |
+          mkdir -p /tmp/sample-project
+          cd /tmp/sample-project
+          cat > package.json << 'EOF'
+          {
+            "name": "test-app",
+            "dependencies": { "next": "^14", "react": "^18", "tailwindcss": "^3" },
+            "devDependencies": { "typescript": "^5", "vitest": "^1" },
+            "scripts": { "test": "vitest", "lint": "eslint ." }
+          }
+          EOF
+          node ${{ github.workspace }}/cli/dist/index.js check
+        continue-on-error: true
+
+      - name: Test vibe init
+        run: |
+          cd /tmp/sample-project
+          node ${{ github.workspace }}/cli/dist/index.js init -y -t saas
+          test -f AGENTS.md
+          test -f .cursorrules
+          test -d .vibecoding/policies
+
+      - name: Test vibe context --auto
+        run: |
+          cd /tmp/sample-project
+          node ${{ github.workspace }}/cli/dist/index.js context --auto
+          test -f AGENTS.md
+
+      - name: Test vibe optimize (non-interactive)
+        run: |
+          cd /tmp/sample-project
+          node ${{ github.workspace }}/cli/dist/index.js optimize "create login form"
+          test -f optimized-prompt.md
+
+      - name: Test vibe chat (non-interactive)
+        run: |
+          cd /tmp/sample-project
+          node ${{ github.workspace }}/cli/dist/index.js chat "build dashboard"
+          test -f vibe-plan.md
+          test -f vibe-prompt.md
+
+      - name: Test vibe review
+        run: |
+          cd /tmp/sample-project
+          echo "const x: any = 1; console.log('test');" > test.ts
+          node ${{ github.workspace }}/cli/dist/index.js review -f test.ts
+
+  # ─── Web App Build ───
+  web:
+    name: Web — Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: cd web && npm ci
+
+      - name: Type check
+        run: cd web && npx tsc --noEmit
+        continue-on-error: true
+
+      - name: Build web app
+        run: cd web && npm run build
+
+  # ─── Lint ───
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: cd web && npm ci
+
+      - name: Run ESLint
+        run: cd web && npm run lint
+        continue-on-error: true
