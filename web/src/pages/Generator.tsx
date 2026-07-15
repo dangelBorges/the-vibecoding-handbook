@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import {
   ArrowLeft, Download, Check, Copy, FileCode, Shield,
@@ -37,10 +37,11 @@ export default function Generator() {
   const [copied, setCopied] = useState(false);
 
   // Redirect if no answers
-  if (!answers) {
-    navigate('/wizard');
-    return null;
-  }
+  useEffect(() => {
+    if (!answers) {
+      navigate('/wizard');
+    }
+  }, [answers, navigate]);
 
   const tabs: FileTab[] = useMemo(() => [
     {
@@ -93,6 +94,10 @@ export default function Generator() {
       generator: (a) => generateAdr(a, 1),
     },
   ], []);
+
+  if (!answers) {
+    return null;
+  }
 
   const activeFile = tabs.find((t) => t.id === activeTab) || tabs[0];
   const content = activeFile.generator(answers);

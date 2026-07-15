@@ -101,7 +101,7 @@ export default function HeroSection() {
               <div className="text-xs text-[#8B92A8] mt-1">Chapters</div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-heading font-bold text-[#F0F2F5]">100+</div>
+              <div className="text-2xl md:text-3xl font-heading font-bold text-[#F0F2F5]">50+</div>
               <div className="text-xs text-[#8B92A8] mt-1">Prompts</div>
             </div>
             <div>

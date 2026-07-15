@@ -37,7 +37,7 @@ const features = [
   },
   {
     icon: MessageSquareCode,
-    title: '100+ Prompts',
+    title: '50+ Prompts',
     description: 'Copy-paste prompts for features, bugfixes, refactors, tests, and documentation. Filtered by tool and stack.',
     href: '/prompts',
     color: '#C792EA',

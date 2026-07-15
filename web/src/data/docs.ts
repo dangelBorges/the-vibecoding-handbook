@@ -446,7 +446,7 @@ Now write a route for user preferences following the same pattern."
       {
         id: 'prompt-library',
         title: 'Prompt Library',
-        content: `Visit our interactive **Prompt Library** at /prompts for 100+ ready-to-use prompts organized by:
+        content: `Visit our interactive **Prompt Library** at /prompts for 50+ ready-to-use prompts organized by:
 
 - **Task type**: Feature, bugfix, refactor, test, docs
 - **Tool**: Cursor, Claude Code, Windsurf
@@ -695,7 +695,7 @@ Long conversations where the AI forgets earlier decisions.
 **v1.0 (2026-01)**
 - Initial release
 - 10 chapters
-- 100+ prompts
+- 50+ prompts
 - Tool comparison matrix
 
 **Roadmap:**

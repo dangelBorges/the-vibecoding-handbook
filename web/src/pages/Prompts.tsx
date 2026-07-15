@@ -177,7 +177,7 @@ export default function Prompts() {
               Prompt Library
             </h1>
             <p className="mt-3 text-[#8B92A8] max-w-2xl">
-              100+ copy-paste prompts for every coding task. Filter by category, tool, or stack.
+              50+ copy-paste prompts for every coding task. Filter by category, tool, or stack.
               Click the copy button to grab any prompt instantly.
             </p>
           </div>

@@ -9,7 +9,7 @@ const footerLinks = [
 ];
 
 const communityLinks = [
-  { label: 'Contributing Guide', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/CONTRIBUTING.md', external: true },
+  { label: 'Contributing Guide', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/.github/CONTRIBUTING.md', external: true },
   { label: 'Changelog', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/CHANGELOG.md', external: true },
   { label: 'Issues', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/issues', external: true },
   { label: 'Discussions', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/discussions', external: true },

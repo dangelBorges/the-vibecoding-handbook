@@ -33,13 +33,19 @@ export default function Wizard() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [wizard.currentStep]);
 
+  // Redirect to the generator once the wizard is complete
+  useEffect(() => {
+    if (wizard.isLastStep) {
+      navigate('/generator', { state: { answers: wizard.answers } });
+    }
+  }, [wizard.isLastStep, wizard.answers, navigate]);
+
   const handleApplyRecommendations = () => {
     wizard.applyRecommendations();
     setShowRecommendations(false);
   };
 
   if (wizard.isLastStep) {
-    navigate('/generator', { state: { answers: wizard.answers } });
     return null;
   }
 
