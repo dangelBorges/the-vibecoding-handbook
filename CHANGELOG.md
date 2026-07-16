@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Web Handbook
-- Community Prompt Library (`/community-prompts`) — browse community-submitted prompts, upvote with localStorage persistence, filter by category/tool/stack, and submit new prompts via GitHub issue template
+- Template Marketplace (`/templates`) — official + community templates with downloads, copy, upvotes and GitHub submissions
+- Community Prompt Library (`/community-prompts`) — browse curated + community prompts, upvote with localStorage persistence, filter by category/tool/stack, and submit new prompts via GitHub issue template
 
 #### GitHub Actions
 - `vibe-check` composite action in `.github/actions/vibe-check` + dogfood workflow `.github/workflows/vibe-check.yml` — runs `vibe check --strict` and `vibe review --base origin/main` in CI

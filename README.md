@@ -289,6 +289,10 @@ A 9-step interactive wizard that helps you decide:
 
 Browse curated and community-submitted prompts, upvote the community ones, copy them into your agent, or submit your own via GitHub. Votes are persisted in the browser with localStorage; community prompts live in `web/src/data/communityPrompts.ts` and are updated through PRs.
 
+### Template Marketplace
+
+Official templates plus community submissions — governance files, checklists, rules and starter prompts. Download or copy any template, upvote community ones, and submit your own via GitHub.
+
 ---
 
 ## Documentation
@@ -323,7 +327,7 @@ See the [open issues](https://github.com/dangelBorges/the-vibecoding-handbook/is
 ### Phase 3 — Community
 
 - [x] Community prompt library (share and vote)
-- [ ] Template marketplace
+- [x] Template marketplace
 - [x] GitHub Action for CI/CD vibe checks
 - [ ] Multi-language support (Spanish, Portuguese, Chinese)
 

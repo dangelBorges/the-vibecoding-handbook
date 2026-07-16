@@ -1,0 +1,62 @@
+name: Community Template
+description: Submit a template to the marketplace
+title: '[Community Template] '
+labels: ['community-template']
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Template name
+      placeholder: e.g. Security Review Checklist
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - context
+        - rules
+        - checklist
+        - starter
+    validations:
+      required: true
+
+  - type: input
+    id: filename
+    attributes:
+      label: Filename
+      placeholder: e.g. SECURITY_CHECKLIST.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Short description
+      placeholder: One or two sentences describing the template.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content
+    attributes:
+      label: Template content
+      description: Paste the full markdown content here.
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags (comma separated)
+      placeholder: e.g. Security, Review, Checklist
+
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      placeholder: '@your-github-handle'
+    validations:
+      required: true

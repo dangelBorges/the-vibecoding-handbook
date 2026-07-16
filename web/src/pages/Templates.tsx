@@ -10,10 +10,33 @@ import {
   Check,
   Sparkles,
   Copy,
+  ThumbsUp,
+  Plus,
 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { templates, categories, type Template } from '../data/templates';
+import { templates as curatedTemplates, categories, type Template } from '../data/templates';
+import { communityTemplates } from '../data/communityTemplates';
+
+const UPVOTES_KEY = 'vibe-template-upvotes';
+
+type UnifiedTemplate = Template & {
+  source: 'curated' | 'community';
+  author: string;
+  submittedAt: string;
+  votes: number;
+};
+
+const unifiedTemplates: UnifiedTemplate[] = [
+  ...curatedTemplates.map((t) => ({
+    ...t,
+    source: 'curated' as const,
+    author: 'The Vibe Coding Handbook',
+    submittedAt: '',
+    votes: 0,
+  })),
+  ...communityTemplates.map((t) => ({ ...t, source: 'community' as const })),
+];
 
 const categoryIcons: Record<string, React.ElementType> = {
   context: FileCode,
@@ -29,7 +52,17 @@ const categoryColors: Record<string, string> = {
   starter: '#f59e0b',
 };
 
-function TemplateCard({ template, index }: { template: Template; index: number }) {
+function TemplateCard({
+  template,
+  index,
+  hasVoted,
+  onVote,
+}: {
+  template: UnifiedTemplate;
+  index: number;
+  hasVoted: boolean;
+  onVote: (id: string) => void;
+}) {
   const [copied, setCopied] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -94,7 +127,14 @@ function TemplateCard({ template, index }: { template: Template; index: number }
               <Icon size={20} style={{ color }} />
             </div>
             <div>
-              <h3 className="font-heading text-lg font-semibold text-[#F0F2F5]">{template.name}</h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-heading text-lg font-semibold text-[#F0F2F5]">{template.name}</h3>
+                {template.source === 'curated' && (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-heading font-medium bg-cyan/10 text-cyan">
+                    Official
+                  </span>
+                )}
+              </div>
               <p className="text-[#8B92A8] text-xs">{template.filename}</p>
             </div>
           </div>
@@ -123,22 +163,41 @@ function TemplateCard({ template, index }: { template: Template; index: number }
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <button
             onClick={handleCopy}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cyan/10 text-cyan font-heading text-sm hover:bg-cyan/20 transition-colors"
+            className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cyan/10 text-cyan font-heading text-sm hover:bg-cyan/20 transition-colors"
           >
             {copied ? <Check size={16} /> : <Copy size={16} />}
             {copied ? 'Copied!' : 'Copy'}
           </button>
           <button
             onClick={handleDownload}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white/5 text-[#F0F2F5] font-heading text-sm hover:bg-white/10 transition-colors"
+            className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white/5 text-[#F0F2F5] font-heading text-sm hover:bg-white/10 transition-colors"
           >
             <Download size={16} />
             Download
           </button>
+          {template.source === 'community' && (
+            <button
+              onClick={() => onVote(template.id)}
+              disabled={hasVoted}
+              className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-heading text-sm transition-colors ${
+                hasVoted
+                  ? 'bg-cyan/20 text-cyan cursor-default'
+                  : 'bg-white/5 text-[#8B92A8] hover:bg-cyan/10 hover:text-cyan'
+              }`}
+            >
+              <ThumbsUp size={16} />
+              {hasVoted ? 'Upvoted' : 'Upvote'}
+              <span className="ml-1">{template.votes + (hasVoted ? 1 : 0)}</span>
+            </button>
+          )}
         </div>
+
+        {template.source === 'community' && (
+          <p className="mt-3 text-xs text-[#8B92A8]/60">by {template.author}</p>
+        )}
       </div>
     </div>
   );
@@ -146,11 +205,34 @@ function TemplateCard({ template, index }: { template: Template; index: number }
 
 export default function Templates() {
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [upvotes, setUpvotes] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem(UPVOTES_KEY);
+      return raw ? (JSON.parse(raw) as string[]) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  const filtered = templates.filter((t) => {
+  const handleVote = (id: string) => {
+    if (upvotes.includes(id)) return;
+    const next = [...upvotes, id];
+    setUpvotes(next);
+    try {
+      localStorage.setItem(UPVOTES_KEY, JSON.stringify(next));
+    } catch {
+      // ignore storage errors
+    }
+  };
+
+  const filtered = unifiedTemplates.filter((t) => {
     if (categoryFilter === 'all') return true;
     return t.category === categoryFilter;
   });
+
+  const submitUrl = `https://github.com/dangelBorges/the-vibecoding-handbook/issues/new?template=community_template.yml&title=${encodeURIComponent(
+    '[Community Template] '
+  )}`;
 
   return (
     <div className="min-h-[100dvh] flex flex-col" style={{ background: '#0B0C10' }}>
@@ -170,42 +252,59 @@ export default function Templates() {
             <div className="flex items-center gap-2 mb-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/20">
                 <Sparkles size={14} className="text-cyan" />
-                <span className="text-cyan text-xs font-heading">Downloadable</span>
+                <span className="text-cyan text-xs font-heading">Marketplace</span>
               </div>
             </div>
             <h1
               className="font-display text-[#F0F2F5] uppercase"
               style={{ fontSize: 'clamp(28px, 5vw, 56px)' }}
             >
-              Templates
+              Template Marketplace
             </h1>
             <p className="mt-3 text-[#8B92A8] max-w-2xl">
-              Ready-to-use templates for your vibe coding workflow. Copy to clipboard 
-              or download as files. Drop them into your project and start coding.
+              Official templates plus community submissions for your vibe coding workflow.
+              Copy to clipboard, download as files, or upvote the ones you love.
             </p>
           </div>
 
-          {/* Category Filters */}
-          <div className="mb-8 flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setCategoryFilter(cat.value)}
-                className={`px-4 py-2 rounded-full text-sm font-heading transition-all ${
-                  categoryFilter === cat.value
-                    ? 'bg-cyan text-[#0B0C10]'
-                    : 'bg-surface text-[#8B92A8] border border-white/10 hover:border-cyan/30 hover:text-[#F0F2F5]'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
+          {/* Category Filters + Submit */}
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => setCategoryFilter(cat.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-heading transition-all ${
+                    categoryFilter === cat.value
+                      ? 'bg-cyan text-[#0B0C10]'
+                      : 'bg-surface text-[#8B92A8] border border-white/10 hover:border-cyan/30 hover:text-[#F0F2F5]'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+            <a
+              href={submitUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-cyan/10 border border-cyan/30 rounded-full text-cyan hover:bg-cyan/20 transition-colors text-sm font-heading"
+            >
+              <Plus size={16} />
+              Submit a template
+            </a>
           </div>
 
           {/* Templates Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filtered.map((template, index) => (
-              <TemplateCard key={template.id} template={template} index={index} />
+              <TemplateCard
+                key={template.id}
+                template={template}
+                index={index}
+                hasVoted={upvotes.includes(template.id)}
+                onVote={handleVote}
+              />
             ))}
           </div>
 
