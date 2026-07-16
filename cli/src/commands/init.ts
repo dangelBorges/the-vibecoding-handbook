@@ -1,11 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { prompt } from 'enquirer';
-import { header, section, success, info, fileTree, spinner, isInteractive } from '../utils/ui.js';
+import { header, section, success, info, warn, error, fileTree, spinner, isInteractive } from '../utils/ui.js';
 import { scanProject, generateSmartAgentsMd, generateCursorRules } from '../utils/scanner.js';
+import { detectLlmConfig, generateAgentsMd } from '../utils/llm.js';
 import { wrapInMarkers, mergeIntoExisting } from '../utils/merge.js';
 
-export async function initCommand(options: { yes?: boolean; type?: string; merge?: boolean }): Promise<void> {
+export async function initCommand(options: { yes?: boolean; type?: string; merge?: boolean; describe?: string }): Promise<void> {
   header('Vibe Coding — Initialize Project');
 
   const cwd = process.cwd();
@@ -59,6 +60,27 @@ export async function initCommand(options: { yes?: boolean; type?: string; merge
   // Override scan name
   scan.name = projectName;
 
+  // Resolve AGENTS.md content (heuristic or LLM from natural-language description)
+  const agentsPath = path.join(cwd, 'AGENTS.md');
+  let agentsContent: string;
+  if (options.describe) {
+    const llm = detectLlmConfig();
+    if (!llm) {
+      error('No LLM API key found. Set OPENAI_API_KEY or ANTHROPIC_API_KEY to use --describe, or omit --describe to use heuristics.');
+      process.exit(1);
+    }
+    const llmContent = await generateAgentsMd(options.describe, scan, llm);
+    if (llmContent) {
+      agentsContent = llmContent;
+      info('AGENTS.md generated from description');
+    } else {
+      warn('LLM unavailable — falling back to local heuristics');
+      agentsContent = generateSmartAgentsMd(scan);
+    }
+  } else {
+    agentsContent = generateSmartAgentsMd(scan);
+  }
+
   section('Generating Files');
 
   const s = spinner('Creating project governance...');
@@ -72,9 +94,7 @@ export async function initCommand(options: { yes?: boolean; type?: string; merge
     }
   }
 
-  // Generate AGENTS.md (smart, based on actual project)
-  const agentsPath = path.join(cwd, 'AGENTS.md');
-  const agentsContent = generateSmartAgentsMd(scan);
+  // Write AGENTS.md (plain, or merged via markers)
   if (options.merge && fs.existsSync(agentsPath)) {
     // --merge: update only the managed block, preserve user content outside it
     fs.writeFileSync(agentsPath, mergeIntoExisting(fs.readFileSync(agentsPath, 'utf-8'), agentsContent));

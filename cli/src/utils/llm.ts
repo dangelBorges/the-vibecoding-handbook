@@ -1,3 +1,5 @@
+import type { ProjectScan } from './scanner.js';
+
 export type LlmProvider = 'openai' | 'anthropic';
 
 export interface LlmConfig {
@@ -83,6 +85,68 @@ function buildRequest(config: LlmConfig, system: string, user: string): LlmReque
       return block?.text ?? null;
     },
   };
+}
+
+function buildScanSummary(scan: ProjectScan): Record<string, unknown> {
+  return {
+    name: scan.name,
+    framework: scan.framework,
+    language: scan.language,
+    runtime: scan.runtime,
+    hasTypeScript: scan.hasTypeScript,
+    hasTests: scan.hasTests,
+    testFramework: scan.testFramework,
+    hasDatabase: scan.hasDatabase,
+    database: scan.database,
+    hasAuth: scan.hasAuth,
+    authProvider: scan.authProvider,
+    hasPayments: scan.hasPayments,
+    paymentProvider: scan.paymentProvider,
+    hasRealtime: scan.hasRealtime,
+    styling: scan.styling,
+    apiStyle: scan.apiStyle,
+    packageManager: scan.packageManager,
+    isMonorepo: scan.isMonorepo,
+    monorepoTool: scan.monorepoTool,
+    packages: scan.packages?.map((p) => ({
+      name: p.name,
+      framework: p.framework,
+      language: p.language,
+    })),
+    conventions: scan.conventions,
+    scripts: scan.scripts,
+  };
+}
+
+/**
+ * Generates a complete AGENTS.md from a natural-language description and a
+ * project scan summary. Returns null on any LLM failure so callers can fall
+ * back to the local heuristic generator.
+ */
+export async function generateAgentsMd(description: string, scan: ProjectScan, config: LlmConfig): Promise<string | null> {
+  const summary = buildScanSummary(scan);
+  const system = `You are a senior technical writer creating an AGENTS.md file for a team of AI coding agents.
+Be concise but specific. Do not invent concrete URLs, credentials, or secrets. Use the provided project stack.`;
+
+  const user = `Project description:
+${description}
+
+Detected stack:
+${JSON.stringify(summary, null, 2)}
+
+Write a complete AGENTS.md in Markdown. Include these sections (omit any that are irrelevant):
+- Overview
+- Tech Stack
+- Architecture
+- Coding Standards
+- Security Rules
+- Git Workflow
+- Deployment Checklist
+- Scripts Reference (only if scripts exist)
+
+Return only the Markdown content. Do not wrap it in code fences.`;
+
+  return generateText(config, system, user);
 }
 
 /**

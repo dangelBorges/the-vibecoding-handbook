@@ -27,6 +27,7 @@ program
   .description('Initialize project governance (AGENTS.md, .cursorrules, policies)')
   .option('-y, --yes', 'Skip prompts and use defaults')
   .option('-t, --type <type>', 'Project type (saas, ecommerce, api, dashboard, content)')
+  .option('--describe <text>', 'Generate AGENTS.md from a natural-language project description (requires an LLM API key)')
   .option('--merge', 'merge into existing AGENTS.md using managed markers instead of overwriting')
   .action(initCommand);
 
@@ -35,6 +36,7 @@ program
   .command('context')
   .description('Update AGENTS.md from current codebase')
   .option('-a, --auto', 'Auto-detect everything (no prompts)')
+  .option('--describe <text>', 'Generate AGENTS.md from a natural-language project description (requires an LLM API key)')
   .option('--dry-run', 'Show what would change without writing files')
   .option('--merge', 'merge into existing AGENTS.md using managed markers instead of overwriting')
   .action(contextCommand);

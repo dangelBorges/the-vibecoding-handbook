@@ -22,14 +22,20 @@ Initialize project governance files:
 vibe init              # Interactive setup
 vibe init -y           # Skip prompts, use defaults
 vibe init -t saas      # Pre-configured for SaaS
+vibe init --describe "SaaS booking app with Stripe" # Generate AGENTS.md from natural language
 vibe init --merge      # Merge into existing AGENTS.md instead of overwriting
 ```
 
 With `--merge`, generated content lives between `<!-- vibe:begin -->` / `<!-- vibe:end -->`
 markers — your own notes outside the markers are preserved on every re-run.
 
+`--describe` uses an LLM (OpenAI or Anthropic) to generate `AGENTS.md` from your
+description plus the detected stack. Requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`
+in the environment. Only the description and stack summary are sent — never source
+file contents.
+
 Creates:
-- `AGENTS.md` — Project context for AI agents (auto-detected from your code)
+- `AGENTS.md` — Project context for AI agents (auto-detected from your code or generated from description)
 - `.cursorrules` — IDE-specific rules
 - `.vibecoding/policies/` — Git, Security, Testing, Deployment policies
 - `.vibecoding/decisions/` — Architecture Decision Records
@@ -41,6 +47,7 @@ Creates:
 ```bash
 vibe context           # Interactive refresh
 vibe context --auto    # Full auto-detection, no prompts
+vibe context --describe "SaaS booking app with Stripe" # LLM-generated AGENTS.md
 vibe context --dry-run # Preview changes without writing
 vibe context --merge   # Update only the managed block, keep your custom notes
 ```

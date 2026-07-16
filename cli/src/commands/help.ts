@@ -44,16 +44,18 @@ const TOPICS: Record<string, CommandHelp> = {
   init: {
     summary: 'Initialize project governance files',
     description:
-      'Scans your codebase (framework, language, database, auth, payments, testing, styling, API style — monorepo-aware) and generates a complete governance setup for AI coding agents.',
+      'Scans your codebase (framework, language, database, auth, payments, testing, styling, API style — monorepo-aware) and generates a complete governance setup for AI coding agents. With --describe, an LLM (OpenAI/Anthropic) writes AGENTS.md from your description plus the detected stack; only the description and stack summary are sent.',
     usage: 'vibe init [options]',
     options: [
       { flag: '-y, --yes', description: 'Skip all prompts and accept detected defaults (CI-friendly)' },
       { flag: '-t, --type <type>', description: 'Project type: saas, ecommerce, api, dashboard, content' },
+      { flag: '--describe <text>', description: 'Generate AGENTS.md from a natural-language description (requires OPENAI_API_KEY or ANTHROPIC_API_KEY)' },
       { flag: '--merge', description: 'Merge into an existing AGENTS.md via managed markers (preserves your edits outside <!-- vibe:begin/end -->)' },
     ],
     modes: [
       { flag: 'Interactive', description: 'asks project name + type; confirms before overwriting an existing AGENTS.md' },
       { flag: 'Non-interactive', description: '-y (or no TTY): runs with detected defaults, never blocks — safe for CI' },
+      { flag: 'AI mode', description: '--describe + API key: LLM writes AGENTS.md from your description' },
     ],
     files: [
       { flag: 'AGENTS.md', description: 'project context for AI agents' },
@@ -64,18 +66,20 @@ const TOPICS: Record<string, CommandHelp> = {
     examples: [
       { cmd: 'vibe init', note: 'interactive setup' },
       { cmd: 'vibe init -y -t saas', note: 'no prompts, SaaS defaults — CI-friendly' },
+      { cmd: 'vibe init --describe "booking SaaS with Stripe"', note: 'LLM-generated AGENTS.md from a description' },
       { cmd: 'vibe init --merge', note: 'update AGENTS.md without losing your custom notes' },
     ],
-    tips: ['Run `vibe check` afterwards to validate the setup.'],
+    tips: ['Run `vibe check` afterwards to validate the setup.', 'Use --describe when you have a clear project idea but no code yet.'],
   },
 
   context: {
     summary: 'Regenerate AGENTS.md from the current codebase',
     description:
-      'Re-scans the project and rewrites AGENTS.md and .cursorrules so they never go stale. Detects monorepos — npm/yarn/pnpm/lerna workspaces, or inferred from the directory structure when no tooling is declared.',
+      'Re-scans the project and rewrites AGENTS.md and .cursorrules so they never go stale. Detects monorepos — npm/yarn/pnpm/lerna workspaces, or inferred from the directory structure when no tooling is declared. With --describe, an LLM rewrites AGENTS.md from your description plus the scan; only the description and stack summary are sent.',
     usage: 'vibe context [options]',
     options: [
       { flag: '-a, --auto', description: 'Auto-detect everything (no prompts)' },
+      { flag: '--describe <text>', description: 'Generate AGENTS.md from a natural-language description (requires OPENAI_API_KEY or ANTHROPIC_API_KEY)' },
       { flag: '--dry-run', description: 'Print a preview (first 30 lines) without writing anything' },
       { flag: '--merge', description: 'Merge into the existing AGENTS.md via managed markers' },
     ],
@@ -86,9 +90,10 @@ const TOPICS: Record<string, CommandHelp> = {
     examples: [
       { cmd: 'vibe context --dry-run', note: 'safe preview — writes nothing' },
       { cmd: 'vibe context --merge', note: 'refresh the managed block, keep your notes' },
+      { cmd: 'vibe context --describe "booking SaaS with Stripe"', note: 'LLM-generated AGENTS.md from a description' },
       { cmd: 'vibe context', note: 'run at a monorepo root to see the package table' },
     ],
-    tips: ['Use --dry-run liberally; it never touches your files.'],
+    tips: ['Use --dry-run liberally; it never touches your files.', 'Use --describe to realign AGENTS.md with a new product direction.'],
   },
 
   check: {
