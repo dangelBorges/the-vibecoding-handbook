@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'Wizard', href: '/wizard' },
   { label: 'Optimize', href: '/optimize' },
   { label: 'Prompts', href: '/prompts' },
+  { label: 'Community', href: '/community-prompts' },
   { label: 'Tools', href: '/tools' },
   { label: 'Templates', href: '/templates' },
 ];

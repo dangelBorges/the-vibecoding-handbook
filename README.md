@@ -285,6 +285,10 @@ A 9-step interactive wizard that helps you decide:
 - Deployment (Vercel vs Railway vs Self-hosted)
 - Team workflow (Branching, PRs, Code Review)
 
+### Community Prompt Library
+
+Browse, upvote and copy prompts shared by the community, or submit your own via GitHub. Votes are persisted in the browser with localStorage; prompts live in `web/src/data/communityPrompts.ts` and are updated through PRs.
+
 ---
 
 ## Documentation
@@ -318,9 +322,9 @@ See the [open issues](https://github.com/dangelBorges/the-vibecoding-handbook/is
 
 ### Phase 3 — Community
 
-- [ ] Community prompt library (share and vote)
+- [x] Community prompt library (share and vote)
 - [ ] Template marketplace
-- [ ] GitHub Action for CI/CD vibe checks
+- [x] GitHub Action for CI/CD vibe checks
 - [ ] Multi-language support (Spanish, Portuguese, Chinese)
 
 ---
