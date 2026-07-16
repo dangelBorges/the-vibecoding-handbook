@@ -102,6 +102,7 @@ Review code against your project's `.cursorrules` and `AGENTS.md`.
 vibe review            # Review modified files
 vibe review -s         # Review staged files only
 vibe review -f src/... # Review specific file
+vibe review --fix      # Auto-fix safe issues, suggest fixes for the rest
 ```
 
 **Options:**
@@ -109,6 +110,7 @@ vibe review -f src/... # Review specific file
 |--------|-------------|
 | `-s, --staged` | Review only git staged files |
 | `-f, --file <file>` | Review a specific file |
+| `--fix` | Remove standalone `console.log(...)` statements and print fix suggestions for the remaining issues |
 
 **Checks performed:**
 - console.log statements in production code

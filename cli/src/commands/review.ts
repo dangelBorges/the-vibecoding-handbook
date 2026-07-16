@@ -3,127 +3,61 @@ import fs from 'fs';
 import path from 'path';
 import { section, success, warn, error, info, divider, score } from '../utils/ui.js';
 import { readVibeFile } from '../utils/fileReader.js';
+import { scanFileContent, ReviewIssue } from '../utils/reviewScanner.js';
+import { removeConsoleLogStatements, FIX_SUGGESTIONS } from '../utils/fixer.js';
 
-interface ReviewIssue {
-  file: string;
-  line?: number;
-  severity: 'error' | 'warning' | 'info';
-  message: string;
-  rule: string;
+interface ReviewOptions {
+  staged?: boolean;
+  file?: string;
+  fix?: boolean;
 }
 
-export async function reviewCommand(options: { staged?: boolean; file?: string }): Promise<void> {
-  section('Vibe Code Review');
+const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx'];
 
-  const issues: ReviewIssue[] = [];
-  const cwd = process.cwd();
-
-  // Load rules
-  const cursorRules = readVibeFile('.cursorrules') || '';
-  const agentsMd = readVibeFile('AGENTS.md') || '';
-
-  // Get files to review
-  let files: string[] = [];
+function selectFiles(options: ReviewOptions, cwd: string): string[] | null {
   if (options.file) {
-    files = [options.file];
-  } else if (options.staged) {
-    try {
-      const output = execSync('git diff --cached --name-only', { cwd, encoding: 'utf-8' });
-      files = output.split('\n').filter((f) => f.endsWith('.ts') || f.endsWith('.tsx') || f.endsWith('.js') || f.endsWith('.jsx'));
-    } catch {
-      error('Not a git repository or no staged files');
-      return;
-    }
-  } else {
-    try {
-      const output = execSync('git diff --name-only', { cwd, encoding: 'utf-8' });
-      files = output.split('\n').filter((f) => f.endsWith('.ts') || f.endsWith('.tsx') || f.endsWith('.js') || f.endsWith('.jsx'));
-    } catch {
-      error('Not a git repository');
-      return;
-    }
+    return [options.file];
   }
-
-  if (files.length === 0) {
-    warn('No files to review');
-    return;
+  const gitCommand = options.staged ? 'git diff --cached --name-only' : 'git diff --name-only';
+  try {
+    const output = execSync(gitCommand, { cwd, encoding: 'utf-8' });
+    return output.split('\n').filter((f) => SOURCE_EXTENSIONS.some((ext) => f.endsWith(ext)));
+  } catch {
+    error(options.staged ? 'Not a git repository or no staged files' : 'Not a git repository');
+    return null;
   }
+}
 
-  info(`Reviewing ${files.length} file(s)...`);
-  console.log();
-
+function scanFiles(files: string[], cwd: string, cursorRules: string, agentsMd: string): ReviewIssue[] {
+  const issues: ReviewIssue[] = [];
   for (const file of files) {
     const fullPath = path.join(cwd, file);
     if (!fs.existsSync(fullPath)) continue;
-
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    const lines = content.split('\n');
-
-    // Rule: No console.log in production code (always check, universal best practice)
-    const noConsoleRule = cursorRules.toLowerCase().includes('console.log') || agentsMd.toLowerCase().includes('console.log') || cursorRules.length > 0;
-    if (noConsoleRule) {
-      lines.forEach((line, idx) => {
-        if (line.includes('console.log') && !line.trim().startsWith('//') && !line.includes('eslint-disable') && !line.includes('logger') && !line.includes('process.stdout')) {
-          issues.push({ file, line: idx + 1, severity: 'warning', message: 'console.log found — remove before production', rule: 'No console.log' });
-        }
-      });
-    }
-
-    // Rule: No any types
-    if (cursorRules.includes('any') || agentsMd.includes('any')) {
-      lines.forEach((line, idx) => {
-        if (line.includes(': any') || line.includes('as any')) {
-          issues.push({ file, line: idx + 1, severity: 'warning', message: '`any` type detected — use specific type', rule: 'No any types' });
-        }
-      });
-    }
-
-    // Rule: No hardcoded secrets
-    const secretPatterns = ['API_KEY', 'SECRET', 'PASSWORD', 'TOKEN', 'api_key'];
-    lines.forEach((line, idx) => {
-      for (const pattern of secretPatterns) {
-        if (line.includes(pattern) && !line.includes('process.env') && !line.includes('import')) {
-          issues.push({ file, line: idx + 1, severity: 'error', message: `Possible hardcoded secret: "${pattern}" — use environment variables`, rule: 'No hardcoded secrets' });
-        }
-      }
-    });
-
-    // Rule: Check for .then() chains (prefer async/await)
-    lines.forEach((line, idx) => {
-      if (line.includes('.then(') && line.includes('.catch(')) {
-        issues.push({ file, line: idx + 1, severity: 'info', message: 'Consider using async/await instead of .then().catch()', rule: 'Prefer async/await' });
-      }
-    });
-
-    // Rule: Check function length
-    let funcStart = -1;
-    lines.forEach((line, idx) => {
-      if (line.match(/^(export\s+)?(async\s+)?function\s+\w+\s*\(/)) {
-        funcStart = idx;
-      }
-      if (funcStart >= 0 && line === '}') {
-        const length = idx - funcStart;
-        if (length > 50) {
-          issues.push({ file, line: funcStart + 1, severity: 'info', message: `Function is ${length} lines — consider extracting (${length - 50} over limit)`, rule: 'Max 50 lines per function' });
-        }
-        funcStart = -1;
-      }
-    });
+    const lines = fs.readFileSync(fullPath, 'utf-8').split('\n');
+    issues.push(...scanFileContent(file, lines, cursorRules, agentsMd));
   }
+  return issues;
+}
 
-  // Report
-  divider();
-  console.log();
-
-  const errors = issues.filter((i) => i.severity === 'error');
-  const warnings = issues.filter((i) => i.severity === 'warning');
-  const infos = issues.filter((i) => i.severity === 'info');
-
-  if (issues.length === 0) {
-    success('No issues found! Code looks clean.');
-    return;
+// Applies safe auto-fixes (standalone console.log removal) and rewrites affected files.
+function applyFixes(files: string[], issues: ReviewIssue[], cwd: string): { fixedCount: number; fixedFiles: number } {
+  let fixedCount = 0;
+  let fixedFiles = 0;
+  for (const file of files) {
+    const issueLines = issues.filter((i) => i.file === file && i.rule === 'No console.log' && i.line).map((i) => i.line as number);
+    if (issueLines.length === 0) continue;
+    const fullPath = path.join(cwd, file);
+    const lines = fs.readFileSync(fullPath, 'utf-8').split('\n');
+    const result = removeConsoleLogStatements(lines, issueLines);
+    if (result.fixed.length === 0) continue;
+    fs.writeFileSync(fullPath, result.lines.join('\n'));
+    fixedCount += result.fixed.length;
+    fixedFiles += 1;
   }
+  return { fixedCount, fixedFiles };
+}
 
+function printIssues(issues: ReviewIssue[]): void {
   for (const issue of issues) {
     const icon = issue.severity === 'error' ? '✖' : issue.severity === 'warning' ? '⚠' : 'ℹ';
     const color = issue.severity === 'error' ? '\x1b[31m' : issue.severity === 'warning' ? '\x1b[33m' : '\x1b[34m';
@@ -133,13 +67,76 @@ export async function reviewCommand(options: { staged?: boolean; file?: string }
     console.log(`     ${'\x1b[90m'}Rule: ${issue.rule}${reset}`);
     console.log();
   }
+}
+
+function printFixSuggestions(issues: ReviewIssue[]): void {
+  const rules = [...new Set(issues.map((i) => i.rule))].filter((rule) => FIX_SUGGESTIONS[rule]);
+  if (rules.length === 0) return;
+  console.log('How to fix the rest:');
+  for (const rule of rules) {
+    console.log(`  • ${rule} — ${FIX_SUGGESTIONS[rule]}`);
+  }
+  console.log();
+}
+
+function printReport(issues: ReviewIssue[], showSuggestions: boolean): void {
+  divider();
+  console.log();
+
+  if (issues.length === 0) {
+    success('No issues found! Code looks clean.');
+    return;
+  }
+
+  printIssues(issues);
 
   divider();
   console.log();
 
+  const errors = issues.filter((i) => i.severity === 'error');
+  const warnings = issues.filter((i) => i.severity === 'warning');
+  const infos = issues.filter((i) => i.severity === 'info');
   const totalScore = Math.max(0, 100 - errors.length * 15 - warnings.length * 5);
   console.log(`Score: ${score(totalScore)}`);
   console.log(`  ${errors.length} errors · ${warnings.length} warnings · ${infos.length} suggestions`);
-
   console.log();
+
+  if (showSuggestions) {
+    printFixSuggestions(issues);
+  }
+}
+
+export async function reviewCommand(options: ReviewOptions): Promise<void> {
+  section('Vibe Code Review');
+
+  const cwd = process.cwd();
+  const cursorRules = readVibeFile('.cursorrules') || '';
+  const agentsMd = readVibeFile('AGENTS.md') || '';
+
+  const files = selectFiles(options, cwd);
+  if (files === null) return;
+
+  if (files.length === 0) {
+    warn('No files to review');
+    return;
+  }
+
+  info(`Reviewing ${files.length} file(s)...`);
+  console.log();
+
+  let issues = scanFiles(files, cwd, cursorRules, agentsMd);
+
+  if (options.fix) {
+    const { fixedCount, fixedFiles } = applyFixes(files, issues, cwd);
+    if (fixedCount > 0) {
+      success(`Auto-fix: removed ${fixedCount} console.log statement(s) from ${fixedFiles} file(s)`);
+      console.log();
+      issues = scanFiles(files, cwd, cursorRules, agentsMd);
+    } else if (issues.some((i) => i.rule === 'No console.log')) {
+      info('No console.log statements were safe to auto-remove (inline or multi-line usage).');
+      console.log();
+    }
+  }
+
+  printReport(issues, Boolean(options.fix));
 }

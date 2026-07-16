@@ -45,6 +45,7 @@ program
   .description('Review staged or specified files against project policies')
   .option('-s, --staged', 'Review only git staged files')
   .option('-f, --file <file>', 'Review a specific file')
+  .option('--fix', 'Auto-fix safe issues (removes console.log), suggests fixes for the rest')
   .action(reviewCommand);
 
 // ─── vibe optimize ───

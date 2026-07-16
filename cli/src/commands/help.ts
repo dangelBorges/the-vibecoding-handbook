@@ -111,18 +111,20 @@ const TOPICS: Record<string, CommandHelp> = {
   review: {
     summary: 'Review changed files against project policies',
     description:
-      'Heuristic review of your changes: console.log, explicit any, hardcoded secrets, .then() chains and oversized functions. Adapts to your .cursorrules / AGENTS.md. Score: 100 − 15 per error − 5 per warning.',
+      'Heuristic review of your changes: console.log, explicit any, hardcoded secrets, .then() chains and oversized functions. Adapts to your .cursorrules / AGENTS.md. Score: 100 − 15 per error − 5 per warning. With --fix it removes standalone console.log statements and suggests how to fix the rest.',
     usage: 'vibe review [options]',
     options: [
       { flag: '-s, --staged', description: 'Review only git staged files' },
       { flag: '-f, --file <file>', description: 'Review a single file' },
+      { flag: '--fix', description: 'Auto-fix safe issues (removes console.log), suggests fixes for the rest' },
     ],
     modes: [{ flag: 'Default', description: 'reviews modified-but-unstaged files (git diff)' }],
     examples: [
       { cmd: 'vibe review -s', note: 'pre-commit: only what is staged' },
       { cmd: 'vibe review -f src/auth.ts', note: 'single file' },
+      { cmd: 'vibe review --fix', note: 'strip console.log and get fix suggestions' },
     ],
-    tips: ['Works great as a pre-commit step before handing code to an AI agent.'],
+    tips: ['Works great as a pre-commit step before handing code to an AI agent. Run --fix first to clear the trivial noise.'],
   },
 
   optimize: {

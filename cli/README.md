@@ -67,6 +67,7 @@ Review code against your project's `.cursorrules` and `AGENTS.md`:
 vibe review            # Review modified files
 vibe review -s         # Review staged files only
 vibe review -f src/... # Review specific file
+vibe review --fix      # Auto-fix safe issues, suggest fixes for the rest
 ```
 
 Checks:
@@ -75,6 +76,10 @@ Checks:
 - Hardcoded secrets (use env vars)
 - `.then().catch()` chains (prefer async/await)
 - Function length > 50 lines (extract)
+
+With `--fix`, standalone `console.log(...)` statements are removed automatically
+(inline or multi-line usages are left untouched), the files are re-scanned, and
+the remaining issues are printed with a fix suggestion for each rule.
 
 ### `vibe optimize`
 
