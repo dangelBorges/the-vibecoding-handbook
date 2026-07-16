@@ -58,18 +58,22 @@ test: add coverage for chat command
 
 ### Web App
 
+Uses **pnpm** (required — lockfile is `pnpm-lock.yaml`):
+
 ```bash
 cd web
-npm install
-npm run dev
+pnpm install
+pnpm run dev   # http://localhost:4000
 ```
 
 ### CLI
 
+Uses **pnpm** as well:
+
 ```bash
 cd cli
-npm install
-npm run build
+pnpm install
+pnpm run build
 node dist/index.js --help
 ```
 

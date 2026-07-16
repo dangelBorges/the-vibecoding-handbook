@@ -1,7 +1,7 @@
 {
   "name": "@vibecoding/cli",
   "version": "1.0.0",
-  "description": "AI-first project governance CLI — context generation, prompt optimization, code review",
+  "description": "AI-first project governance CLI \u00e2\u20ac\u201d context generation, prompt optimization, code review",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -48,5 +48,6 @@
     "dist/",
     "bin/",
     "README.md"
-  ]
+  ],
+  "packageManager": "pnpm@10.26.2"
 }

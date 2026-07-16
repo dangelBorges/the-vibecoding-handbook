@@ -16,12 +16,14 @@ Guidance for AI agents working in this repository. Read this fully before making
 
 Important: this repo is the **tool**, not a consumer. The governance templates in the codebase are the *product* it generates for other projects. If generated sample files (e.g. `.vibecoding/`, wizard output) ever appear in this repo, they are test artifacts — they do NOT describe this repo.
 
-## Monorepo Structure (npm workspaces)
+## Monorepo Structure (independent packages — no npm workspaces)
 
-- `web/` — Public website. React 19 + Vite 7 + TypeScript + Tailwind 3.4 + shadcn/ui (Radix) + HashRouter. No backend: static data lives in `web/src/data/`, all processing is client-side. Deploys to Vercel (`vercel.json`, SPA fallback).
-- `cli/` — `@vibecoding/cli` npm package (`vibe` binary). Node 20+, TypeScript ESM strict, Commander.js. 7 commands: `init`, `context`, `review`, `optimize`, `chat`, `check`, `sync`. Core: `src/utils/scanner.ts` (dependency-based stack detection). Build: `tsc` → `dist/`.
-- `vscode-extension/` — VS Code extension (WIP, unpublished). CommonJS, no runtime deps. 3 tree views (policies / decisions / stack), commands, context webview.
+- `web/` — Public website. React 19 + Vite 7 + TypeScript + Tailwind 3.4 + shadcn/ui (Radix) + HashRouter. No backend: static data lives in `web/src/data/`, all processing is client-side. Deploys to Vercel (`vercel.json`, SPA fallback). **Package manager: pnpm** (`pnpm-lock.yaml`, `packageManager` pinned).
+- `cli/` — `@vibecoding/cli` npm package (`vibe` binary). Node 20+, TypeScript ESM strict, Commander.js. 7 commands: `init`, `context`, `review`, `optimize`, `chat`, `check`, `sync`. Core: `src/utils/scanner.ts` (dependency-based stack detection, monorepo-aware). Build: `tsc` → `dist/`. **Package manager: pnpm**.
+- `vscode-extension/` — VS Code extension (WIP, unpublished). CommonJS, no runtime deps. 3 tree views (policies / decisions / stack), commands, context webview. **Package manager: npm** (deliberate exception).
 - `docs/` — Public docs + screenshots. `.github/` — CI (CLI functional tests, web build+typecheck, blocking lint) and release workflow (tags `cli@*` → npm publish).
+
+Package manager rule: **use pnpm in `web/` and `cli/`** (never npm — do not create `package-lock.json` there); npm only in `vscode-extension/`. The repo root is scripts-only (no dependencies, no lockfile).
 
 ## Conventions
 
@@ -35,6 +37,6 @@ Important: this repo is the **tool**, not a consumer. The governance templates i
 
 ## Verify Before Committing
 
-- Web: `cd web && npx tsc --noEmit && npm run lint && npm run build` (all must pass; lint is blocking in CI)
-- CLI: `cd cli && npm run build` + smoke-test `node dist/index.js <command>` against a temp sample project
+- Web: `cd web && pnpm exec tsc --noEmit && pnpm run lint && pnpm run build` (all must pass; lint is blocking in CI)
+- CLI: `cd cli && pnpm run build` + smoke-test `node dist/index.js <command>` against a temp sample project
 - Extension: `cd vscode-extension && npm run compile`

@@ -3,20 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "description": "The most complete guide for vibe coding — AI-first development from prompt to production",
-  "workspaces": [
-    "web",
-    "cli",
-    "vscode-extension"
-  ],
   "scripts": {
-    "dev:web": "cd web && npm run dev",
-    "build:web": "cd web && npm run build",
-    "build:cli": "cd cli && npm run build",
+    "dev:web": "cd web && pnpm run dev",
+    "build:web": "cd web && pnpm run build",
+    "build:cli": "cd cli && pnpm run build",
     "build:vscode": "cd vscode-extension && npm run compile",
     "build:all": "npm run build:cli && npm run build:web && npm run build:vscode",
-    "test:cli": "cd cli && npm test",
-    "lint": "cd web && npm run lint",
-    "typecheck": "cd web && npm run typecheck"
+    "test:cli": "cd cli && pnpm test",
+    "lint": "cd web && pnpm run lint",
+    "typecheck": "cd web && pnpm exec tsc --noEmit"
   },
   "keywords": [
     "vibe-coding",

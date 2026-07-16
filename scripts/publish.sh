@@ -43,8 +43,8 @@ echo ""
 # Step 1: Build CLI
 echo -e "${CYAN}── Building CLI ──${NC}"
 cd "$(dirname "$0")/../cli"
-npm ci
-npm run build
+pnpm install --frozen-lockfile
+pnpm run build
 echo -e "${GREEN}✓${NC} CLI built successfully"
 echo ""
 
@@ -70,7 +70,7 @@ echo ""
 
 # Step 5: Git tag
 cd "$(dirname "$0")/.."
-git add cli/package.json cli/package-lock.json
+git add cli/package.json cli/pnpm-lock.yaml
 git commit -m "chore(release): @vibecoding/cli@${NEW_VERSION}"
 git tag "cli@${NEW_VERSION}"
 echo -e "${GREEN}✓${NC} Git tag created: cli@${NEW_VERSION}"
