@@ -8,7 +8,13 @@ export default defineConfig({
   base: './',
   plugins: [inspectAttr(), react()],
   server: {
-    port: 3000,
+    // This project always runs on localhost:4000 (project rule — see AGENTS.md)
+    port: 4000,
+    strictPort: true,
+  },
+  preview: {
+    port: 4000,
+    strictPort: true,
   },
   resolve: {
     alias: {

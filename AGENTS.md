@@ -25,6 +25,7 @@ Important: this repo is the **tool**, not a consumer. The governance templates i
 
 ## Conventions
 
+- **Local development always runs on port 4000** (`http://localhost:4000`) — port 3000 belongs to another project on the owner's machine. Dev and preview servers use `strictPort`; never change or let Vite fall back to another port.
 - TypeScript strict everywhere; no `any` in new code; named exports; keep functions under ~50 lines.
 - All user-facing content (code, UI text, docs, commit messages) in **English**.
 - `web/src/components/ui/` is shadcn-generated vendor code — prefer eslint-config-level fixes over editing those files.
