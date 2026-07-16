@@ -7,6 +7,7 @@ import { optimizeCommand } from './commands/optimize.js';
 import { chatCommand } from './commands/chat.js';
 import { checkCommand } from './commands/check.js';
 import { syncCommand } from './commands/sync.js';
+import { helpCommand } from './commands/help.js';
 
 const program = new Command();
 
@@ -15,6 +16,7 @@ program
   .description(chalk.cyan('AI-first project governance — context, policies, and prompt optimization'))
   .version('1.0.0', '-v, --version', 'Show version number')
   .helpOption('-h, --help', 'Show help')
+  .addHelpCommand(false)
   .configureOutput({
     outputError: (str, write) => write(chalk.red(str)),
   });
@@ -72,14 +74,21 @@ program
 // ─── vibe sync ───
 program
   .command('sync')
-  .description('Sync templates and prompts from vibecoding.guide')
+  .description('Browse bundled starter templates and prompt library')
   .option('--templates', 'Sync only templates')
   .option('--prompts', 'Sync only prompts')
   .action(syncCommand);
 
-// ─── Default: show help ───
-if (process.argv.length <= 2) {
-  program.help();
-}
+// ─── vibe help ───
+program
+  .command('help')
+  .argument('[command]', 'Command to explain (or "modes")')
+  .description('Show the full usage guide (try: vibe help <command>)')
+  .action((command?: string) => helpCommand(command));
 
-program.parse();
+// ─── Default: show the rich help overview ───
+if (process.argv.length <= 2) {
+  helpCommand();
+} else {
+  program.parse();
+}

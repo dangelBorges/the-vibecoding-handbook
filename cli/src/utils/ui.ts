@@ -16,9 +16,10 @@ export const c = {
 };
 
 export function header(text: string): void {
+  const inner = text.length > 52 ? text.slice(0, 51) + '…' : text;
   console.log();
   console.log(c.cyan('╔' + '═'.repeat(54) + '╗'));
-  console.log(c.cyan('║') + '  ' + c.bold(text).padEnd(52) + c.cyan('║'));
+  console.log(c.cyan('║') + '  ' + c.bold(inner).padEnd(52) + c.cyan('║'));
   console.log(c.cyan('╚' + '═'.repeat(54) + '╝'));
   console.log();
 }
