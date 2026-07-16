@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { section, success, info, warn, error, spinner } from '../utils/ui.js';
-import { scanProject, generateSmartAgentsMd, generateCursorRules } from '../utils/scanner.js';
+import { scanProject, generateSmartAgentsMd, generateIdeRules } from '../utils/scanner.js';
 import { detectLlmConfig, generateAgentsMd } from '../utils/llm.js';
 import { wrapInMarkers, mergeIntoExisting } from '../utils/merge.js';
 
@@ -73,11 +73,11 @@ export async function contextCommand(options: { auto?: boolean; dryRun?: boolean
   const action = oldExists ? (options.merge ? 'Merged into' : 'Updated') : 'Created';
   success(`${action} AGENTS.md (${agentsContent.split('\n').length} lines)`);
 
-  // Update .cursorrules
-  const cursorPath = path.join(cwd, '.cursorrules');
-  const cursorContent = generateCursorRules(scan);
-  fs.writeFileSync(cursorPath, cursorContent);
-  success(`${fs.existsSync(cursorPath) && oldExists ? 'Updated' : 'Created'} .cursorrules`);
+  // Update .iderules
+  const idePath = path.join(cwd, '.iderules');
+  const ideContent = generateIdeRules(scan);
+  fs.writeFileSync(idePath, ideContent);
+  success(`${fs.existsSync(idePath) && oldExists ? 'Updated' : 'Created'} .iderules`);
 
   console.log();
   success('Project context refreshed from codebase!');

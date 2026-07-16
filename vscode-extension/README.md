@@ -7,11 +7,11 @@
 - **🛡️ Policy Sidebar** — Browse project policies (Git, Security, Testing) in the activity bar
 - **📋 Architecture Decisions** — View ADRs (Architecture Decision Records) 
 - **⚡ Stack Detection** — Auto-detect your framework, language, auth, database
-- **🚀 Initialize Project** — Generate AGENTS.md, .cursorrules, and policies with one command
+- **🚀 Initialize Project** — Generate AGENTS.md, .iderules, and policies with one command
 - **🔍 Check Project** — Validate governance setup (6 checks)
 - **🔄 Refresh Context** — Auto-update AGENTS.md from current codebase
 - **✨ Optimize Prompt** — Transform vague prompts into structured instructions
-- **📖 Context Panel** — Rich webview with project overview, AGENTS.md, and .cursorrules
+- **📖 Context Panel** — Rich webview with project overview, AGENTS.md, and .iderules
 
 ## Commands
 
@@ -23,14 +23,14 @@
 | `Vibe: Optimize Prompt` | Optimize a prompt for AI agents |
 | `Vibe: Show Project Context` | Open context webview panel |
 | `Open AGENTS.md` | Open project's AGENTS.md |
-| `Open .cursorrules` | Open project's .cursorrules |
+| `Open .iderules` | Open project's .iderules |
 
 ## Generated Files
 
 ```
 project/
 ├── AGENTS.md              ← Main agent context
-├── .cursorrules           ← IDE rules
+├── .iderules           ← IDE rules
 └── .vibecoding/
     ├── policies/
     │   ├── git-policy.md

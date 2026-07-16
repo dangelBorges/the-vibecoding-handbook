@@ -140,7 +140,7 @@ The UI should match this design system: [link to Storybook]
 **Setting Up Context**
 Before generating, ensure your context files are in place:
 1. **AGENTS.md** at project root
-2. **.cursorrules** in your IDE
+2. **.iderules** in your IDE
 3. **Skills/Memories** configured (if your tool supports them)
 
 **Scope Control**
@@ -268,11 +268,11 @@ Sometimes iteration makes things worse. Start fresh when:
 \`\`\``,
       },
       {
-        id: 'cursor-rules',
-        title: '.cursorrules',
-        content: `The .cursorrules file (for Cursor IDE) provides real-time guidance to the AI agent.
+        id: 'ide-rules',
+        title: '.iderules',
+        content: `The .iderules file provides real-time guidance to the AI agent in any IDE that reads it (Cursor, Windsurf, Claude Code, etc.).
 
-**Example .cursorrules:**
+**Example .iderules:**
 \`\`\`
 # Global rules
 - Always use TypeScript strict mode
@@ -302,9 +302,9 @@ Dumping your entire codebase into the context window. This confuses the agent an
 *Fix*: Be selective. Include only relevant files and patterns.
 
 **2. Contradictory Rules**
-Having conflicting instructions in AGENTS.md and .cursorrules.
+Having conflicting instructions in AGENTS.md and .iderules.
 
-*Fix*: Keep a single source of truth. AGENTS.md for project-level, .cursorrules for IDE-specific style.
+*Fix*: Keep a single source of truth. AGENTS.md for project-level, .iderules for IDE-specific style.
 
 **3. Over-specification**
 Writing 500 lines of rules that no one will read or maintain.
@@ -497,7 +497,7 @@ Next.js 15 (App Router)
 \`\`\`
 my-app/
 ├── AGENTS.md              # Project context
-├── .cursorrules           # IDE rules
+├── .iderules              # IDE rules
 ├── src/
 │   ├── app/               # Next.js App Router
 │   │   ├── (auth)/        # Route groups

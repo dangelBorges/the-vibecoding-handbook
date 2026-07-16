@@ -11,7 +11,7 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import {
   generateAgentsMd,
-  generateCursorRules,
+  generateIdeRules,
   generateGitPolicy,
   generateSecurityPolicy,
   generateTestingPolicy,
@@ -52,11 +52,11 @@ export default function Generator() {
       generator: generateAgentsMd,
     },
     {
-      id: 'cursorrules',
-      label: '.cursorrules',
-      filename: '.cursorrules',
+      id: 'iderules',
+      label: '.iderules',
+      filename: '.iderules',
       icon: <FileCode size={16} />,
-      generator: generateCursorRules,
+      generator: generateIdeRules,
     },
     {
       id: 'git',
@@ -124,7 +124,7 @@ export default function Generator() {
 
     // Add all generated files
     zip.file('AGENTS.md', generateAgentsMd(answers));
-    zip.file('.cursorrules', generateCursorRules(answers));
+    zip.file('.iderules', generateIdeRules(answers));
     zip.file('.vibecoding/policies/git-policy.md', generateGitPolicy());
     zip.file('.vibecoding/policies/security-policy.md', generateSecurityPolicy());
     zip.file('.vibecoding/policies/testing-policy.md', generateTestingPolicy(answers));
@@ -202,7 +202,7 @@ export default function Generator() {
             <div className="font-mono text-xs space-y-1 text-[#8B92A8]">
               <div className="text-cyan">{answers.projectName || 'project'}/</div>
               <div className="pl-4 text-[#F0F2F5]">AGENTS.md</div>
-              <div className="pl-4 text-[#F0F2F5]">.cursorrules</div>
+              <div className="pl-4 text-[#F0F2F5]">.iderules</div>
               <div className="pl-4 text-cyan/60">.vibecoding/</div>
               <div className="pl-8 text-cyan/40">README.md</div>
               <div className="pl-8 text-cyan/40">policies/</div>
@@ -395,7 +395,7 @@ function generateReadme(answers: WizardAnswers): string {
 ## Quick Start
 
 1. Read \`AGENTS.md\` — this is the main context file for AI agents
-2. Check \`.cursorrules\` — IDE-specific rules
+2. Check \`.iderules\` — IDE-specific rules
 3. Review \`.vibecoding/policies/\` — project policies
 4. Start coding with your AI agent
 

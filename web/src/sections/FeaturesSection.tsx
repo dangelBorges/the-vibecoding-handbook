@@ -24,7 +24,7 @@ const features = [
   {
     icon: Wand2,
     title: 'Project Wizard',
-    description: 'Answer a few questions and get a complete governance setup: AGENTS.md, .cursorrules, Git policy, Security policy, and more.',
+    description: 'Answer a few questions and get a complete governance setup: AGENTS.md, .iderules, Git policy, Security policy, and more.',
     href: '/wizard',
     color: '#58A6B2',
   },
@@ -52,7 +52,7 @@ const features = [
   {
     icon: FileDown,
     title: 'Templates',
-    description: 'Download AGENTS.md, .cursorrules, project starters, and checklists. Ready to drop into your repo.',
+    description: 'Download AGENTS.md, .iderules, project starters, and checklists. Ready to drop into your repo.',
     href: '/templates',
     color: '#58A6B2',
   },

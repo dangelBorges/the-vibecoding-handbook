@@ -34,7 +34,7 @@ export class ContextPanel {
     const stack = detectStack();
     const agentsSections = parseAgentsMd();
     const agentsContent = readVibeFile('AGENTS.md') || '# No AGENTS.md found\n\nRun "Vibe: Initialize Project" to create one.';
-    const cursorRules = readVibeFile('.cursorrules') || '# No .cursorrules found';
+    const ideRules = readVibeFile('.iderules') || '# No .iderules found';
 
     const techStackRows = agentsSections
       .filter((s) => s.key === 'Tech Stack')
@@ -182,15 +182,15 @@ export class ContextPanel {
 
   <div class="tabs">
     <button class="tab active" onclick="showTab('agents')">AGENTS.md</button>
-    <button class="tab" onclick="showTab('cursor')">.cursorrules</button>
+    <button class="tab" onclick="showTab('ide')">.iderules</button>
     <button class="tab" onclick="showTab('stack')">Tech Stack</button>
   </div>
 
   <div id="tab-agents" class="tab-content active">
     <pre>${this._escapeHtml(agentsContent)}</pre>
   </div>
-  <div id="tab-cursor" class="tab-content">
-    <pre>${this._escapeHtml(cursorRules)}</pre>
+  <div id="tab-ide" class="tab-content">
+    <pre>${this._escapeHtml(ideRules)}</pre>
   </div>
   <div id="tab-stack" class="tab-content">
     <pre>${this._escapeHtml(techStackRows || 'No tech stack info found in AGENTS.md')}</pre>

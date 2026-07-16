@@ -30,12 +30,12 @@ export async function checkCommand(options: { strict?: boolean } = {}): Promise<
     message: agentsExists ? 'Found and readable' : 'Missing — run "vibe init" to create',
   });
 
-  // Check 2: .cursorrules exists
-  const cursorRulesExists = fs.existsSync(path.join(cwd, '.cursorrules'));
+  // Check 2: .iderules exists
+  const ideRulesExists = fs.existsSync(path.join(cwd, '.iderules'));
   results.push({
-    name: '.cursorrules',
-    status: cursorRulesExists ? 'pass' : 'warn',
-    message: cursorRulesExists ? 'Found' : 'Missing — IDE rules not configured',
+    name: '.iderules',
+    status: ideRulesExists ? 'pass' : 'warn',
+    message: ideRulesExists ? 'Found' : 'Missing — IDE rules not configured',
   });
 
   // Check 3: .vibecoding directory

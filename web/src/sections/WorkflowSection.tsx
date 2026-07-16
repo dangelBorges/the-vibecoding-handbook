@@ -13,7 +13,7 @@ const steps = [
   {
     number: '02',
     title: 'Generate',
-    description: 'Choose the right model and context scope. Set up your agent with proper context files (AGENTS.md, .cursorrules) and let it generate the initial implementation.',
+    description: 'Choose the right model and context scope. Set up your agent with proper context files (AGENTS.md, .iderules) and let it generate the initial implementation.',
     icon: Cpu,
     color: '#C792EA',
   },

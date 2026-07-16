@@ -94,8 +94,8 @@
         "icon": "$(file-code)"
       },
       {
-        "command": "vibecoding.openCursorRules",
-        "title": "Open .cursorrules",
+        "command": "vibecoding.openIdeRules",
+        "title": "Open .iderules",
         "category": "Vibe Coding",
         "icon": "$(file-code)"
       },
@@ -127,7 +127,7 @@
           "command": "vibecoding.openAgents"
         },
         {
-          "command": "vibecoding.openCursorRules"
+          "command": "vibecoding.openIdeRules"
         }
       ],
       "view/title": [

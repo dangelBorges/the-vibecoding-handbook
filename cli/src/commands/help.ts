@@ -31,7 +31,7 @@ interface CommandHelp {
 const COMMAND_ORDER = ['init', 'context', 'check', 'review', 'optimize', 'chat', 'sync'];
 
 const COMMAND_SUMMARIES: Record<string, string> = {
-  init: 'Initialize project governance (AGENTS.md, .cursorrules, policies)',
+  init: 'Initialize project governance (AGENTS.md, .iderules, policies)',
   context: 'Update AGENTS.md from the current codebase',
   check: 'Validate project setup (score + CI-ready exit codes)',
   review: 'Review changed files against project policies',
@@ -59,7 +59,7 @@ const TOPICS: Record<string, CommandHelp> = {
     ],
     files: [
       { flag: 'AGENTS.md', description: 'project context for AI agents' },
-      { flag: '.cursorrules', description: 'IDE rules for Cursor-compatible tools' },
+      { flag: '.iderules', description: 'IDE rules for AI-compatible editors' },
       { flag: '.vibecoding/policies/*.md', description: 'git, security, testing and deployment policies' },
       { flag: '.vibecoding/decisions/ADR-001-architecture.md', description: 'your first architecture decision record' },
     ],
@@ -75,7 +75,7 @@ const TOPICS: Record<string, CommandHelp> = {
   context: {
     summary: 'Regenerate AGENTS.md from the current codebase',
     description:
-      'Re-scans the project and rewrites AGENTS.md and .cursorrules so they never go stale. Detects monorepos — npm/yarn/pnpm/lerna workspaces, or inferred from the directory structure when no tooling is declared. With --describe, an LLM rewrites AGENTS.md from your description plus the scan; only the description and stack summary are sent.',
+      'Re-scans the project and rewrites AGENTS.md and .iderules so they never go stale. Detects monorepos — npm/yarn/pnpm/lerna workspaces, or inferred from the directory structure when no tooling is declared. With --describe, an LLM rewrites AGENTS.md from your description plus the scan; only the description and stack summary are sent.',
     usage: 'vibe context [options]',
     options: [
       { flag: '-a, --auto', description: 'Auto-detect everything (no prompts)' },
@@ -85,7 +85,7 @@ const TOPICS: Record<string, CommandHelp> = {
     ],
     files: [
       { flag: 'AGENTS.md', description: 'rewritten (or merged) with fresh scan results' },
-      { flag: '.cursorrules', description: 'regenerated from the detected stack' },
+      { flag: '.iderules', description: 'regenerated from the detected stack' },
     ],
     examples: [
       { cmd: 'vibe context --dry-run', note: 'safe preview — writes nothing' },
@@ -99,7 +99,7 @@ const TOPICS: Record<string, CommandHelp> = {
   check: {
     summary: 'Validate project setup against vibe coding policies',
     description:
-      'Runs governance checks — AGENTS.md, .cursorrules, .vibecoding/, git repo, .gitignore covering .env, framework detection, test/lint/typecheck scripts, and obvious exposed secrets — and prints a score.',
+      'Runs governance checks — AGENTS.md, .iderules, .vibecoding/, git repo, .gitignore covering .env, framework detection, test/lint/typecheck scripts, and obvious exposed secrets — and prints a score.',
     usage: 'vibe check [options]',
     options: [{ flag: '--strict', description: 'Warnings also count as failures' }],
     modes: [
@@ -116,7 +116,7 @@ const TOPICS: Record<string, CommandHelp> = {
   review: {
     summary: 'Review changed files against project policies',
     description:
-      'Heuristic review of your changes: console.log, explicit any, hardcoded secrets, .then() chains and oversized functions. Adapts to your .cursorrules / AGENTS.md. Score: 100 − 15 per error − 5 per warning. With --fix it removes standalone console.log statements and suggests how to fix the rest.',
+      'Heuristic review of your changes: console.log, explicit any, hardcoded secrets, .then() chains and oversized functions. Adapts to your .iderules / AGENTS.md. Score: 100 − 15 per error − 5 per warning. With --fix it removes standalone console.log statements and suggests how to fix the rest.',
     usage: 'vibe review [options]',
     options: [
       { flag: '-s, --staged', description: 'Review only git staged files' },
@@ -175,7 +175,7 @@ const TOPICS: Record<string, CommandHelp> = {
   sync: {
     summary: 'Browse bundled starter templates and the prompt library',
     description:
-      'Pick a starter template (next-saas, react-dashboard, api-service) to generate AGENTS.md + .cursorrules + policies, or browse categorized prompt patterns (components, auth, database, testing) to copy or save.',
+      'Pick a starter template (next-saas, react-dashboard, api-service) to generate AGENTS.md + .iderules + policies, or browse categorized prompt patterns (components, auth, database, testing) to copy or save.',
     usage: 'vibe sync [options]',
     options: [
       { flag: '--templates', description: 'Only the templates flow' },

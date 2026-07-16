@@ -38,11 +38,11 @@ export async function checkCommand(silent = false): Promise<void> {
       message: readVibeFile('AGENTS.md') ? 'Found' : 'Missing — run "Vibe: Initialize Project"',
     });
 
-    // Check .cursorrules
+    // Check .iderules
     results.push({
-      name: '.cursorrules',
-      status: readVibeFile('.cursorrules') ? 'pass' : 'warn',
-      message: readVibeFile('.cursorrules') ? 'Found' : 'Missing',
+      name: '.iderules',
+      status: readVibeFile('.iderules') ? 'pass' : 'warn',
+      message: readVibeFile('.iderules') ? 'Found' : 'Missing',
     });
 
     // Check .vibecoding

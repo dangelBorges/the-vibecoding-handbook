@@ -12,7 +12,7 @@ Guidance for AI agents working in this repository. Read this fully before making
 
 ## What This Project Is
 
-**The Vibecoding Handbook** — an open-source monorepo that teaches and automates "vibe coding" (AI-first development): it generates project-governance files (`AGENTS.md`, `.cursorrules`, `.vibecoding/` policies, ADRs) and optimizes prompts for AI coding agents. Production site: https://vibecoding.guide.
+**The Vibecoding Handbook** — an open-source monorepo that teaches and automates "vibe coding" (AI-first development): it generates project-governance files (`AGENTS.md`, `.iderules`, `.vibecoding/` policies, ADRs) and optimizes prompts for AI coding agents. Production site: https://vibecoding.guide.
 
 Important: this repo is the **tool**, not a consumer. The governance templates in the codebase are the *product* it generates for other projects. If generated sample files (e.g. `.vibecoding/`, wizard output) ever appear in this repo, they are test artifacts — they do NOT describe this repo.
 

@@ -73,7 +73,7 @@ export function renderWelcome(): void {
   renderBanner();
   console.log('  ' + chalk.bold('Get started'));
   console.log(chalk.dim('    cd your-project'));
-  console.log('    ' + chalk.greenBright('vibe init') + chalk.dim('   → generate AGENTS.md, .cursorrules & policies'));
+  console.log('    ' + chalk.greenBright('vibe init') + chalk.dim('   → generate AGENTS.md, .iderules & policies'));
   console.log('    ' + chalk.greenBright('vibe help') + chalk.dim('   → full command guide'));
   console.log();
   console.log(chalk.dim('  Docs: https://vibecoding.guide'));

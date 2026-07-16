@@ -6,8 +6,8 @@ export interface ReviewIssue {
   rule: string;
 }
 
-function checkConsoleLog(file: string, lines: string[], cursorRules: string, agentsMd: string): ReviewIssue[] {
-  const noConsoleRule = cursorRules.toLowerCase().includes('console.log') || agentsMd.toLowerCase().includes('console.log') || cursorRules.length > 0;
+function checkConsoleLog(file: string, lines: string[], ideRules: string, agentsMd: string): ReviewIssue[] {
+  const noConsoleRule = ideRules.toLowerCase().includes('console.log') || agentsMd.toLowerCase().includes('console.log') || ideRules.length > 0;
   if (!noConsoleRule) return [];
   const issues: ReviewIssue[] = [];
   lines.forEach((line, idx) => {
@@ -18,8 +18,8 @@ function checkConsoleLog(file: string, lines: string[], cursorRules: string, age
   return issues;
 }
 
-function checkAnyTypes(file: string, lines: string[], cursorRules: string, agentsMd: string): ReviewIssue[] {
-  if (!cursorRules.includes('any') && !agentsMd.includes('any')) return [];
+function checkAnyTypes(file: string, lines: string[], ideRules: string, agentsMd: string): ReviewIssue[] {
+  if (!ideRules.includes('any') && !agentsMd.includes('any')) return [];
   const issues: ReviewIssue[] = [];
   lines.forEach((line, idx) => {
     if (line.includes(': any') || line.includes('as any')) {
@@ -70,10 +70,10 @@ function checkFunctionLength(file: string, lines: string[]): ReviewIssue[] {
   return issues;
 }
 
-export function scanFileContent(file: string, lines: string[], cursorRules: string, agentsMd: string): ReviewIssue[] {
+export function scanFileContent(file: string, lines: string[], ideRules: string, agentsMd: string): ReviewIssue[] {
   return [
-    ...checkConsoleLog(file, lines, cursorRules, agentsMd),
-    ...checkAnyTypes(file, lines, cursorRules, agentsMd),
+    ...checkConsoleLog(file, lines, ideRules, agentsMd),
+    ...checkAnyTypes(file, lines, ideRules, agentsMd),
     ...checkHardcodedSecrets(file, lines),
     ...checkThenChains(file, lines),
     ...checkFunctionLength(file, lines),

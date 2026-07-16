@@ -45,15 +45,15 @@ export async function contextCommand(): Promise<void> {
 
       writeVibeFile('AGENTS.md', content);
 
-      // Update .cursorrules
-      const cursorRulesPath = path.join(wsPath, '.cursorrules');
-      if (fs.existsSync(cursorRulesPath)) {
-        let cursorRules = fs.readFileSync(cursorRulesPath, 'utf-8');
-        cursorRules = cursorRules.replace(
+      // Update .iderules
+      const ideRulesPath = path.join(wsPath, '.iderules');
+      if (fs.existsSync(ideRulesPath)) {
+        let ideRules = fs.readFileSync(ideRulesPath, 'utf-8');
+        ideRules = ideRules.replace(
           /This is a .* project/,
           `This is a ${stack.framework} project using ${stack.language}`
         );
-        writeVibeFile('.cursorrules', cursorRules);
+        writeVibeFile('.iderules', ideRules);
       }
 
       vscode.window.showInformationMessage('Project context refreshed!');

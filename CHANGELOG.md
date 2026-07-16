@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+#### All packages
+- Renamed governance artifact `.cursorrules` → `.iderules` across CLI, web handbook, and VS Code extension. The file is IDE-agnostic; references to Cursor as an IDE remain unchanged.
+
 ### Added
 
 #### CLI (`@vibecoding/cli`)

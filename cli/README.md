@@ -36,7 +36,7 @@ file contents.
 
 Creates:
 - `AGENTS.md` — Project context for AI agents (auto-detected from your code or generated from description)
-- `.cursorrules` — IDE-specific rules
+- `.iderules` — IDE-specific rules
 - `.vibecoding/policies/` — Git, Security, Testing, Deployment policies
 - `.vibecoding/decisions/` — Architecture Decision Records
 
@@ -68,7 +68,7 @@ Detects automatically:
 
 ### `vibe review`
 
-Review code against your project's `.cursorrules` and `AGENTS.md`:
+Review code against your project's `.iderules` and `AGENTS.md`:
 
 ```bash
 vibe review            # Review modified files
@@ -138,7 +138,7 @@ vibe check --strict # Fail on warnings too
 
 Validates:
 - AGENTS.md exists
-- .cursorrules configured
+- .iderules configured
 - .vibecoding directory
 - Git repository initialized
 - .gitignore includes .env
@@ -174,7 +174,7 @@ Prompt library:
 | AGENTS.md uniqueness | Per-project, auto-updated | Same for everyone |
 | Framework detection | 15+ frameworks | 2-3 hardcoded |
 | Prompt optimization | Intent-aware + context | Simple wrapping |
-| Code review | Reads your .cursorrules | Generic rules |
+| Code review | Reads your .iderules | Generic rules |
 
 ## Environment Variables
 

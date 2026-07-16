@@ -32,7 +32,7 @@ vibe init
 
 This creates:
 - `AGENTS.md` — Your project's "brain" for AI agents
-- `.cursorrules` — IDE-specific coding rules
+- `.iderules` — IDE-specific coding rules
 - `.vibecoding/policies/` — Project policies (Git, Security, Testing, Deployment)
 
 ### Step 3: Scan Your Codebase

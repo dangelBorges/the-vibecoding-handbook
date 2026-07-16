@@ -144,7 +144,7 @@ export default function CLISection() {
                     <span className="text-green-400">&#10003;</span> Payments: Stripe &nbsp;
                     <span className="text-green-400">&#10003;</span> Tests: Vitest<br />
                     <span className="text-green-400">&#10003;</span> Updated AGENTS.md (142 lines)<br />
-                    <span className="text-green-400">&#10003;</span> Updated .cursorrules<br />
+                    <span className="text-green-400">&#10003;</span> Updated .iderules<br />
                     <span className="text-cyan">&#8594;</span> <span className="text-mint-code">Your AI agent now understands your project.</span>
                   </div>
                 </div>

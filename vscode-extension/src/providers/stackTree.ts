@@ -49,9 +49,9 @@ export class StackTreeProvider implements vscode.TreeDataProvider<StackItem> {
       items.push(new StackItem('AGENTS.md', 'Missing', 'warning'));
     }
 
-    // Add .cursorrules status
-    const cursorRules = readVibeFile('.cursorrules');
-    items.push(new StackItem('.cursorrules', cursorRules ? 'Found' : 'Missing', cursorRules ? 'file-code' : 'warning'));
+    // Add .iderules status
+    const ideRules = readVibeFile('.iderules');
+    items.push(new StackItem('.iderules', ideRules ? 'Found' : 'Missing', ideRules ? 'file-code' : 'warning'));
 
     return Promise.resolve(items);
   }

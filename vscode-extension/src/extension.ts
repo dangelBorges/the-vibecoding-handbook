@@ -70,16 +70,16 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }),
 
-    // Open .cursorrules
-    vscode.commands.registerCommand('vibecoding.openCursorRules', async () => {
+    // Open .iderules
+    vscode.commands.registerCommand('vibecoding.openIdeRules', async () => {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) return;
-      const uri = vscode.Uri.joinPath(workspaceFolders[0].uri, '.cursorrules');
+      const uri = vscode.Uri.joinPath(workspaceFolders[0].uri, '.iderules');
       try {
         const doc = await vscode.workspace.openTextDocument(uri);
         await vscode.window.showTextDocument(doc);
       } catch {
-        vscode.window.showWarningMessage('.cursorrules not found. Run "Vibe: Initialize Project" first.');
+        vscode.window.showWarningMessage('.iderules not found. Run "Vibe: Initialize Project" first.');
       }
     }),
 

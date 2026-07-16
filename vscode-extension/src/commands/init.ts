@@ -46,8 +46,8 @@ export async function initCommand(): Promise<void> {
       progress.report({ increment: 0, message: 'Creating AGENTS.md...' });
       writeVibeFile('AGENTS.md', generateAgentsMd(projectName, stack));
 
-      progress.report({ increment: 25, message: 'Creating .cursorrules...' });
-      writeVibeFile('.cursorrules', generateCursorRules(stack));
+      progress.report({ increment: 25, message: 'Creating .iderules...' });
+      writeVibeFile('.iderules', generateIdeRules(stack));
 
       progress.report({ increment: 50, message: 'Creating policies...' });
       writeVibeFile('.vibecoding/policies/git-policy.md', generateGitPolicy());
@@ -123,7 +123,7 @@ A ${stack.framework} project using ${stack.language}.
 `;
 }
 
-function generateCursorRules(stack: { framework: string; language: string }): string {
+function generateIdeRules(stack: { framework: string; language: string }): string {
   return `# Global Rules
 
 # Framework

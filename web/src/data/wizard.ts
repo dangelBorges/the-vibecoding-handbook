@@ -732,7 +732,7 @@ Before every deploy to production:
 `;
 }
 
-export function generateCursorRules(answers: WizardAnswers): string {
+export function generateIdeRules(answers: WizardAnswers): string {
   const features = answers.features || [];
 
   return `# Global Rules — ${answers.projectName || 'Project'}

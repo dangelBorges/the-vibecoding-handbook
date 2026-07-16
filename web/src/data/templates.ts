@@ -54,12 +54,12 @@ export const templates: Template[] = [
 `,
   },
   {
-    id: 'cursorrules',
-    name: '.cursorrules',
-    description: 'IDE-specific rules for Cursor that guide the AI agent in real-time.',
-    filename: '.cursorrules',
+    id: 'iderules',
+    name: '.iderules',
+    description: 'IDE-specific rules that guide the AI agent in real-time across editors.',
+    filename: '.iderules',
     category: 'rules',
-    tags: ['Cursor', 'IDE', 'Rules'],
+    tags: ['IDE', 'Rules'],
     content: `# Global rules
 - Always use TypeScript strict mode
 - Prefer Server Components unless interactivity is needed

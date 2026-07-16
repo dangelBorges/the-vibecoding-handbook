@@ -91,7 +91,7 @@ The command-line companion that **scans your actual codebase** (not templates) t
 $ vibe init
   ✔ Detected Next.js + TypeScript
   ✔ Created AGENTS.md
-  ✔ Created .cursorrules
+  ✔ Created .iderules
   ✔ Created .vibecoding/policies/
 
 # The killer feature: auto-detect from your code
@@ -138,7 +138,7 @@ Brings vibe coding governance directly into your IDE.
 - **Policy Sidebar** — Browse and validate project policies
 - **Decision Tree** — Track Architecture Decision Records (ADRs)
 - **Stack Detector** — Auto-detects your tech stack from dependencies
-- **Context Panel** — Preview AGENTS.md and .cursorrules without leaving the editor
+- **Context Panel** — Preview AGENTS.md and .iderules without leaving the editor
 - **Quick Commands** — `Ctrl+Shift+P` → "Vibe: Initialize Project", "Vibe: Check Policies", "Vibe: Optimize Prompt"
 
 ---
@@ -151,7 +151,7 @@ Brings vibe coding governance directly into your IDE.
 | AGENTS.md | Same for everyone | **Unique per project, auto-updated** |
 | Framework support | 2-3 hardcoded | **15+ frameworks detected** |
 | Prompt optimization | Simple wrapping | **Intent-aware + project context** |
-| Code review | Generic rules | **Reads your .cursorrules** |
+| Code review | Generic rules | **Reads your .iderules** |
 | Learning resource | Blog posts | **10 chapters + interactive tools** |
 
 ---

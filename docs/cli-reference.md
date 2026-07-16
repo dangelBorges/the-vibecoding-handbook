@@ -55,7 +55,7 @@ you wrote outside the markers is preserved.
 
 **Generated files:**
 - `AGENTS.md` — Project context for AI agents
-- `.cursorrules` — IDE coding rules
+- `.iderules` — IDE coding rules
 - `.vibecoding/policies/git-policy.md`
 - `.vibecoding/policies/security-policy.md`
 - `.vibecoding/policies/testing-policy.md`
@@ -106,7 +106,7 @@ source file contents are transmitted.
 
 ### `vibe review`
 
-Review code against your project's `.cursorrules` and `AGENTS.md`.
+Review code against your project's `.iderules` and `AGENTS.md`.
 
 ```bash
 vibe review            # Review modified files
@@ -198,7 +198,7 @@ vibe check --strict
 
 **Validations:**
 - AGENTS.md exists
-- .cursorrules configured
+- .iderules configured
 - .vibecoding directory
 - Git repository initialized
 - .gitignore includes .env

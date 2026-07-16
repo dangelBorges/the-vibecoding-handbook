@@ -660,10 +660,10 @@ ${Object.entries(scan.scripts).slice(0, 8).map(([name, cmd]) => `| \`${name}\` |
 `;
 }
 
-export function generateCursorRules(scan: ProjectScan): string {
+export function generateIdeRules(scan: ProjectScan): string {
   const deps = [...scan.dependencies, ...scan.devDependencies];
   const rules: string[] = [
-    `# ${scan.name} — Cursor Rules`,
+    `# ${scan.name} — IDE Rules`,
     '',
     `# Framework`,
     `- This is a ${scan.framework} project using ${scan.language}`,

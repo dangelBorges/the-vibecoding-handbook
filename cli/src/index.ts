@@ -24,7 +24,7 @@ program
 // ─── vibe init ───
 program
   .command('init')
-  .description('Initialize project governance (AGENTS.md, .cursorrules, policies)')
+  .description('Initialize project governance (AGENTS.md, .iderules, policies)')
   .option('-y, --yes', 'Skip prompts and use defaults')
   .option('-t, --type <type>', 'Project type (saas, ecommerce, api, dashboard, content)')
   .option('--describe <text>', 'Generate AGENTS.md from a natural-language project description (requires an LLM API key)')

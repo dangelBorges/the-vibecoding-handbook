@@ -28,13 +28,13 @@ function selectFiles(options: ReviewOptions, cwd: string): string[] | null {
   }
 }
 
-function scanFiles(files: string[], cwd: string, cursorRules: string, agentsMd: string): ReviewIssue[] {
+function scanFiles(files: string[], cwd: string, ideRules: string, agentsMd: string): ReviewIssue[] {
   const issues: ReviewIssue[] = [];
   for (const file of files) {
     const fullPath = path.join(cwd, file);
     if (!fs.existsSync(fullPath)) continue;
     const lines = fs.readFileSync(fullPath, 'utf-8').split('\n');
-    issues.push(...scanFileContent(file, lines, cursorRules, agentsMd));
+    issues.push(...scanFileContent(file, lines, ideRules, agentsMd));
   }
   return issues;
 }
@@ -110,7 +110,7 @@ export async function reviewCommand(options: ReviewOptions): Promise<void> {
   section('Vibe Code Review');
 
   const cwd = process.cwd();
-  const cursorRules = readVibeFile('.cursorrules') || '';
+  const ideRules = readVibeFile('.iderules') || '';
   const agentsMd = readVibeFile('AGENTS.md') || '';
 
   const files = selectFiles(options, cwd);
@@ -124,14 +124,14 @@ export async function reviewCommand(options: ReviewOptions): Promise<void> {
   info(`Reviewing ${files.length} file(s)...`);
   console.log();
 
-  let issues = scanFiles(files, cwd, cursorRules, agentsMd);
+  let issues = scanFiles(files, cwd, ideRules, agentsMd);
 
   if (options.fix) {
     const { fixedCount, fixedFiles } = applyFixes(files, issues, cwd);
     if (fixedCount > 0) {
       success(`Auto-fix: removed ${fixedCount} console.log statement(s) from ${fixedFiles} file(s)`);
       console.log();
-      issues = scanFiles(files, cwd, cursorRules, agentsMd);
+      issues = scanFiles(files, cwd, ideRules, agentsMd);
     } else if (issues.some((i) => i.rule === 'No console.log')) {
       info('No console.log statements were safe to auto-remove (inline or multi-line usage).');
       console.log();

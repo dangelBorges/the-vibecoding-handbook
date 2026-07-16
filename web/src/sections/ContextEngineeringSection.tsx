@@ -11,7 +11,7 @@ const strategies = [
     tag: 'Template included',
   },
   {
-    title: '.cursorrules',
+    title: '.iderules',
     description: 'IDE-specific rules that guide the AI agent in real-time. Define coding standards, file organization, and technology preferences.',
     icon: Zap,
     color: '#C792EA',
