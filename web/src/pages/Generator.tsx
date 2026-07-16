@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import {
   ArrowLeft, Download, Check, Copy, FileCode, Shield,
@@ -9,6 +9,8 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import { useNamespace } from '../i18n/useNamespace';
+import wizardPage from '../i18n/translations/wizardPage';
 import {
   generateAgentsMd,
   generateIdeRules,
@@ -32,6 +34,7 @@ export default function Generator() {
   const location = useLocation();
   const navigate = useNavigate();
   const answers = location.state?.answers as WizardAnswers | undefined;
+  const { t } = useNamespace(wizardPage);
 
   const [activeTab, setActiveTab] = useState('agents');
   const [copied, setCopied] = useState(false);
@@ -43,57 +46,57 @@ export default function Generator() {
     }
   }, [answers, navigate]);
 
-  const tabs: FileTab[] = useMemo(() => [
+  const tabs: FileTab[] = [
     {
       id: 'agents',
-      label: 'AGENTS.md',
+      label: t('tabAgents'),
       filename: 'AGENTS.md',
       icon: <FileCode size={16} />,
       generator: generateAgentsMd,
     },
     {
       id: 'iderules',
-      label: '.iderules',
+      label: t('tabIderules'),
       filename: '.iderules',
       icon: <FileCode size={16} />,
       generator: generateIdeRules,
     },
     {
       id: 'git',
-      label: 'Git Policy',
+      label: t('tabGit'),
       filename: '.vibecoding/policies/git-policy.md',
       icon: <GitBranch size={16} />,
       generator: generateGitPolicy,
     },
     {
       id: 'security',
-      label: 'Security',
+      label: t('tabSecurity'),
       filename: '.vibecoding/policies/security-policy.md',
       icon: <Shield size={16} />,
       generator: generateSecurityPolicy,
     },
     {
       id: 'testing',
-      label: 'Testing',
+      label: t('tabTesting'),
       filename: '.vibecoding/policies/testing-policy.md',
       icon: <ClipboardCheck size={16} />,
       generator: generateTestingPolicy,
     },
     {
       id: 'deployment',
-      label: 'Deployment',
+      label: t('tabDeployment'),
       filename: '.vibecoding/policies/deployment-policy.md',
       icon: <Server size={16} />,
       generator: generateDeploymentPolicy,
     },
     {
       id: 'adr',
-      label: 'ADR-001',
+      label: t('tabAdr'),
       filename: '.vibecoding/decisions/ADR-001-architecture.md',
       icon: <FileText size={16} />,
       generator: (a) => generateAdr(a, 1),
     },
-  ], []);
+  ];
 
   if (!answers) {
     return null;
@@ -154,7 +157,7 @@ export default function Generator() {
               className="inline-flex items-center gap-1 text-[#8B92A8] hover:text-cyan text-sm mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
-              Back to wizard
+              {t('backToWizard')}
             </Link>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -162,22 +165,22 @@ export default function Generator() {
                 <div className="flex items-center gap-2 mb-2">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/20">
                     <Sparkles size={14} className="text-cyan" />
-                    <span className="text-cyan text-xs font-heading">Generated</span>
+                    <span className="text-cyan text-xs font-heading">{t('generatedBadge')}</span>
                   </div>
                 </div>
                 <h1
                   className="font-display text-[#F0F2F5] uppercase"
                   style={{ fontSize: 'clamp(24px, 4vw, 48px)' }}
                 >
-                  Your Project Setup
+                  {t('generatorTitle')}
                 </h1>
                 <p className="mt-2 text-[#8B92A8]">
-                  <span className="text-cyan font-heading">{answers.projectName}</span> — 
-                  Complete governance package generated.
+                  <span className="text-cyan font-heading">{answers.projectName}</span> —{' '}
+                  {t('generatorSubtitle')}
                 </p>
                 <p className="mt-3 text-xs text-[#8B92A8]/80 flex items-center gap-1.5">
                   <Info size={12} className="text-cyan shrink-0" />
-                  Generated from your wizard answers, not an analysis of your repo — review and adapt before committing.
+                  {t('generatorInfo')}
                 </p>
               </div>
 
@@ -186,7 +189,7 @@ export default function Generator() {
                 className="group flex items-center gap-2 px-6 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 hover:glow-cyan transition-all"
               >
                 <Download size={18} />
-                Download All as ZIP
+                {t('downloadAllZip')}
               </button>
             </div>
           </div>
@@ -196,7 +199,7 @@ export default function Generator() {
             <div className="flex items-center gap-2 mb-3">
               <FolderOpen size={16} className="text-cyan" />
               <span className="font-heading text-sm font-semibold text-[#F0F2F5]">
-                Generated Structure
+                {t('generatedStructure')}
               </span>
             </div>
             <div className="font-mono text-xs space-y-1 text-[#8B92A8]">
@@ -241,19 +244,19 @@ export default function Generator() {
               {/* Setup Summary */}
               <div className="mt-6 p-4 rounded-xl bg-surface/30 border border-white/5">
                 <h3 className="font-heading text-xs font-semibold text-[#F0F2F5] mb-3 uppercase tracking-wider">
-                  Your Stack
+                  {t('yourStack')}
                 </h3>
                 <div className="space-y-2 text-xs">
-                  <StackItem label="Frontend" value={answers.frontend} />
-                  <StackItem label="Backend" value={answers.backend} />
-                  <StackItem label="Database" value={answers.database} />
-                  <StackItem label="Auth" value={answers.auth} />
-                  <StackItem label="Hosting" value={answers.hosting} />
+                  <StackItem label={t('stackFrontend')} value={answers.frontend} />
+                  <StackItem label={t('stackBackend')} value={answers.backend} />
+                  <StackItem label={t('stackDatabase')} value={answers.database} />
+                  <StackItem label={t('stackAuth')} value={answers.auth} />
+                  <StackItem label={t('stackHosting')} value={answers.hosting} />
                   {answers.payments !== 'none' && (
-                    <StackItem label="Payments" value={answers.payments} />
+                    <StackItem label={t('stackPayments')} value={answers.payments} />
                   )}
                   {answers.email !== 'none' && (
-                    <StackItem label="Email" value={answers.email} />
+                    <StackItem label={t('stackEmail')} value={answers.email} />
                   )}
                 </div>
               </div>
@@ -276,14 +279,14 @@ export default function Generator() {
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-[#8B92A8] text-xs hover:bg-white/10 hover:text-[#F0F2F5] transition-colors"
                     >
                       {copied ? <Check size={12} /> : <Copy size={12} />}
-                      {copied ? 'Copied' : 'Copy'}
+                      {copied ? t('copied') : t('copy')}
                     </button>
                     <button
                       onClick={handleDownloadSingle}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan/10 text-cyan text-xs hover:bg-cyan/20 transition-colors"
                     >
                       <Download size={12} />
-                      Download
+                      {t('download')}
                     </button>
                   </div>
                 </div>
@@ -301,7 +304,7 @@ export default function Generator() {
           {/* Next Steps */}
           <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-cyan/5 to-purple-code/5 border border-cyan/10">
             <h2 className="font-heading text-xl font-semibold text-[#F0F2F5] mb-4">
-              What&apos;s Next?
+              {t('whatsNext')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex gap-3">
@@ -310,10 +313,10 @@ export default function Generator() {
                 </div>
                 <div>
                   <h4 className="font-heading text-sm font-semibold text-[#F0F2F5] mb-1">
-                    Download & Extract
+                    {t('next1Title')}
                   </h4>
                   <p className="text-xs text-[#8B92A8]">
-                    Download the ZIP and extract it at your project root.
+                    {t('next1Desc')}
                   </p>
                 </div>
               </div>
@@ -323,10 +326,10 @@ export default function Generator() {
                 </div>
                 <div>
                   <h4 className="font-heading text-sm font-semibold text-[#F0F2F5] mb-1">
-                    Customize
+                    {t('next2Title')}
                   </h4>
                   <p className="text-xs text-[#8B92A8]">
-                    Edit AGENTS.md with your project-specific details and patterns.
+                    {t('next2Desc')}
                   </p>
                 </div>
               </div>
@@ -336,10 +339,10 @@ export default function Generator() {
                 </div>
                 <div>
                   <h4 className="font-heading text-sm font-semibold text-[#F0F2F5] mb-1">
-                    Start Coding
+                    {t('next3Title')}
                   </h4>
                   <p className="text-xs text-[#8B92A8]">
-                    Your AI agent now has full context. Start prompting with confidence.
+                    {t('next3Desc')}
                   </p>
                 </div>
               </div>
@@ -350,21 +353,21 @@ export default function Generator() {
                 to="/docs"
                 className="flex items-center gap-2 text-cyan text-sm font-heading hover:underline"
               >
-                Read the full guide
+                {t('readFullGuide')}
                 <ChevronRight size={14} />
               </Link>
               <Link
                 to="/prompts"
                 className="flex items-center gap-2 text-cyan text-sm font-heading hover:underline"
               >
-                Browse prompt library
+                {t('browsePromptLibrary')}
                 <ChevronRight size={14} />
               </Link>
               <Link
                 to="/templates"
                 className="flex items-center gap-2 text-cyan text-sm font-heading hover:underline"
               >
-                Download more templates
+                {t('downloadMoreTemplates')}
                 <ChevronRight size={14} />
               </Link>
             </div>

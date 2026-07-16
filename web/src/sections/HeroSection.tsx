@@ -1,9 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ArrowRight, Wand2, ChevronDown, Code2, Terminal } from 'lucide-react';
+import { useNamespace } from '../i18n/useNamespace';
+import hero from '../i18n/translations/hero';
 import NeuralAurora from '../components/NeuralAurora';
 
 export default function HeroSection() {
+  const { t } = useNamespace(hero);
   const [scrollY, setScrollY] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -39,7 +42,7 @@ export default function HeroSection() {
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan/10 border border-cyan/20">
             <span className="w-2 h-2 rounded-full bg-cyan animate-pulse" />
             <span className="text-cyan text-xs font-heading font-medium tracking-wide">
-              Open Source &middot; 2026 Edition
+              {t('badge')}
             </span>
           </div>
 
@@ -48,17 +51,16 @@ export default function HeroSection() {
             className="font-display text-[#F0F2F5] uppercase leading-[0.95] tracking-tight"
             style={{ fontSize: 'clamp(36px, 8vw, 120px)' }}
           >
-            The Vibe
+            {t('titleLine1')}
             <br />
-            Coding
+            {t('titleLine2')}
             <br />
-            <span className="text-gradient-cyan">Handbook</span>
+            <span className="text-gradient-cyan">{t('titleLine3')}</span>
           </h1>
 
           {/* Subtitle */}
           <p className="mt-6 md:mt-8 text-[#8B92A8] text-lg md:text-xl max-w-2xl leading-relaxed">
-            From vibes to production — the structured guide to AI-first development.
-            The complete open-source handbook for coding with AI agents.
+            {t('subtitle')}
           </p>
 
           {/* CTAs */}
@@ -69,7 +71,7 @@ export default function HeroSection() {
               className="group inline-flex items-center justify-center gap-2 px-7 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 hover:glow-cyan-strong transition-all duration-300"
             >
               <Wand2 size={16} />
-              Launch Wizard
+              {t('launchWizard')}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
 
@@ -81,7 +83,7 @@ export default function HeroSection() {
               className="group inline-flex items-center justify-center gap-2 px-7 py-3 border border-purple-code/30 text-purple-code font-heading rounded-full hover:border-purple-code/60 hover:bg-purple-code/10 transition-all duration-300"
             >
               <Code2 size={16} />
-              Install VS Code Extension
+              {t('installVsCodeExtension')}
             </a>
 
             {/* CLI */}
@@ -90,7 +92,7 @@ export default function HeroSection() {
               className="group inline-flex items-center justify-center gap-2 px-7 py-3 border border-mint-code/30 text-mint-code font-heading rounded-full hover:border-mint-code/60 hover:bg-mint-code/10 transition-all duration-300 cursor-pointer"
             >
               <Terminal size={16} />
-              Install CLI
+              {t('installCli')}
             </button>
           </div>
 
@@ -98,15 +100,15 @@ export default function HeroSection() {
           <div className="mt-12 md:mt-16 flex gap-8 md:gap-12">
             <div>
               <div className="text-2xl md:text-3xl font-heading font-bold text-[#F0F2F5]">10+</div>
-              <div className="text-xs text-[#8B92A8] mt-1">Chapters</div>
+              <div className="text-xs text-[#8B92A8] mt-1">{t('chapters')}</div>
             </div>
             <div>
               <div className="text-2xl md:text-3xl font-heading font-bold text-[#F0F2F5]">50+</div>
-              <div className="text-xs text-[#8B92A8] mt-1">Prompts</div>
+              <div className="text-xs text-[#8B92A8] mt-1">{t('prompts')}</div>
             </div>
             <div>
               <div className="text-2xl md:text-3xl font-heading font-bold text-[#F0F2F5]">50+</div>
-              <div className="text-xs text-[#8B92A8] mt-1">Pages</div>
+              <div className="text-xs text-[#8B92A8] mt-1">{t('pages')}</div>
             </div>
           </div>
         </div>
@@ -117,7 +119,7 @@ export default function HeroSection() {
         className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
         style={{ opacity: Math.max(0, 1 - scrollY / 300) }}
       >
-        <span className="text-[#8B92A8] text-xs tracking-widest uppercase">Scroll</span>
+        <span className="text-[#8B92A8] text-xs tracking-widest uppercase">{t('scroll')}</span>
         <ChevronDown size={20} className="text-[#8B92A8] animate-bounce" />
       </div>
     </section>

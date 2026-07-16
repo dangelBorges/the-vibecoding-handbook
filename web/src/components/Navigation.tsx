@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { Menu, X, Github } from 'lucide-react';
-
-const navLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'Docs', href: '/docs' },
-  { label: 'Wizard', href: '/wizard' },
-  { label: 'Optimize', href: '/optimize' },
-  { label: 'Community', href: '/community-prompts' },
-  { label: 'Tools', href: '/tools' },
-  { label: 'Templates', href: '/templates' },
-];
+import { useNamespace } from '../i18n/useNamespace';
+import navigation from '../i18n/translations/navigation';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export default function Navigation() {
+  const { t } = useNamespace(navigation);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -39,6 +33,16 @@ export default function Navigation() {
     return location.pathname.startsWith(href);
   };
 
+  const navLinks = [
+    { label: t('home'), href: '/' },
+    { label: t('docs'), href: '/docs' },
+    { label: t('wizard'), href: '/wizard' },
+    { label: t('optimize'), href: '/optimize' },
+    { label: t('community'), href: '/community-prompts' },
+    { label: t('tools'), href: '/tools' },
+    { label: t('templates'), href: '/templates' },
+  ];
+
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
@@ -50,7 +54,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <Link to="/" className="font-heading text-sm tracking-[0.2em] text-[#F0F2F5] hover:text-cyan transition-colors">
-          THE VIBE CODING HANDBOOK
+          {t('logo')}
         </Link>
 
         {/* Desktop Nav */}
@@ -70,8 +74,9 @@ export default function Navigation() {
           ))}
         </div>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
+        {/* CTA + Language */}
+        <div className="hidden md:flex items-center gap-4">
+          <LanguageSwitcher />
           <a
             href="https://github.com/dangelBorges/the-vibecoding-handbook"
             target="_blank"
@@ -79,7 +84,7 @@ export default function Navigation() {
             className="inline-flex items-center gap-2 px-5 py-2 border border-cyan/60 text-cyan text-sm font-heading rounded-full hover:bg-cyan/10 hover:glow-cyan transition-all duration-300"
           >
             <Github size={16} />
-            Contribute
+            {t('contribute')}
           </a>
         </div>
 
@@ -109,6 +114,7 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <LanguageSwitcher />
             <a
               href="https://github.com/dangelBorges/the-vibecoding-handbook"
               target="_blank"
@@ -116,7 +122,7 @@ export default function Navigation() {
               className="inline-flex items-center gap-2 px-5 py-2 border border-cyan/60 text-cyan text-sm font-heading rounded-full hover:bg-cyan/10 transition-all w-fit"
             >
               <Github size={16} />
-              Contribute on GitHub
+              {t('contributeOnGitHub')}
             </a>
           </div>
         </div>

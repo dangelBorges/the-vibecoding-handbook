@@ -1,48 +1,51 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { FileCode, Brain, Layers, AlertTriangle, Zap, ArrowRight } from 'lucide-react';
-
-const strategies = [
-  {
-    title: 'AGENTS.md',
-    description: 'A project-level context file that defines your architecture, patterns, and constraints. The AI reads this first before any code generation.',
-    icon: FileCode,
-    color: '#58A6B2',
-    tag: 'Template included',
-  },
-  {
-    title: '.iderules',
-    description: 'IDE-specific rules that guide the AI agent in real-time. Define coding standards, file organization, and technology preferences.',
-    icon: Zap,
-    color: '#C792EA',
-    tag: 'Cursor / Windsurf',
-  },
-  {
-    title: 'Memory & Skills',
-    description: 'Persistent memory patterns that help AI agents remember your preferences across sessions and projects.',
-    icon: Brain,
-    color: '#C3E88D',
-    tag: 'Advanced',
-  },
-  {
-    title: 'Multi-repo Context',
-    description: 'How to share context across multiple repositories when working with microservices or monorepos.',
-    icon: Layers,
-    color: '#58A6B2',
-    tag: 'Monorepo',
-  },
-  {
-    title: 'Anti-patterns',
-    description: 'Common mistakes: inflated context, contradictory rules, over-specification. Learn what NOT to do.',
-    icon: AlertTriangle,
-    color: '#ef4444',
-    tag: 'Avoid these',
-  },
-];
+import { useNamespace } from '../i18n/useNamespace';
+import contextEngineering from '../i18n/translations/contextEngineering';
 
 export default function ContextEngineeringSection() {
+  const { t } = useNamespace(contextEngineering);
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const strategies = [
+    {
+      title: t('strategy1Title'),
+      description: t('strategy1Description'),
+      icon: FileCode,
+      color: '#58A6B2',
+      tag: t('strategy1Tag'),
+    },
+    {
+      title: t('strategy2Title'),
+      description: t('strategy2Description'),
+      icon: Zap,
+      color: '#C792EA',
+      tag: t('strategy2Tag'),
+    },
+    {
+      title: t('strategy3Title'),
+      description: t('strategy3Description'),
+      icon: Brain,
+      color: '#C3E88D',
+      tag: t('strategy3Tag'),
+    },
+    {
+      title: t('strategy4Title'),
+      description: t('strategy4Description'),
+      icon: Layers,
+      color: '#58A6B2',
+      tag: t('strategy4Tag'),
+    },
+    {
+      title: t('strategy5Title'),
+      description: t('strategy5Description'),
+      icon: AlertTriangle,
+      color: '#ef4444',
+      tag: t('strategy5Tag'),
+    },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -69,14 +72,13 @@ export default function ContextEngineeringSection() {
             className="font-display text-[#F0F2F5] uppercase"
             style={{ fontSize: 'clamp(28px, 5vw, 72px)' }}
           >
-            Context Engineering
+            {t('title')}
           </h2>
           <p className="mt-4 text-cyan font-heading text-lg">
-            The secret to multi-file precision
+            {t('subtitle')}
           </p>
           <p className="mt-4 text-[#8B92A8] max-w-2xl mx-auto">
-            Master the art of giving your AI the right context. Well-engineered context 
-            is the difference between generic code and production-quality output.
+            {t('description')}
           </p>
         </div>
 
@@ -131,7 +133,7 @@ export default function ContextEngineeringSection() {
             to="/docs"
             className="group inline-flex items-center gap-2 px-6 py-3 border border-cyan/40 text-cyan font-heading rounded-full hover:bg-cyan/10 hover:border-cyan transition-all duration-300"
           >
-            Read the Context Engineering Guide
+            {t('cta')}
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

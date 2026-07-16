@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { WizardAnswers } from '../data/wizard';
-import { steps, getRecommendedStack } from '../data/wizard';
+import { useI18n } from '../i18n/useI18n';
+import { getWizardData } from '../i18n/localizers/wizard';
 
 const initialAnswers: WizardAnswers = {
   projectName: '',
@@ -23,6 +24,9 @@ const initialAnswers: WizardAnswers = {
 };
 
 export function useWizard() {
+  const { locale } = useI18n();
+  const { steps, getRecommendedStack } = getWizardData(locale);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<WizardAnswers>(initialAnswers);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
@@ -46,14 +50,14 @@ export function useWizard() {
       auth: recs.auth,
       hosting: recs.hosting,
     }));
-  }, [answers]);
+  }, [answers, getRecommendedStack]);
 
   const nextStep = useCallback(() => {
     if (currentStep < steps.length - 1) {
       setDirection('forward');
       setCurrentStep((prev) => prev + 1);
     }
-  }, [currentStep]);
+  }, [currentStep, steps.length]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 0) {
@@ -89,7 +93,7 @@ export function useWizard() {
       default:
         return true;
     }
-  }, [currentStep, answers]);
+  }, [currentStep, answers, steps]);
 
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;

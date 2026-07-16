@@ -11,6 +11,7 @@ import '@fontsource/jetbrains-mono/400.css'
 import './index.css'
 import App from './App.tsx'
 import { ScrollToTop } from './hooks/useScrollToTop'
+import { I18nProvider } from './i18n/I18nProvider'
 
 function LoadingFallback() {
   return (
@@ -26,9 +27,11 @@ function LoadingFallback() {
 
 createRoot(document.getElementById('root')!).render(
   <HashRouter>
-    <Suspense fallback={<LoadingFallback />}>
-      <ScrollToTop />
-      <App />
-    </Suspense>
+    <I18nProvider>
+      <Suspense fallback={<LoadingFallback />}>
+        <ScrollToTop />
+        <App />
+      </Suspense>
+    </I18nProvider>
   </HashRouter>,
 )

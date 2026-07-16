@@ -11,13 +11,29 @@ export interface DetectedIntent {
   keywords: string[];
 }
 
+export type ImprovementKey =
+  | 'structuredSections'
+  | 'roleContext'
+  | 'testingRequirements'
+  | 'typescriptConstraints'
+  | 'edgeCaseHandling'
+  | 'preImplementationPlanning'
+  | 'expandedContext'
+  | 'patternApplied'
+  | 'optimizedForAI';
+
+export interface ImprovementItem {
+  key: ImprovementKey;
+  data?: Record<string, string | number>;
+}
+
 export interface OptimizedPrompt {
   original: string;
   optimized: string;
   intent: DetectedIntent;
   pattern: PatternType;
   sections: { title: string; content: string }[];
-  improvements: string[];
+  improvements: ImprovementItem[];
   tokenEstimate: number;
 }
 
@@ -409,7 +425,7 @@ export function optimizePrompt(rawPrompt: string, context?: string): OptimizedPr
   const sections = extractSections(optimized);
 
   // Calculate improvements
-  const improvements = calculateImprovements(rawPrompt, optimized, intent.type);
+  const improvements = calculateImprovementItems(rawPrompt, optimized, intent.type, pattern);
 
   // Token estimate (rough: ~4 chars per token)
   const tokenEstimate = Math.round(optimized.length / 4);
@@ -450,64 +466,81 @@ function extractSections(markdown: string): { title: string; content: string }[]
   return sections;
 }
 
-function calculateImprovements(original: string, optimized: string, intent: IntentType): string[] {
-  const improvements: string[] = [];
+function calculateImprovementItems(
+  original: string,
+  optimized: string,
+  intent: IntentType,
+  pattern: PatternType
+): ImprovementItem[] {
+  const improvements: ImprovementItem[] = [];
 
   // Structure improvements
   if (!original.includes('#') && optimized.includes('#')) {
-    improvements.push('Added structured sections (Role, Context, Constraints)');
+    improvements.push({ key: 'structuredSections' });
   }
 
   // Context improvement
-  if (!original.toLowerCase().includes('context') && !original.toLowerCase().includes('you are')) {
-    improvements.push('Added role definition and context');
+  if (
+    !original.toLowerCase().includes('context') &&
+    !original.toLowerCase().includes('you are')
+  ) {
+    improvements.push({ key: 'roleContext' });
   }
 
   // Constraints improvement
-  if (!original.toLowerCase().includes('constraint') && !original.toLowerCase().includes('test')) {
+  if (
+    !original.toLowerCase().includes('constraint') &&
+    !original.toLowerCase().includes('test')
+  ) {
     if (intent !== 'docs') {
-      improvements.push('Added testing requirements');
+      improvements.push({ key: 'testingRequirements' });
     }
   }
 
   // TypeScript mention
-  if (!original.toLowerCase().includes('typescript') && !original.toLowerCase().includes('type')) {
-    improvements.push('Added TypeScript constraints');
+  if (
+    !original.toLowerCase().includes('typescript') &&
+    !original.toLowerCase().includes('type')
+  ) {
+    improvements.push({ key: 'typescriptConstraints' });
   }
 
   // Edge cases
-  if (!original.toLowerCase().includes('edge') && !original.toLowerCase().includes('error')) {
-    improvements.push('Added edge case handling instructions');
+  if (
+    !original.toLowerCase().includes('edge') &&
+    !original.toLowerCase().includes('error')
+  ) {
+    improvements.push({ key: 'edgeCaseHandling' });
   }
 
   // Pre-thinking
-  if (!original.toLowerCase().includes('plan') && !original.toLowerCase().includes('before')) {
-    improvements.push('Added pre-implementation planning step');
+  if (
+    !original.toLowerCase().includes('plan') &&
+    !original.toLowerCase().includes('before')
+  ) {
+    improvements.push({ key: 'preImplementationPlanning' });
   }
 
   // Length improvement
   if (optimized.length > original.length * 2) {
-    improvements.push(`Expanded from ${original.length} to ${optimized.length} chars (${Math.round((optimized.length / original.length - 1) * 100)}% more context)`);
+    improvements.push({
+      key: 'expandedContext',
+      data: {
+        originalLength: original.length,
+        optimizedLength: optimized.length,
+        percent: Math.round((optimized.length / original.length - 1) * 100),
+      },
+    });
   }
 
   // Always add these
-  improvements.push(`Applied ${getPatternLabel(intent)} pattern`);
-  improvements.push('Optimized for AI agent comprehension');
+  improvements.push({
+    key: 'patternApplied',
+    data: { pattern },
+  });
+  improvements.push({ key: 'optimizedForAI' });
 
   return improvements;
-}
-
-function getPatternLabel(intent: IntentType): string {
-  const labels: Record<IntentType, string> = {
-    feature: 'RICE (Role-Instruction-Constraint-Expectation)',
-    bugfix: 'STAR (Situation-Task-Action-Result)',
-    refactor: 'Chain-of-Thought',
-    test: 'Few-Shot Learning',
-    docs: 'Structured Documentation',
-    review: 'Chain-of-Thought Analysis',
-    unknown: 'RICE',
-  };
-  return labels[intent] || 'RICE';
 }
 
 // ============================================================

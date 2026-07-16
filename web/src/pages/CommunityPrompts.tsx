@@ -1,18 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, Copy, Check, Filter, ThumbsUp, Plus } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import { useI18n } from '../i18n/useI18n';
+import { useNamespace } from '../i18n/useNamespace';
+import communityPromptsNamespace from '../i18n/translations/communityPrompts';
+import {
+  getCategories,
+  getLocalizedPrompts,
+  getStacks,
+  getTools,
+} from '../i18n/localizers/prompts';
 import { communityPrompts, type CommunityPrompt } from '../data/communityPrompts';
-import { prompts as curatedPrompts, categories, tools, stacks } from '../data/prompts';
 
 const UPVOTES_KEY = 'vibe-upvotes';
 
 type UnifiedPrompt = CommunityPrompt & { source: 'curated' | 'community' };
-
-const unifiedPrompts: UnifiedPrompt[] = [
-  ...curatedPrompts.map((p) => ({ ...p, author: 'The Vibe Coding Handbook', submittedAt: '', votes: 0, source: 'curated' as const })),
-  ...communityPrompts.map((p) => ({ ...p, source: 'community' as const })),
-];
 
 const categoryColors: Record<string, string> = {
   feature: '#58A6B2',
@@ -22,25 +25,20 @@ const categoryColors: Record<string, string> = {
   docs: '#f59e0b',
 };
 
-const categoryLabels: Record<string, string> = {
-  feature: 'Feature',
-  bugfix: 'Bugfix',
-  refactor: 'Refactor',
-  test: 'Test',
-  docs: 'Docs',
-};
-
 function CommunityPromptCard({
   prompt,
   index,
   hasVoted,
   onVote,
+  getCategoryLabel,
 }: {
   prompt: UnifiedPrompt;
   index: number;
   hasVoted: boolean;
   onVote: (id: string) => void;
+  getCategoryLabel: (value: string) => string;
 }) {
+  const { t } = useNamespace(communityPromptsNamespace);
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -48,7 +46,9 @@ function CommunityPromptCard({
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
       { threshold: 0.1 }
     );
     if (cardRef.current) observer.observe(cardRef.current);
@@ -91,12 +91,12 @@ function CommunityPromptCard({
                   color: categoryColors[prompt.category],
                 }}
               >
-                {categoryLabels[prompt.category]}
+                {getCategoryLabel(prompt.category)}
               </span>
               <span className="text-[#8B92A8]/50 text-xs">{prompt.stack}</span>
               {prompt.source === 'curated' && (
                 <span className="px-2 py-0.5 rounded-full text-xs font-heading font-medium bg-cyan/10 text-cyan">
-                  Official
+                  {t('official')}
                 </span>
               )}
             </div>
@@ -107,7 +107,7 @@ function CommunityPromptCard({
           <button
             onClick={handleCopy}
             className="flex-shrink-0 p-2 rounded-lg bg-cyan/10 text-cyan hover:bg-cyan/20 transition-colors"
-            title="Copy prompt"
+            title={t('copyPrompt')}
           >
             {copied ? <Check size={18} /> : <Copy size={18} />}
           </button>
@@ -133,7 +133,7 @@ function CommunityPromptCard({
             onClick={() => setExpanded(!expanded)}
             className="mt-1 text-xs text-cyan hover:text-cyan/80 transition-colors"
           >
-            {expanded ? 'Show less' : 'Show more'}
+            {expanded ? t('showLess') : t('showMore')}
           </button>
         )}
       </div>
@@ -151,15 +151,17 @@ function CommunityPromptCard({
               }`}
             >
               <ThumbsUp size={14} />
-              {hasVoted ? 'Upvoted' : 'Upvote'}
+              {hasVoted ? t('upvoted') : t('upvote')}
               <span className="ml-1">{prompt.votes + (hasVoted ? 1 : 0)}</span>
             </button>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-heading bg-cyan/10 text-cyan">
-              Curated
+              {t('curated')}
             </span>
           )}
-          <span className="text-xs text-[#8B92A8]/60">by {prompt.author}</span>
+          <span className="text-xs text-[#8B92A8]/60">
+            {t('byAuthor', { author: prompt.author })}
+          </span>
         </div>
         <div className="text-xs text-[#8B92A8]/60">{prompt.whenToUse}</div>
       </div>
@@ -168,6 +170,8 @@ function CommunityPromptCard({
 }
 
 export default function CommunityPrompts() {
+  const { locale } = useI18n();
+  const { t, plural } = useNamespace(communityPromptsNamespace);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [toolFilter, setToolFilter] = useState('all');
@@ -182,6 +186,28 @@ export default function CommunityPrompts() {
     }
   });
 
+  const curatedPrompts = getLocalizedPrompts(locale);
+  const categories = getCategories(locale);
+  const tools = getTools(locale);
+  const stacks = getStacks(locale);
+
+  const categoryLabelMap = useMemo(
+    () => Object.fromEntries(categories.map((category) => [category.value, category.label])),
+    [categories]
+  );
+  const getCategoryLabel = (value: string) => categoryLabelMap[value] ?? value;
+
+  const unifiedPrompts: UnifiedPrompt[] = [
+    ...curatedPrompts.map((prompt) => ({
+      ...prompt,
+      author: 'The Vibe Coding Handbook',
+      submittedAt: '',
+      votes: 0,
+      source: 'curated' as const,
+    })),
+    ...communityPrompts.map((prompt) => ({ ...prompt, source: 'community' as const })),
+  ];
+
   const handleVote = (id: string) => {
     if (upvotes.includes(id)) return;
     const next = [...upvotes, id];
@@ -193,15 +219,15 @@ export default function CommunityPrompts() {
     }
   };
 
-  const filtered = unifiedPrompts.filter((p) => {
+  const filtered = unifiedPrompts.filter((prompt) => {
     const matchesSearch =
       !search ||
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase()) ||
-      p.prompt.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
-    const matchesTool = toolFilter === 'all' || p.tool === toolFilter;
-    const matchesStack = stackFilter === 'all' || p.stack === stackFilter;
+      prompt.title.toLowerCase().includes(search.toLowerCase()) ||
+      prompt.description.toLowerCase().includes(search.toLowerCase()) ||
+      prompt.prompt.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || prompt.category === categoryFilter;
+    const matchesTool = toolFilter === 'all' || prompt.tool === toolFilter;
+    const matchesStack = stackFilter === 'all' || prompt.stack === stackFilter;
     return matchesSearch && matchesCategory && matchesTool && matchesStack;
   });
 
@@ -217,22 +243,22 @@ export default function CommunityPrompts() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-12">
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-[#F0F2F5] mb-4">
-              Prompt Library
+              {t('title')}
             </h1>
-            <p className="text-[#8B92A8] text-lg max-w-3xl">
-              Curated prompts plus community submissions. Upvote the ones you find useful, copy them
-              into your agent, or submit your own via GitHub.
-            </p>
+            <p className="text-[#8B92A8] text-lg max-w-3xl">{t('subtitle')}</p>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8B92A8]/50" size={18} />
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8B92A8]/50"
+                size={18}
+              />
               <input
                 type="text"
-                placeholder="Search community prompts..."
+                placeholder={t('searchPlaceholder')}
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(event) => setSearch(event.target.value)}
                 className="w-full bg-surface/50 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-[#F0F2F5] placeholder-[#8B92A8]/50 focus:outline-none focus:border-cyan/50 transition-colors"
               />
             </div>
@@ -241,7 +267,7 @@ export default function CommunityPrompts() {
               className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-surface/50 border border-white/10 rounded-xl text-[#F0F2F5] hover:border-cyan/50 transition-colors"
             >
               <Filter size={18} />
-              Filters
+              {t('filters')}
             </button>
             <a
               href={submitUrl}
@@ -250,45 +276,57 @@ export default function CommunityPrompts() {
               className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-cyan/10 border border-cyan/30 rounded-xl text-cyan hover:bg-cyan/20 transition-colors"
             >
               <Plus size={18} />
-              Submit a prompt
+              {t('submitPrompt')}
             </a>
           </div>
 
           {showFilters && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-6 bg-surface/30 rounded-xl border border-white/5">
               <div>
-                <label className="block text-xs text-[#8B92A8] mb-2">Category</label>
+                <label className="block text-xs text-[#8B92A8] mb-2">
+                  {t('categoryLabel')}
+                </label>
                 <select
                   value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  onChange={(event) => setCategoryFilter(event.target.value)}
                   className="w-full bg-[#0B0C10] border border-white/10 rounded-lg px-3 py-2 text-[#F0F2F5] focus:outline-none focus:border-cyan/50"
                 >
-                  {categories.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
+                  {categories.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-[#8B92A8] mb-2">Tool</label>
+                <label className="block text-xs text-[#8B92A8] mb-2">
+                  {t('toolLabel')}
+                </label>
                 <select
                   value={toolFilter}
-                  onChange={(e) => setToolFilter(e.target.value)}
+                  onChange={(event) => setToolFilter(event.target.value)}
                   className="w-full bg-[#0B0C10] border border-white/10 rounded-lg px-3 py-2 text-[#F0F2F5] focus:outline-none focus:border-cyan/50"
                 >
-                  {tools.map((t) => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
+                  {tools.map((tool) => (
+                    <option key={tool.value} value={tool.value}>
+                      {tool.label}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-[#8B92A8] mb-2">Stack</label>
+                <label className="block text-xs text-[#8B92A8] mb-2">
+                  {t('stackLabel')}
+                </label>
                 <select
                   value={stackFilter}
-                  onChange={(e) => setStackFilter(e.target.value)}
+                  onChange={(event) => setStackFilter(event.target.value)}
                   className="w-full bg-[#0B0C10] border border-white/10 rounded-lg px-3 py-2 text-[#F0F2F5] focus:outline-none focus:border-cyan/50"
                 >
-                  {stacks.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
+                  {stacks.map((stack) => (
+                    <option key={stack.value} value={stack.value}>
+                      {stack.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -296,7 +334,10 @@ export default function CommunityPrompts() {
           )}
 
           <div className="mb-4 text-[#8B92A8] text-sm">
-            {filtered.length} community prompt{filtered.length !== 1 ? 's' : ''}
+            {plural(filtered.length, {
+              one: t('countOne', { count: filtered.length }),
+              other: t('countOther', { count: filtered.length }),
+            })}
           </div>
 
           {filtered.length > 0 ? (
@@ -308,12 +349,13 @@ export default function CommunityPrompts() {
                   index={index}
                   hasVoted={upvotes.includes(prompt.id)}
                   onVote={handleVote}
+                  getCategoryLabel={getCategoryLabel}
                 />
               ))}
             </div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-[#8B92A8] mb-4">No community prompts match your filters.</p>
+              <p className="text-[#8B92A8] mb-4">{t('emptyTitle')}</p>
               <button
                 onClick={() => {
                   setSearch('');
@@ -323,7 +365,7 @@ export default function CommunityPrompts() {
                 }}
                 className="text-cyan hover:text-cyan/80 transition-colors"
               >
-                Clear all filters
+                {t('emptyClearFilters')}
               </button>
             </div>
           )}

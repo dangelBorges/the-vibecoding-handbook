@@ -13,7 +13,16 @@ import {
 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { tools, categories, type Tool } from '../data/tools';
+import { useNamespace } from '../i18n/useNamespace';
+import { useI18n } from '../i18n/useI18n';
+import toolsPage from '../i18n/translations/toolsPage';
+import {
+  getLocalizedTools,
+  getCategories,
+  getFeatureLabels,
+  getCategoryLabels,
+} from '../i18n/localizers/tools';
+import type { Tool } from '../data/tools';
 
 function FeatureBar({ value, label, max = 5 }: { value: number; label: string; max?: number }) {
   return (
@@ -30,7 +39,18 @@ function FeatureBar({ value, label, max = 5 }: { value: number; label: string; m
   );
 }
 
-function ToolCard({ tool, index }: { tool: Tool; index: number }) {
+function ToolCard({
+  tool,
+  index,
+  featureLabels,
+  categoryLabels,
+}: {
+  tool: Tool;
+  index: number;
+  featureLabels: ReturnType<typeof getFeatureLabels>;
+  categoryLabels: ReturnType<typeof getCategoryLabels>;
+}) {
+  const { t } = useNamespace(toolsPage);
   const [expanded, setExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -43,12 +63,6 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
     if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, []);
-
-  const categoryLabels: Record<string, string> = {
-    ide: 'IDE',
-    cli: 'CLI Agent',
-    'app-builder': 'App Builder',
-  };
 
   const categoryColors: Record<string, string> = {
     ide: '#58A6B2',
@@ -98,16 +112,16 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
 
         {/* Feature Bars */}
         <div className="mt-4 space-y-2">
-          <FeatureBar value={tool.features.contextAwareness} label="Context" />
-          <FeatureBar value={tool.features.multiFile} label="Multi-file" />
-          <FeatureBar value={tool.features.terminal} label="Terminal" />
-          <FeatureBar value={tool.features.uiGeneration} label="UI Gen" />
-          <FeatureBar value={tool.features.speed} label="Speed" />
+          <FeatureBar value={tool.features.contextAwareness} label={featureLabels.context} />
+          <FeatureBar value={tool.features.multiFile} label={featureLabels.multiFile} />
+          <FeatureBar value={tool.features.terminal} label={featureLabels.terminal} />
+          <FeatureBar value={tool.features.uiGeneration} label={featureLabels.uiGeneration} />
+          <FeatureBar value={tool.features.speed} label={featureLabels.speed} />
         </div>
 
         {/* Best For */}
         <div className="mt-4 p-3 rounded-lg bg-cyan/5 border border-cyan/10">
-          <span className="text-xs text-cyan font-heading">Best for:</span>
+          <span className="text-xs text-cyan font-heading">{t('bestForLabel')}</span>
           <span className="text-xs text-[#8B92A8] ml-2">{tool.bestFor}</span>
         </div>
 
@@ -117,9 +131,9 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
           className="mt-4 flex items-center gap-1 text-sm text-cyan hover:text-cyan/80 transition-colors"
         >
           {expanded ? (
-            <>Less details <ChevronUp size={14} /></>
+            <>{t('lessDetails')} <ChevronUp size={14} /></>
           ) : (
-            <>More details <ChevronDown size={14} /></>
+            <>{t('moreDetails')} <ChevronDown size={14} /></>
           )}
         </button>
       </div>
@@ -132,7 +146,7 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
             <div>
               <h4 className="font-heading text-sm font-semibold text-[#F0F2F5] mb-3 flex items-center gap-2">
                 <Check size={14} className="text-mint-code" />
-                Pros
+                {t('pros')}
               </h4>
               <ul className="space-y-2">
                 {tool.pros.map((pro, i) => (
@@ -148,7 +162,7 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
             <div>
               <h4 className="font-heading text-sm font-semibold text-[#F0F2F5] mb-3 flex items-center gap-2">
                 <X size={14} className="text-red-400" />
-                Cons
+                {t('cons')}
               </h4>
               <ul className="space-y-2">
                 {tool.cons.map((con, i) => (
@@ -163,7 +177,7 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
 
           {/* Pricing */}
           <div className="mt-4 pt-4 border-t border-white/5">
-            <span className="text-xs text-[#8B92A8]">Pricing: </span>
+            <span className="text-xs text-[#8B92A8]">{t('pricingLabel')}</span>
             <span className="text-xs text-[#F0F2F5] font-heading">{tool.pricing}</span>
           </div>
         </div>
@@ -173,11 +187,18 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
 }
 
 export default function Tools() {
+  const { locale } = useI18n();
+  const { t, plural } = useNamespace(toolsPage);
   const [categoryFilter, setCategoryFilter] = useState('all');
 
-  const filtered = tools.filter((t) => {
+  const tools = getLocalizedTools(locale);
+  const categories = getCategories(locale);
+  const featureLabels = getFeatureLabels(locale);
+  const categoryLabels = getCategoryLabels(locale);
+
+  const filtered = tools.filter((toolItem) => {
     if (categoryFilter === 'all') return true;
-    return t.category === categoryFilter;
+    return toolItem.category === categoryFilter;
   });
 
   return (
@@ -193,23 +214,22 @@ export default function Tools() {
               className="inline-flex items-center gap-1 text-[#8B92A8] hover:text-cyan text-sm mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
-              Back to home
+              {t('backToHome')}
             </Link>
             <div className="flex items-center gap-2 mb-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/20">
                 <Sparkles size={14} className="text-cyan" />
-                <span className="text-cyan text-xs font-heading">2026 Comparison</span>
+                <span className="text-cyan text-xs font-heading">{t('badge')}</span>
               </div>
             </div>
             <h1
               className="font-display text-[#F0F2F5] uppercase"
               style={{ fontSize: 'clamp(28px, 5vw, 56px)' }}
             >
-              Tool Comparison
+              {t('title')}
             </h1>
             <p className="mt-3 text-[#8B92A8] max-w-2xl">
-              Honest, detailed comparisons of the leading AI coding tools. 
-              Find the perfect fit for your workflow and skill level.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -233,31 +253,42 @@ export default function Tools() {
           {/* Results count */}
           <div className="mb-6 flex items-center gap-2 text-sm text-[#8B92A8]">
             <Wrench size={16} />
-            <span>{filtered.length} tool{filtered.length !== 1 ? 's' : ''}</span>
+            <span>
+              {plural(filtered.length, {
+                one: t('resultCount_one', { count: filtered.length }),
+                other: t('resultCount_other', { count: filtered.length }),
+              })}
+            </span>
           </div>
 
           {/* Tools Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filtered.map((tool, index) => (
-              <ToolCard key={tool.id} tool={tool} index={index} />
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                index={index}
+                featureLabels={featureLabels}
+                categoryLabels={categoryLabels}
+              />
             ))}
           </div>
 
           {/* Comparison Table */}
           <div className="mt-16">
             <h2 className="font-heading text-2xl font-semibold text-[#F0F2F5] mb-6">
-              Quick Comparison Matrix
+              {t('matrixTitle')}
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-4 text-[#8B92A8] font-heading font-medium">Tool</th>
-                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">Category</th>
-                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">Context</th>
-                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">Multi-file</th>
-                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">Speed</th>
-                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">Rating</th>
+                    <th className="text-left py-3 px-4 text-[#8B92A8] font-heading font-medium">{t('matrixTool')}</th>
+                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">{t('matrixCategory')}</th>
+                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">{t('matrixContext')}</th>
+                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">{t('matrixMultiFile')}</th>
+                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">{t('matrixSpeed')}</th>
+                    <th className="text-center py-3 px-4 text-[#8B92A8] font-heading font-medium">{t('matrixRating')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -310,12 +341,6 @@ export default function Tools() {
     </div>
   );
 }
-
-const categoryLabels: Record<string, string> = {
-  ide: 'IDE',
-  cli: 'CLI',
-  'app-builder': 'App Builder',
-};
 
 const categoryColors: Record<string, string> = {
   ide: '#58A6B2',

@@ -1,41 +1,44 @@
 import { useRef, useEffect, useState } from 'react';
 import { MessageSquare, Cpu, ShieldCheck, RefreshCw } from 'lucide-react';
+import { useNamespace } from '../i18n/useNamespace';
+import workflow from '../i18n/translations/workflow';
 import WorkflowConstellation from '../components/WorkflowConstellation';
 
-const steps = [
-  {
-    number: '01',
-    title: 'Prompt',
-    description: 'Write specs in natural language. Define constraints, provide examples, and set clear expectations. Good prompts include context, requirements, and acceptance criteria.',
-    icon: MessageSquare,
-    color: '#58A6B2',
-  },
-  {
-    number: '02',
-    title: 'Generate',
-    description: 'Choose the right model and context scope. Set up your agent with proper context files (AGENTS.md, .iderules) and let it generate the initial implementation.',
-    icon: Cpu,
-    color: '#C792EA',
-  },
-  {
-    number: '03',
-    title: 'Review',
-    description: 'Never accept blindly. Check for security issues, architecture consistency, code quality, and test coverage. Treat AI output as code from a junior developer.',
-    icon: ShieldCheck,
-    color: '#C3E88D',
-  },
-  {
-    number: '04',
-    title: 'Refine',
-    description: 'Iterate precisely. Use targeted follow-up prompts instead of "fix this." Provide specific feedback on what needs to change and why.',
-    icon: RefreshCw,
-    color: '#58A6B2',
-  },
-];
-
 export default function WorkflowSection() {
+  const { t } = useNamespace(workflow);
   const sectionRef = useRef<HTMLElement>(null);
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
+
+  const steps = [
+    {
+      number: '01',
+      title: t('step1Title'),
+      description: t('step1Description'),
+      icon: MessageSquare,
+      color: '#58A6B2',
+    },
+    {
+      number: '02',
+      title: t('step2Title'),
+      description: t('step2Description'),
+      icon: Cpu,
+      color: '#C792EA',
+    },
+    {
+      number: '03',
+      title: t('step3Title'),
+      description: t('step3Description'),
+      icon: ShieldCheck,
+      color: '#C3E88D',
+    },
+    {
+      number: '04',
+      title: t('step4Title'),
+      description: t('step4Description'),
+      icon: RefreshCw,
+      color: '#58A6B2',
+    },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -73,10 +76,10 @@ export default function WorkflowSection() {
             className="font-display text-[#F0F2F5] uppercase"
             style={{ fontSize: 'clamp(32px, 6vw, 80px)' }}
           >
-            The Workflow
+            {t('title')}
           </h2>
           <p className="mt-4 text-cyan font-heading text-lg md:text-xl tracking-wide">
-            Prompt &rarr; Generate &rarr; Review &rarr; Refine
+            {t('subtitle')}
           </p>
         </div>
 

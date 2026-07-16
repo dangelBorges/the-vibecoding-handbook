@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { useNamespace } from '../i18n/useNamespace';
+import toolMatrix from '../i18n/translations/toolMatrix';
 import VerticalLoopScroll from '../components/VerticalLoopScroll';
 
 const tools = [
@@ -17,6 +19,7 @@ const tools = [
 ];
 
 export default function ToolMatrixSection() {
+  const { t } = useNamespace(toolMatrix);
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -47,22 +50,20 @@ export default function ToolMatrixSection() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/20 mb-6">
               <Sparkles size={14} className="text-cyan" />
-              <span className="text-cyan text-xs font-heading">Tool Comparison Matrix</span>
+              <span className="text-cyan text-xs font-heading">{t('badge')}</span>
             </div>
 
             <h2
               className="font-display text-[#F0F2F5] uppercase leading-[0.95]"
               style={{ fontSize: 'clamp(32px, 5vw, 72px)' }}
             >
-              Pick Your
+              {t('titleLine1')}
               <br />
-              <span className="text-gradient-cyan">Tool</span>
+              <span className="text-gradient-cyan">{t('titleLine2')}</span>
             </h2>
 
             <p className="mt-6 text-[#8B92A8] text-base leading-relaxed max-w-md">
-              A comparative matrix of the leading AI coding tools in 2026. 
-              Find the perfect fit for your workflow — from IDE integrations 
-              to full app builders.
+              {t('description')}
             </p>
 
             <div className="mt-8 space-y-4">
@@ -70,19 +71,19 @@ export default function ToolMatrixSection() {
                 <div className="w-8 h-8 rounded-lg bg-cyan/10 flex items-center justify-center">
                   <span className="text-cyan text-sm font-heading font-bold">10</span>
                 </div>
-                <span className="text-[#8B92A8] text-sm">Tools compared</span>
+                <span className="text-[#8B92A8] text-sm">{t('toolsCompared')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-purple-code/10 flex items-center justify-center">
                   <span className="text-purple-code text-sm font-heading font-bold">6</span>
                 </div>
-                <span className="text-[#8B92A8] text-sm">Categories</span>
+                <span className="text-[#8B92A8] text-sm">{t('categories')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-mint-code/10 flex items-center justify-center">
                   <span className="text-mint-code text-sm font-heading font-bold">3</span>
                 </div>
-                <span className="text-[#8B92A8] text-sm">Skill levels</span>
+                <span className="text-[#8B92A8] text-sm">{t('skillLevels')}</span>
               </div>
             </div>
 
@@ -90,7 +91,7 @@ export default function ToolMatrixSection() {
               to="/tools"
               className="group mt-8 inline-flex items-center gap-2 px-6 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 transition-all duration-300"
             >
-              View Full Comparison
+              {t('cta')}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

@@ -3,14 +3,46 @@ import { Link, useParams, useNavigate } from 'react-router';
 import { Menu, X, ChevronRight, BookOpen, Clock, ArrowLeft } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { chapters } from '../data/docs';
+import { useNamespace } from '../i18n/useNamespace';
+import { useI18n } from '../i18n/useI18n';
+import docsTranslations from '../i18n/translations/docs';
+import { loadDocs } from '../i18n/localizers/docs';
+import type { DocChapter } from '../data/docs/en';
+import type { Locale } from '../i18n/config';
 
 export default function Docs() {
   const { slug } = useParams<{ slug?: string }>();
   const navigate = useNavigate();
+  const { t } = useNamespace(docsTranslations);
+  const { locale } = useI18n();
+  const [chapters, setChapters] = useState<DocChapter[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadedLocale, setLoadedLocale] = useState<Locale | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Trigger loading state when locale changes (state adjustment during render,
+  // see react.dev "adjusting state when a prop changes").
+  if (loadedLocale !== locale) {
+    setLoadedLocale(locale);
+    setLoading(true);
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    loadDocs(locale)
+      .then((data) => {
+        if (!cancelled) {
+          setChapters(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [locale]);
 
   const currentChapter = slug
     ? chapters.find((c) => c.slug === slug)
@@ -24,10 +56,10 @@ export default function Docs() {
   const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex + 1] : null;
 
   useEffect(() => {
-    if (!slug) {
+    if (!slug && chapters.length > 0) {
       navigate(`/docs/${chapters[0].slug}`, { replace: true });
     }
-  }, [slug, navigate]);
+  }, [slug, chapters, navigate]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,7 +122,7 @@ export default function Docs() {
           inCodeBlock = false;
         } else {
           inCodeBlock = true;
-           
+          
         }
         return;
       }
@@ -191,7 +223,7 @@ export default function Docs() {
           <div className="p-6">
             <div className="flex items-center gap-2 text-cyan mb-6">
               <BookOpen size={18} />
-              <span className="font-heading text-sm font-semibold">Contents</span>
+              <span className="font-heading text-sm font-semibold">{t('contents')}</span>
             </div>
 
             <nav className="space-y-1">
@@ -243,16 +275,20 @@ export default function Docs() {
           ref={contentRef}
           className="flex-1 overflow-y-auto h-[calc(100dvh-4rem)]"
         >
-          {currentChapter && (
+          {loading ? (
+            <div className="flex items-center justify-center h-full text-[#8B92A8]">
+              {t('loading')}
+            </div>
+          ) : currentChapter && (
             <article className="max-w-3xl mx-auto px-6 py-12">
               {/* Chapter Header */}
               <header className="mb-10 pb-8 border-b border-white/5">
                 <div className="flex items-center gap-2 text-[#8B92A8] text-sm mb-4">
                   <BookOpen size={14} />
-                  <span>Chapter {chapterIndex + 1} of {chapters.length}</span>
+                  <span>{t('chapterOf', { current: chapterIndex + 1, total: chapters.length })}</span>
                   <span className="mx-2">&middot;</span>
                   <Clock size={14} />
-                  <span>{currentChapter.sections.length * 5} min read</span>
+                  <span>{t('minRead', { minutes: currentChapter.sections.length * 5 })}</span>
                 </div>
                 <h1 className="font-display text-3xl md:text-4xl text-[#F0F2F5] uppercase">
                   {currentChapter.title}
@@ -287,7 +323,7 @@ export default function Docs() {
                   >
                     <ArrowLeft size={16} />
                     <div>
-                      <div className="text-xs">Previous</div>
+                      <div className="text-xs">{t('previous')}</div>
                       <div className="font-heading text-sm">{prevChapter.title}</div>
                     </div>
                   </Link>
@@ -300,7 +336,7 @@ export default function Docs() {
                     className="flex items-center gap-2 text-[#8B92A8] hover:text-cyan transition-colors text-right"
                   >
                     <div>
-                      <div className="text-xs">Next</div>
+                      <div className="text-xs">{t('next')}</div>
                       <div className="font-heading text-sm">{nextChapter.title}</div>
                     </div>
                     <ChevronRight size={16} />

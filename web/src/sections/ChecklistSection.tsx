@@ -1,56 +1,59 @@
 import { useRef, useEffect, useState } from 'react';
 import { Check, Shield, Lock, FileSearch, Users, Terminal, AlertOctagon } from 'lucide-react';
-
-const checklistItems = [
-  {
-    id: 'secrets',
-    title: 'Secrets Detection',
-    description: 'Scan for API keys, tokens, and credentials in generated code',
-    icon: Lock,
-    checked: false,
-  },
-  {
-    id: 'dependencies',
-    title: 'Dependency Audit',
-    description: 'Review all new packages for known vulnerabilities',
-    icon: FileSearch,
-    checked: false,
-  },
-  {
-    id: 'auth',
-    title: 'Human-in-the-loop',
-    description: 'Manual review for auth, payments, and PII handling',
-    icon: Users,
-    checked: false,
-  },
-  {
-    id: 'owasp',
-    title: 'OWASP Compliance',
-    description: 'Verify against top 10 web application security risks',
-    icon: Shield,
-    checked: false,
-  },
-  {
-    id: 'tests',
-    title: 'Test Coverage',
-    description: 'Ensure generated code has adequate unit and integration tests',
-    icon: Terminal,
-    checked: false,
-  },
-  {
-    id: 'architecture',
-    title: 'Architecture Review',
-    description: 'Verify consistency with existing patterns and conventions',
-    icon: AlertOctagon,
-    checked: false,
-  },
-];
+import { useNamespace } from '../i18n/useNamespace';
+import checklist from '../i18n/translations/checklist';
 
 export default function ChecklistSection() {
+  const { t } = useNamespace(checklist);
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [burstPos, setBurstPos] = useState<{ x: number; y: number } | null>(null);
+
+  const checklistItems = [
+    {
+      id: 'secrets',
+      title: t('item1Title'),
+      description: t('item1Description'),
+      icon: Lock,
+      checked: false,
+    },
+    {
+      id: 'dependencies',
+      title: t('item2Title'),
+      description: t('item2Description'),
+      icon: FileSearch,
+      checked: false,
+    },
+    {
+      id: 'auth',
+      title: t('item3Title'),
+      description: t('item3Description'),
+      icon: Users,
+      checked: false,
+    },
+    {
+      id: 'owasp',
+      title: t('item4Title'),
+      description: t('item4Description'),
+      icon: Shield,
+      checked: false,
+    },
+    {
+      id: 'tests',
+      title: t('item5Title'),
+      description: t('item5Description'),
+      icon: Terminal,
+      checked: false,
+    },
+    {
+      id: 'architecture',
+      title: t('item6Title'),
+      description: t('item6Description'),
+      icon: AlertOctagon,
+      checked: false,
+    },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -94,20 +97,19 @@ export default function ChecklistSection() {
               className="font-display text-[#F0F2F5] uppercase mb-4"
               style={{ fontSize: 'clamp(28px, 4vw, 56px)' }}
             >
-              Ship With
+              {t('titleLine1')}
               <br />
-              <span className="text-gradient-cyan">Confidence</span>
+              <span className="text-gradient-cyan">{t('titleLine2')}</span>
             </h2>
 
             <p className="text-[#8B92A8] mb-8 max-w-lg">
-              Before merging AI-generated code, run through this production checklist. 
-              Each item represents a critical security or quality gate.
+              {t('intro')}
             </p>
 
             {/* Progress */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[#8B92A8] font-heading">Checklist Progress</span>
+                <span className="text-xs text-[#8B92A8] font-heading">{t('progressLabel')}</span>
                 <span className="text-xs text-cyan font-heading">{progress}%</span>
               </div>
               <div className="w-full h-2 bg-surface rounded-full overflow-hidden">
@@ -217,7 +219,7 @@ export default function ChecklistSection() {
 
               {/* Floating badges */}
               <div className="absolute -top-4 -right-4 px-3 py-1.5 rounded-full bg-surface border border-cyan/20 text-cyan text-xs font-heading animate-pulse">
-                {progress === 100 ? 'Ready to ship!' : `${checked.size}/${checklistItems.length} checked`}
+                {progress === 100 ? t('readyToShip') : t('checked', { checked: checked.size, total: checklistItems.length })}
               </div>
             </div>
           </div>

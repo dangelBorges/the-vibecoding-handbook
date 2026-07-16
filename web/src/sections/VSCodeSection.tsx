@@ -1,18 +1,21 @@
 import { useRef, useEffect, useState } from 'react';
 import { Code2, ArrowRight, Puzzle, ShieldCheck, Sparkles, RefreshCw, Wand2, BookOpen } from 'lucide-react';
-
-const features = [
-  { icon: Puzzle, label: 'Policy Sidebar', desc: 'Browse policies in activity bar' },
-  { icon: ShieldCheck, label: 'Project Check', desc: '12 validation checks' },
-  { icon: Sparkles, label: 'Stack Detection', desc: 'Auto-detect framework' },
-  { icon: RefreshCw, label: 'Refresh Context', desc: 'Update AGENTS.md' },
-  { icon: Wand2, label: 'Optimize Prompt', desc: 'Transform vague → precise' },
-  { icon: BookOpen, label: 'Context Panel', desc: 'Rich project overview' },
-];
+import { useNamespace } from '../i18n/useNamespace';
+import vscode from '../i18n/translations/vscode';
 
 export default function VSCodeSection() {
+  const { t } = useNamespace(vscode);
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const features = [
+    { icon: Puzzle, label: t('feature1Label'), desc: t('feature1Desc') },
+    { icon: ShieldCheck, label: t('feature2Label'), desc: t('feature2Desc') },
+    { icon: Sparkles, label: t('feature3Label'), desc: t('feature3Desc') },
+    { icon: RefreshCw, label: t('feature4Label'), desc: t('feature4Desc') },
+    { icon: Wand2, label: t('feature5Label'), desc: t('feature5Desc') },
+    { icon: BookOpen, label: t('feature6Label'), desc: t('feature6Desc') },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -61,34 +64,34 @@ export default function VSCodeSection() {
 
                 {/* Sidebar — Vibe Coding panel */}
                 <div className="w-48 bg-[#181818] border-r border-white/5 flex flex-col">
-                  <div className="px-3 py-2 text-[10px] font-semibold text-[#8B92A8] uppercase tracking-wider">Vibe Coding</div>
+                  <div className="px-3 py-2 text-[10px] font-semibold text-[#8B92A8] uppercase tracking-wider">{t('panelTitle')}</div>
 
                   <div className="px-2 py-1.5 mx-2 rounded bg-white/5">
                     <div className="flex items-center gap-1.5 text-[11px] text-[#F0F2F5]">
                       <ShieldCheck size={12} className="text-cyan" />
-                      Policies
+                      {t('policies')}
                     </div>
                     <div className="ml-5 mt-1 space-y-0.5">
-                      <div className="text-[10px] text-[#8B92A8]">Git Policy ✓</div>
-                      <div className="text-[10px] text-[#8B92A8]">Security ✓</div>
-                      <div className="text-[10px] text-[#8B92A8]">Testing ✓</div>
+                      <div className="text-[10px] text-[#8B92A8]">{t('gitPolicy')}</div>
+                      <div className="text-[10px] text-[#8B92A8]">{t('security')}</div>
+                      <div className="text-[10px] text-[#8B92A8]">{t('testing')}</div>
                     </div>
                   </div>
 
                   <div className="px-2 py-1.5 mx-2 mt-1">
                     <div className="flex items-center gap-1.5 text-[11px] text-[#F0F2F5]">
                       <BookOpen size={12} className="text-purple-code" />
-                      Decisions
+                      {t('decisions')}
                     </div>
                     <div className="ml-5 mt-1">
-                      <div className="text-[10px] text-[#8B92A8]">ADR-001 ✓</div>
+                      <div className="text-[10px] text-[#8B92A8]">{t('adr001')}</div>
                     </div>
                   </div>
 
                   <div className="px-2 py-1.5 mx-2 mt-1">
                     <div className="flex items-center gap-1.5 text-[11px] text-[#F0F2F5]">
                       <Puzzle size={12} className="text-mint-code" />
-                      Stack
+                      {t('stack')}
                     </div>
                     <div className="ml-5 mt-1 space-y-0.5">
                       <div className="text-[10px] text-[#8B92A8]">Next.js</div>
@@ -99,24 +102,24 @@ export default function VSCodeSection() {
 
                   <div className="mt-auto p-2">
                     <div className="text-[9px] text-[#8B92A8] bg-cyan/10 rounded px-2 py-1 text-center">
-                      Score: <span className="text-cyan font-semibold">92%</span>
+                      {t('score')} <span className="text-cyan font-semibold">{t('scoreValue')}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Main editor area */}
                 <div className="flex-1 bg-[#1e1e1e] p-4">
-                  <div className="text-[11px] text-[#8B92A8] mb-2">AGENTS.md</div>
+                  <div className="text-[11px] text-[#8B92A8] mb-2">{t('fileName')}</div>
                   <div className="font-mono text-[10px] text-[#C792EA] space-y-0.5 opacity-80">
-                    <div><span className="text-[#8B92A8]">#</span> Project — Agent Context</div>
-                    <div><span className="text-[#8B92A8]">##</span> Tech Stack</div>
+                    <div><span className="text-[#8B92A8]">#</span> {t('projectContext')}</div>
+                    <div><span className="text-[#8B92A8]">##</span> {t('techStack')}</div>
                     <div className="pl-3 text-[#F0F2F5]">| Framework | Next.js |</div>
                     <div className="pl-3 text-[#F0F2F5]">| Language | TypeScript |</div>
                     <div className="pl-3 text-[#F0F2F5]">| Database | Supabase |</div>
-                    <div><span className="text-[#8B92A8]">##</span> Coding Standards</div>
+                    <div><span className="text-[#8B92A8]">##</span> {t('codingStandards')}</div>
                     <div className="pl-3 text-[#F0F2F5]">- Strict mode enabled</div>
                     <div className="pl-3 text-[#F0F2F5]">- Named exports preferred</div>
-                    <div><span className="text-[#8B92A8]">##</span> Security Rules</div>
+                    <div><span className="text-[#8B92A8]">##</span> {t('securityRules')}</div>
                     <div className="pl-3 text-[#F0F2F5]">- Input validation on ALL inputs</div>
                   </div>
                 </div>
@@ -132,22 +135,20 @@ export default function VSCodeSection() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-code/10 border border-purple-code/20 mb-6">
               <Code2 size={14} className="text-purple-code" />
-              <span className="text-purple-code text-xs font-heading">VS Code Extension</span>
+              <span className="text-purple-code text-xs font-heading">{t('badge')}</span>
             </div>
 
             <h2
               className="font-display text-[#F0F2F5] uppercase leading-[0.95]"
               style={{ fontSize: 'clamp(28px, 4vw, 56px)' }}
             >
-              Governance
+              {t('titleLine1')}
               <br />
-              <span className="text-gradient-cyan">In Your IDE</span>
+              <span className="text-gradient-cyan">{t('titleLine2')}</span>
             </h2>
 
             <p className="mt-6 text-[#8B92A8] leading-relaxed">
-              The Vibe Coding extension brings project governance directly into VS Code. 
-              Browse policies, detect your stack, validate setup, and optimize prompts — 
-              without leaving your editor.
+              {t('description')}
             </p>
 
             {/* Feature grid */}
@@ -172,7 +173,7 @@ export default function VSCodeSection() {
               rel="noopener noreferrer"
               className="group mt-8 inline-flex items-center gap-2 text-cyan font-heading text-sm hover:underline"
             >
-              View extension source
+              {t('viewSource')}
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </div>

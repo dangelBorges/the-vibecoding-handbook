@@ -9,7 +9,10 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useWizard } from '../hooks/useWizard';
 import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
-import { questions, steps, comparisons, getRecommendedStack } from '../data/wizard';
+import { useI18n } from '../i18n/useI18n';
+import { useNamespace } from '../i18n/useNamespace';
+import { getWizardData } from '../i18n/localizers/wizard';
+import wizardPage from '../i18n/translations/wizardPage';
 
 const stepIcons: Record<string, React.ReactNode> = {
   info: <Info size={16} />,
@@ -26,6 +29,9 @@ const stepIcons: Record<string, React.ReactNode> = {
 export default function Wizard() {
   const wizard = useWizard();
   const navigate = useNavigate();
+  const { locale } = useI18n();
+  const { t } = useNamespace(wizardPage);
+  const { questions, steps, comparisons, getRecommendedStack } = getWizardData(locale);
   const [showRecommendations, setShowRecommendations] = useState(false);
 
   const stepQuestions = questions.filter((q) => q.step === wizard.currentStepId);
@@ -63,29 +69,27 @@ export default function Wizard() {
               className="inline-flex items-center gap-1 text-[#8B92A8] hover:text-cyan text-sm mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
-              Back to home
+              {t('backToHome')}
             </Link>
             <div className="flex items-center gap-3">
               <h1
                 className="font-display text-[#F0F2F5] uppercase"
                 style={{ fontSize: 'clamp(24px, 4vw, 48px)' }}
               >
-                Project Wizard
+                {t('title')}
               </h1>
               <div className="px-3 py-1 rounded-full bg-cyan/10 border border-cyan/20">
-                <span className="text-cyan text-xs font-heading">Beta</span>
+                <span className="text-cyan text-xs font-heading">{t('badge')}</span>
               </div>
             </div>
             <p className="mt-2 text-[#8B92A8]">
-              Answer a few questions and we&apos;ll generate your complete project governance setup.
+              {t('intro')}
             </p>
             <Alert className="mt-4 border-cyan/20 bg-cyan/5">
               <Info className="h-4 w-4 text-cyan" />
-              <AlertTitle className="text-cyan font-heading">Generated from your answers, not your repo</AlertTitle>
+              <AlertTitle className="text-cyan font-heading">{t('alertTitle')}</AlertTitle>
               <AlertDescription className="text-[#8B92A8]">
-                This wizard doesn&apos;t analyze your code — it builds governance from what you tell it.
-                Answer for the project you actually have (or plan), and review the generated files
-                before committing them: they&apos;re a starting point to adapt, not gospel.
+                {t('alertDescription')}
               </AlertDescription>
             </Alert>
           </div>
@@ -94,10 +98,10 @@ export default function Wizard() {
           <div className="mb-10">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-[#8B92A8] font-heading">
-                Step {wizard.currentStep + 1} of {steps.length}
+                {t('stepOf', { current: wizard.currentStep + 1, total: steps.length })}
               </span>
               <span className="text-xs text-cyan font-heading">
-                {Math.round(wizard.progress)}%
+                {t('percent', { progress: Math.round(wizard.progress) })}
               </span>
             </div>
             <div className="w-full h-2 bg-surface rounded-full overflow-hidden">
@@ -132,10 +136,10 @@ export default function Wizard() {
             {/* Questions Column */}
             <div className="lg:col-span-2 space-y-6">
               {wizard.currentStepId === 'project-info' && (
-                <ProjectInfoStep wizard={wizard} />
+                <ProjectInfoStep wizard={wizard} questions={questions} />
               )}
               {wizard.currentStepId === 'requirements' && (
-                <RequirementsStep wizard={wizard} />
+                <RequirementsStep wizard={wizard} questions={questions} />
               )}
               {['frontend', 'backend', 'database', 'auth', 'hosting'].includes(wizard.currentStepId) && (
                 <TechSelectStep
@@ -159,7 +163,7 @@ export default function Wizard() {
                   }`}
                 >
                   <ArrowLeft size={16} />
-                  Previous
+                  {t('previous')}
                 </button>
 
                 <button
@@ -174,11 +178,11 @@ export default function Wizard() {
                   {wizard.currentStep === steps.length - 2 ? (
                     <>
                       <Wand2 size={16} />
-                      Generate Setup
+                      {t('generateSetup')}
                     </>
                   ) : (
                     <>
-                      Next
+                      {t('next')}
                       <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
                     </>
                   )}
@@ -194,11 +198,11 @@ export default function Wizard() {
                   <div className="flex items-center gap-2 mb-3">
                     <Lightbulb size={16} className="text-cyan" />
                     <h3 className="font-heading text-sm font-semibold text-[#F0F2F5]">
-                      Smart Recommendation
+                      {t('smartRecommendation')}
                     </h3>
                   </div>
                   <p className="text-xs text-[#8B92A8] mb-3">
-                    Based on your project type ({wizard.answers.projectType}), we recommend:
+                    {t('basedOnProjectType', { projectType: wizard.answers.projectType })}
                   </p>
                   {!showRecommendations ? (
                     <button
@@ -206,7 +210,7 @@ export default function Wizard() {
                       className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan/10 text-cyan text-xs font-heading hover:bg-cyan/20 transition-colors"
                     >
                       <Sparkles size={14} />
-                      Show Recommendations
+                      {t('showRecommendations')}
                     </button>
                   ) : (
                     <div className="space-y-2">
@@ -232,7 +236,7 @@ export default function Wizard() {
                               className="mt-2 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan text-[#0B0C10] text-xs font-heading hover:bg-cyan/90 transition-colors"
                             >
                               <Zap size={12} />
-                              Apply All
+                              {t('applyAll')}
                             </button>
                           </div>
                         ) : (
@@ -249,7 +253,7 @@ export default function Wizard() {
                               className="mt-3 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan text-[#0B0C10] text-xs font-heading hover:bg-cyan/90 transition-colors"
                             >
                               <Zap size={12} />
-                              Apply All Recommendations
+                              {t('applyAllRecommendations')}
                             </button>
                           </div>
                         );
@@ -274,48 +278,48 @@ export default function Wizard() {
               {wizard.currentStep > 0 && (
                 <div className="p-5 rounded-xl bg-surface/50 border border-white/5">
                   <h3 className="font-heading text-sm font-semibold text-[#F0F2F5] mb-3">
-                    Current Setup
+                    {t('currentSetup')}
                   </h3>
                   <div className="space-y-2 text-xs">
                     {wizard.answers.projectName && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Project</span>
+                        <span className="text-[#8B92A8]">{t('summaryProject')}</span>
                         <span className="text-[#F0F2F5]">{wizard.answers.projectName}</span>
                       </div>
                     )}
                     {wizard.answers.projectType && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Type</span>
+                        <span className="text-[#8B92A8]">{t('summaryType')}</span>
                         <span className="text-[#F0F2F5]">{wizard.answers.projectType}</span>
                       </div>
                     )}
                     {wizard.answers.frontend && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Frontend</span>
+                        <span className="text-[#8B92A8]">{t('summaryFrontend')}</span>
                         <span className="text-cyan">{wizard.answers.frontend}</span>
                       </div>
                     )}
                     {wizard.answers.backend && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Backend</span>
+                        <span className="text-[#8B92A8]">{t('summaryBackend')}</span>
                         <span className="text-cyan">{wizard.answers.backend}</span>
                       </div>
                     )}
                     {wizard.answers.database && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Database</span>
+                        <span className="text-[#8B92A8]">{t('summaryDatabase')}</span>
                         <span className="text-cyan">{wizard.answers.database}</span>
                       </div>
                     )}
                     {wizard.answers.auth && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Auth</span>
+                        <span className="text-[#8B92A8]">{t('summaryAuth')}</span>
                         <span className="text-cyan">{wizard.answers.auth}</span>
                       </div>
                     )}
                     {wizard.answers.hosting && (
                       <div className="flex justify-between">
-                        <span className="text-[#8B92A8]">Hosting</span>
+                        <span className="text-[#8B92A8]">{t('summaryHosting')}</span>
                         <span className="text-cyan">{wizard.answers.hosting}</span>
                       </div>
                     )}
@@ -336,38 +340,46 @@ export default function Wizard() {
 // STEP COMPONENTS
 // ============================================================
 
-function ProjectInfoStep({ wizard }: { wizard: ReturnType<typeof useWizard> }) {
+function ProjectInfoStep({
+  wizard,
+  questions,
+}: {
+  wizard: ReturnType<typeof useWizard>;
+  questions: ReturnType<typeof getWizardData>['questions'];
+}) {
+  const { t } = useNamespace(wizardPage);
+
   return (
     <div className="space-y-6">
       <div>
         <label className="block font-heading text-sm font-semibold text-[#F0F2F5] mb-2">
-          Project Name
+          {t('projectNameLabel')}
         </label>
         <input
           type="text"
           value={wizard.answers.projectName}
           onChange={(e) => wizard.updateAnswer('projectName', e.target.value)}
-          placeholder="My Awesome SaaS"
+          placeholder={t('projectNamePlaceholder')}
           className="w-full px-4 py-3 bg-surface border border-white/10 rounded-xl text-[#F0F2F5] placeholder-[#8B92A8]/40 focus:outline-none focus:border-cyan/40 transition-colors"
         />
       </div>
 
       <div>
         <label className="block font-heading text-sm font-semibold text-[#F0F2F5] mb-2">
-          Description
+          {t('descriptionLabel')}
         </label>
         <input
           type="text"
           value={wizard.answers.projectDescription}
           onChange={(e) => wizard.updateAnswer('projectDescription', e.target.value)}
-          placeholder="A SaaS invoicing platform for freelancers"
+          placeholder={t('descriptionPlaceholder')}
           className="w-full px-4 py-3 bg-surface border border-white/10 rounded-xl text-[#F0F2F5] placeholder-[#8B92A8]/40 focus:outline-none focus:border-cyan/40 transition-colors"
         />
       </div>
 
       <div>
         <label className="block font-heading text-sm font-semibold text-[#F0F2F5] mb-3">
-          Project Type
+          {t('projectTypeLabel')}
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {questions.find((q) => q.id === 'projectType')?.options.map((option) => (
@@ -390,7 +402,13 @@ function ProjectInfoStep({ wizard }: { wizard: ReturnType<typeof useWizard> }) {
   );
 }
 
-function RequirementsStep({ wizard }: { wizard: ReturnType<typeof useWizard> }) {
+function RequirementsStep({
+  wizard,
+  questions,
+}: {
+  wizard: ReturnType<typeof useWizard>;
+  questions: ReturnType<typeof getWizardData>['questions'];
+}) {
   const features = wizard.answers.features || [];
   const featuresQuestion = questions.find((q) => q.id === 'features');
   const timelineQuestion = questions.find((q) => q.id === 'timeline');
@@ -496,7 +514,7 @@ function TechSelectStep({
   questions: qs,
 }: {
   wizard: ReturnType<typeof useWizard>;
-  questions: typeof questions;
+  questions: ReturnType<typeof getWizardData>['questions'];
 }) {
   const answerKey = qs[0]?.id as keyof typeof wizard.answers;
   const selected = wizard.answers[answerKey] as string;
@@ -555,7 +573,7 @@ function ExtrasStep({
   questions: qs,
 }: {
   wizard: ReturnType<typeof useWizard>;
-  questions: typeof questions;
+  questions: ReturnType<typeof getWizardData>['questions'];
 }) {
   return (
     <div className="space-y-8">
@@ -590,7 +608,8 @@ function ExtrasStep({
   );
 }
 
-function ComparisonCard({ comparison }: { comparison: typeof comparisons[0] }) {
+function ComparisonCard({ comparison }: { comparison: ReturnType<typeof getWizardData>['comparisons'][number] }) {
+  const { t } = useNamespace(wizardPage);
   const [activeTab, setActiveTab] = useState(0);
   const tech = comparison.technologies[activeTab];
 
@@ -622,7 +641,7 @@ function ComparisonCard({ comparison }: { comparison: typeof comparisons[0] }) {
         <p className="text-xs text-[#8B92A8]">{tech.bestFor}</p>
 
         <div>
-          <div className="text-xs font-heading text-mint-code mb-1">Pros</div>
+          <div className="text-xs font-heading text-mint-code mb-1">{t('comparisonPros')}</div>
           {tech.pros.map((pro, i) => (
             <div key={i} className="flex items-start gap-1.5 text-xs text-[#8B92A8]">
               <ChevronRight size={10} className="text-mint-code mt-0.5 flex-shrink-0" />
@@ -632,7 +651,7 @@ function ComparisonCard({ comparison }: { comparison: typeof comparisons[0] }) {
         </div>
 
         <div>
-          <div className="text-xs font-heading text-red-400 mb-1">Cons</div>
+          <div className="text-xs font-heading text-red-400 mb-1">{t('comparisonCons')}</div>
           {tech.cons.map((con, i) => (
             <div key={i} className="flex items-start gap-1.5 text-xs text-[#8B92A8]">
               <ChevronRight size={10} className="text-red-400 mt-0.5 flex-shrink-0" />

@@ -1,21 +1,25 @@
 import { Link } from 'react-router';
 import { Github, Heart, ExternalLink } from 'lucide-react';
-
-const footerLinks = [
-  { label: 'Documentation', href: '/docs' },
-  { label: 'Prompt Library', href: '/prompts' },
-  { label: 'Tool Comparison', href: '/tools' },
-  { label: 'Templates', href: '/templates' },
-];
-
-const communityLinks = [
-  { label: 'Contributing Guide', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/.github/CONTRIBUTING.md', external: true },
-  { label: 'Changelog', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/CHANGELOG.md', external: true },
-  { label: 'Issues', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/issues', external: true },
-  { label: 'Discussions', href: 'https://github.com/dangelBorges/the-vibecoding-handbook/discussions', external: true },
-];
+import { useNamespace } from '../i18n/useNamespace';
+import footer from '../i18n/translations/footer';
 
 export default function Footer() {
+  const { t } = useNamespace(footer);
+
+  const footerLinks = [
+    { label: t('documentation'), href: '/docs' },
+    { label: t('promptLibrary'), href: '/prompts' },
+    { label: t('toolComparison'), href: '/tools' },
+    { label: t('templates'), href: '/templates' },
+  ];
+
+  const communityLinks = [
+    { label: t('contributingGuide'), href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/.github/CONTRIBUTING.md', external: true },
+    { label: t('changelog'), href: 'https://github.com/dangelBorges/the-vibecoding-handbook/blob/main/CHANGELOG.md', external: true },
+    { label: t('issues'), href: 'https://github.com/dangelBorges/the-vibecoding-handbook/issues', external: true },
+    { label: t('discussions'), href: 'https://github.com/dangelBorges/the-vibecoding-handbook/discussions', external: true },
+  ];
+
   return (
     <footer className="bg-surface border-t border-white/5">
       {/* Massive CTA */}
@@ -24,12 +28,10 @@ export default function Footer() {
           className="font-display text-[#F0F2F5] uppercase leading-none"
           style={{ fontSize: 'clamp(40px, 10vw, 140px)' }}
         >
-          START
-          <br />
-          BUILDING
+          {t('ctaTitle')}
         </h2>
         <p className="mt-6 text-[#8B92A8] text-lg max-w-xl mx-auto">
-          Join thousands of developers coding with AI. Star the repo, contribute prompts, and help shape the future of vibe coding.
+          {t('ctaSubtitle')}
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <a
@@ -39,13 +41,13 @@ export default function Footer() {
             className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 transition-all duration-300"
           >
             <Github size={20} />
-            Star on GitHub
+            {t('starOnGitHub')}
           </a>
           <Link
             to="/docs"
             className="inline-flex items-center justify-center gap-2 px-8 py-3 border border-[#F0F2F5]/20 text-[#F0F2F5] font-heading rounded-full hover:border-cyan/60 hover:text-cyan transition-all duration-300"
           >
-            Read the Guide
+            {t('readTheGuide')}
           </Link>
         </div>
       </div>
@@ -55,7 +57,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Handbook */}
           <div>
-            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">Handbook</h4>
+            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">{t('handbook')}</h4>
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.href}>
@@ -72,7 +74,7 @@ export default function Footer() {
 
           {/* Community */}
           <div>
-            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">Community</h4>
+            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">{t('community')}</h4>
             <ul className="space-y-3">
               {communityLinks.map((link) => (
                 <li key={link.href}>
@@ -92,29 +94,29 @@ export default function Footer() {
 
           {/* Resources */}
           <div>
-            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">Resources</h4>
+            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">{t('resources')}</h4>
             <ul className="space-y-3">
               <li>
-                <span className="text-[#8B92A8] text-sm cursor-default">Awesome Vibe Coding (soon)</span>
+                <span className="text-[#8B92A8] text-sm cursor-default">{t('awesomeVibeCoding')}</span>
               </li>
               <li>
-                <span className="text-[#8B92A8] text-sm cursor-default">Community Discord (soon)</span>
+                <span className="text-[#8B92A8] text-sm cursor-default">{t('communityDiscord')}</span>
               </li>
               <li>
-                <span className="text-[#8B92A8] text-sm cursor-default">Newsletter (soon)</span>
+                <span className="text-[#8B92A8] text-sm cursor-default">{t('newsletter')}</span>
               </li>
             </ul>
           </div>
 
           {/* Legal */}
           <div>
-            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">Legal</h4>
+            <h4 className="font-heading text-[#F0F2F5] text-sm font-semibold mb-4">{t('legal')}</h4>
             <ul className="space-y-3">
               <li>
-                <span className="text-[#8B92A8] text-sm cursor-default">MIT License</span>
+                <span className="text-[#8B92A8] text-sm cursor-default">{t('mitLicense')}</span>
               </li>
               <li>
-                <span className="text-[#8B92A8] text-sm cursor-default">Code of Conduct</span>
+                <span className="text-[#8B92A8] text-sm cursor-default">{t('codeOfConduct')}</span>
               </li>
             </ul>
           </div>
@@ -125,10 +127,12 @@ export default function Footer() {
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[#8B92A8] text-xs flex items-center gap-1">
-            Open source. Built with <Heart size={12} className="text-cyan" /> by the community.
+            {t('builtWith').replace('♥', '')}
+            <Heart size={12} className="text-cyan" />
+            {t('byTheCommunity')}
           </p>
           <p className="text-[#8B92A8]/60 text-xs">
-            &copy; {new Date().getFullYear()} The Vibe Coding Handbook. MIT License.
+            {t('copyright', { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>

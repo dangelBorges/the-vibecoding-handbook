@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Github, Sparkles, X, ArrowRight } from 'lucide-react';
+import { useNamespace } from '../i18n/useNamespace';
+import konami from '../i18n/translations/konami';
 
 const KONAMI_CODE = [
   'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
@@ -8,6 +10,7 @@ const KONAMI_CODE = [
 ];
 
 export default function KonamiEasterEgg() {
+  const { t } = useNamespace(konami);
   const [show, setShow] = useState(false);
   const [sequence, setSequence] = useState<string[]>([]);
 
@@ -65,16 +68,16 @@ export default function KonamiEasterEgg() {
           className="font-display text-[#F0F2F5] uppercase mb-2"
           style={{ fontSize: 'clamp(18px, 3vw, 28px)' }}
         >
-          You Found The Secret!
+          {t('title')}
         </h2>
         <p className="text-[#8B92A8] text-sm mb-6">
-          Konami code unlocked. You are a true vibe coder. Welcome to the inner circle.
+          {t('subtitle')}
         </p>
 
         <div className="p-4 rounded-xl bg-[#0B0C10] border border-white/5 mb-6">
-          <div className="font-mono text-xs text-cyan mb-2">Your vibe coder rank:</div>
+          <div className="font-mono text-xs text-cyan mb-2">{t('rankLabel')}</div>
           <div className="font-display text-lg text-[#F0F2F5]">
-            LEVEL 99 ARCHITECT
+            {t('rankValue')}
           </div>
         </div>
 
@@ -86,14 +89,14 @@ export default function KonamiEasterEgg() {
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-cyan text-[#0B0C10] font-heading font-semibold rounded-full hover:bg-cyan/90 transition-all"
           >
             <Github size={18} />
-            Star on GitHub
+            {t('starOnGitHub')}
             <ArrowRight size={16} />
           </a>
           <button
             onClick={() => setShow(false)}
             className="text-[#8B92A8] text-sm hover:text-[#F0F2F5] transition-colors"
           >
-            Close and keep exploring
+            {t('close')}
           </button>
         </div>
       </div>

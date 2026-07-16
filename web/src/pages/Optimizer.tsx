@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { Link } from 'react-router';
 import {
   ArrowLeft, Wand2, Copy, Check, Upload, Zap,
@@ -7,19 +7,26 @@ import {
 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { optimizePrompt, extractContextFromAgentsMd, type OptimizedPrompt, type IntentType } from '../data/optimizer';
-
-const intentLabels: Record<IntentType, { label: string; color: string; bg: string }> = {
-  feature: { label: 'Feature', color: '#58A6B2', bg: 'rgba(88,166,178,0.1)' },
-  bugfix: { label: 'Bug Fix', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-  refactor: { label: 'Refactor', color: '#C792EA', bg: 'rgba(199,146,234,0.1)' },
-  test: { label: 'Test', color: '#C3E88D', bg: 'rgba(195,232,141,0.1)' },
-  docs: { label: 'Documentation', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-  review: { label: 'Code Review', color: '#8B92A8', bg: 'rgba(139,146,168,0.1)' },
-  unknown: { label: 'General', color: '#8B92A8', bg: 'rgba(139,146,168,0.1)' },
-};
+import { useNamespace } from '../i18n/useNamespace';
+import { useI18n } from '../i18n/useI18n';
+import {
+  getIntentLabels,
+  getImprovements,
+  getSectionTitles,
+} from '../i18n/localizers/optimizer';
+import optimizerPage from '../i18n/translations/optimizerPage';
+import {
+  optimizePrompt,
+  extractContextFromAgentsMd,
+  type OptimizedPrompt,
+} from '../data/optimizer';
 
 export default function Optimizer() {
+  const { locale } = useI18n();
+  const { t, plural } = useNamespace(optimizerPage);
+  const intentLabels = getIntentLabels(locale);
+  const sectionTitles = getSectionTitles(locale);
+
   const [rawPrompt, setRawPrompt] = useState('');
   const [context, setContext] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -77,7 +84,14 @@ export default function Optimizer() {
   };
 
   // Live intent detection
-  const liveIntent = rawPrompt.length > 5 ? optimizePrompt(rawPrompt, agentsFile || undefined).intent : null;
+  const liveIntent = rawPrompt.length > 5
+    ? optimizePrompt(rawPrompt, agentsFile || undefined).intent
+    : null;
+
+  const localizedImprovements = useMemo(
+    () => (result ? getImprovements(locale, result.improvements) : []),
+    [locale, result]
+  );
 
   return (
     <div className="min-h-[100dvh] flex flex-col" style={{ background: '#0B0C10' }}>
@@ -92,23 +106,22 @@ export default function Optimizer() {
               className="inline-flex items-center gap-1 text-[#8B92A8] hover:text-cyan text-sm mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
-              Back to home
+              {t('backToHome')}
             </Link>
             <div className="flex items-center gap-3 mb-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/20">
                 <Zap size={14} className="text-cyan" />
-                <span className="text-cyan text-xs font-heading">AI-Powered</span>
+                <span className="text-cyan text-xs font-heading">{t('badge')}</span>
               </div>
             </div>
             <h1
               className="font-display text-[#F0F2F5] uppercase"
               style={{ fontSize: 'clamp(28px, 5vw, 56px)' }}
             >
-              Prompt Optimizer
+              {t('title')}
             </h1>
             <p className="mt-3 text-[#8B92A8] max-w-2xl">
-              Transform your vague ideas into structured, optimized prompts that AI agents 
-              can execute with precision. Detects intent, applies patterns, enriches with context.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -117,7 +130,7 @@ export default function Optimizer() {
             <div className="mb-6 flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Target size={14} className="text-[#8B92A8]" />
-                <span className="text-xs text-[#8B92A8]">Detected:</span>
+                <span className="text-xs text-[#8B92A8]">{t('detectedLabel')}</span>
               </div>
               <div
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-heading font-medium"
@@ -131,7 +144,7 @@ export default function Optimizer() {
               </div>
               {liveIntent.keywords.length > 0 && (
                 <span className="text-xs text-[#8B92A8]/60">
-                  from: {liveIntent.keywords.slice(0, 3).join(', ')}
+                  {t('detectedFrom')} {liveIntent.keywords.slice(0, 3).join(', ')}
                 </span>
               )}
             </div>
@@ -144,24 +157,24 @@ export default function Optimizer() {
               <div className="p-6 rounded-xl bg-surface/50 border border-white/5">
                 <label className="flex items-center gap-2 font-heading text-sm font-semibold text-[#F0F2F5] mb-3">
                   <FileCode size={16} className="text-cyan" />
-                  Your Prompt
+                  {t('yourPromptLabel')}
                 </label>
                 <textarea
                   value={rawPrompt}
                   onChange={(e) => setRawPrompt(e.target.value)}
-                  placeholder="Describe what you need... e.g., 'Create a login page with email and Google auth'"
+                  placeholder={t('yourPromptPlaceholder')}
                   className="w-full h-48 px-4 py-3 bg-[#0B0C10] border border-white/10 rounded-xl text-[#F0F2F5] placeholder-[#8B92A8]/40 focus:outline-none focus:border-cyan/40 transition-colors resize-none font-mono text-sm"
                 />
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-xs text-[#8B92A8]">
-                    {rawPrompt.length} chars · ~{Math.round(rawPrompt.length / 4)} tokens
+                    {t('chars', { count: rawPrompt.length })} · {t('tokens', { count: Math.round(rawPrompt.length / 4) })}
                   </span>
                   {rawPrompt && (
                     <button
                       onClick={() => setRawPrompt('')}
                       className="text-xs text-[#8B92A8] hover:text-red-400 transition-colors"
                     >
-                      Clear
+                      {t('clear')}
                     </button>
                   )}
                 </div>
@@ -174,7 +187,7 @@ export default function Optimizer() {
                   className="flex items-center gap-2 text-sm text-[#8B92A8] hover:text-cyan transition-colors"
                 >
                   {showAdvanced ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  Advanced Options
+                  {t('advancedOptions')}
                 </button>
 
                 {showAdvanced && (
@@ -183,15 +196,15 @@ export default function Optimizer() {
                     <div className="p-5 rounded-xl bg-surface/30 border border-white/5">
                       <label className="flex items-center gap-2 font-heading text-sm font-semibold text-[#F0F2F5] mb-2">
                         <Layers size={14} className="text-purple-code" />
-                        Additional Context (optional)
+                        {t('additionalContextLabel')}
                       </label>
                       <p className="text-xs text-[#8B92A8] mb-3">
-                        Paste any relevant context about your project, stack, or patterns.
+                        {t('additionalContextHint')}
                       </p>
                       <textarea
                         value={context}
                         onChange={(e) => setContext(e.target.value)}
-                        placeholder="We use Next.js 15 with Supabase, shadcn/ui components..."
+                        placeholder={t('additionalContextPlaceholder')}
                         className="w-full h-32 px-4 py-3 bg-[#0B0C10] border border-white/10 rounded-xl text-[#F0F2F5] placeholder-[#8B92A8]/40 focus:outline-none focus:border-cyan/40 transition-colors resize-none font-mono text-sm"
                       />
                     </div>
@@ -200,10 +213,10 @@ export default function Optimizer() {
                     <div className="p-5 rounded-xl bg-surface/30 border border-white/5">
                       <label className="flex items-center gap-2 font-heading text-sm font-semibold text-[#F0F2F5] mb-2">
                         <Upload size={14} className="text-mint-code" />
-                        Upload AGENTS.md
+                        {t('uploadAgentsLabel')}
                       </label>
                       <p className="text-xs text-[#8B92A8] mb-3">
-                        We&apos;ll extract your project context and include it in the optimized prompt.
+                        {t('uploadAgentsHint')}
                       </p>
 
                       {!agentsFile ? (
@@ -212,8 +225,8 @@ export default function Optimizer() {
                           className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-cyan/30 transition-colors"
                         >
                           <Upload size={24} className="mx-auto text-[#8B92A8] mb-2" />
-                          <p className="text-sm text-[#8B92A8]">Click to upload AGENTS.md</p>
-                          <p className="text-xs text-[#8B92A8]/60 mt-1">or drag and drop</p>
+                          <p className="text-sm text-[#8B92A8]">{t('uploadAgentsClick')}</p>
+                          <p className="text-xs text-[#8B92A8]/60 mt-1">{t('uploadAgentsDrag')}</p>
                           <input
                             ref={fileInputRef}
                             type="file"
@@ -226,7 +239,7 @@ export default function Optimizer() {
                         <div className="flex items-center justify-between p-3 rounded-lg bg-mint-code/10 border border-mint-code/20">
                           <div className="flex items-center gap-2">
                             <Check size={14} className="text-mint-code" />
-                            <span className="text-sm text-mint-code font-heading">AGENTS.md loaded</span>
+                            <span className="text-sm text-mint-code font-heading">{t('agentsLoaded')}</span>
                           </div>
                           <button
                             onClick={clearAgentsFile}
@@ -252,7 +265,7 @@ export default function Optimizer() {
                 }`}
               >
                 <Wand2 size={20} />
-                Optimize Prompt
+                {t('optimizeButton')}
               </button>
             </div>
 
@@ -262,12 +275,12 @@ export default function Optimizer() {
                 <div className="h-full flex flex-col items-center justify-center p-12 rounded-xl bg-surface/30 border border-white/5 border-dashed">
                   <Sparkles size={48} className="text-[#8B92A8]/20 mb-4" />
                   <p className="text-[#8B92A8] text-center">
-                    Enter a prompt and click <span className="text-cyan font-heading">Optimize</span> to see the magic.
+                    {t('emptyStateTitle', { highlight: t('emptyStateHighlight') })}
                   </p>
                   <div className="mt-6 space-y-2 text-xs text-[#8B92A8]/60">
-                    <p>Try: &quot;Create a user dashboard with analytics&quot;</p>
-                    <p>Try: &quot;Fix the login error when password is wrong&quot;</p>
-                    <p>Try: &quot;Add tests for the payment flow&quot;</p>
+                    <p>{t('example1')}</p>
+                    <p>{t('example2')}</p>
+                    <p>{t('example3')}</p>
                   </div>
                 </div>
               ) : (
@@ -286,11 +299,14 @@ export default function Optimizer() {
                     </div>
                     <div className="flex items-center gap-1 text-xs text-[#8B92A8]">
                       <TrendingUp size={12} />
-                      {result.improvements.length} improvements
+                      {plural(result.improvements.length, {
+                        one: t('improvementsCount_one', { count: result.improvements.length }),
+                        other: t('improvementsCount_other', { count: result.improvements.length }),
+                      })}
                     </div>
                     <div className="flex items-center gap-1 text-xs text-[#8B92A8]">
                       <Zap size={12} />
-                      ~{result.tokenEstimate} tokens
+                      {t('estimatedTokens', { count: result.tokenEstimate })}
                     </div>
                   </div>
 
@@ -301,7 +317,7 @@ export default function Optimizer() {
                       <div className="flex items-center gap-2">
                         <Wand2 size={14} className="text-cyan" />
                         <span className="font-mono text-xs text-[#F0F2F5]">
-                          Optimized Prompt
+                          {t('optimizedPromptLabel')}
                         </span>
                       </div>
                       <button
@@ -309,7 +325,7 @@ export default function Optimizer() {
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan/10 text-cyan text-xs hover:bg-cyan/20 transition-colors"
                       >
                         {copied ? <Check size={12} /> : <Copy size={12} />}
-                        {copied ? 'Copied!' : 'Copy'}
+                        {copied ? t('copied') : t('copy')}
                       </button>
                     </div>
 
@@ -325,10 +341,10 @@ export default function Optimizer() {
                   <div className="p-5 rounded-xl bg-surface/30 border border-white/5">
                     <h3 className="flex items-center gap-2 font-heading text-sm font-semibold text-[#F0F2F5] mb-3">
                       <TrendingUp size={14} className="text-mint-code" />
-                      Improvements Applied
+                      {t('improvementsApplied')}
                     </h3>
                     <ul className="space-y-2">
-                      {result.improvements.map((imp, i) => (
+                      {localizedImprovements.map((imp, i) => (
                         <li key={i} className="flex items-start gap-2 text-xs text-[#8B92A8]">
                           <Check size={12} className="text-mint-code mt-0.5 flex-shrink-0" />
                           {imp}
@@ -341,27 +357,31 @@ export default function Optimizer() {
                   <div className="p-5 rounded-xl bg-surface/30 border border-white/5">
                     <h3 className="flex items-center gap-2 font-heading text-sm font-semibold text-[#F0F2F5] mb-3">
                       <AlertCircle size={14} className="text-cyan" />
-                      Before vs After
+                      {t('beforeVsAfter')}
                     </h3>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <div className="text-xs text-[#8B92A8] mb-1">Original</div>
+                        <div className="text-xs text-[#8B92A8] mb-1">{t('originalLabel')}</div>
                         <div className="p-3 rounded-lg bg-[#0B0C10] border border-white/5">
                           <p className="text-xs text-[#8B92A8] line-clamp-6">{result.original}</p>
                         </div>
                         <div className="text-xs text-[#8B92A8]/60 mt-1">
-                          ~{Math.round(result.original.length / 4)} tokens
+                          {t('tokens', { count: Math.round(result.original.length / 4) })}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs text-cyan mb-1">Optimized</div>
+                        <div className="text-xs text-cyan mb-1">{t('optimizedLabel')}</div>
                         <div className="p-3 rounded-lg bg-[#0B0C10] border border-cyan/10">
                           <p className="text-xs text-[#C792EA] line-clamp-6">{result.optimized}</p>
                         </div>
                         <div className="text-xs text-cyan/60 mt-1">
-                          ~{result.tokenEstimate} tokens
+                          {t('estimatedTokens', { count: result.tokenEstimate })}
                           <span className="text-mint-code ml-1">
-                            (+{Math.round((result.tokenEstimate / Math.max(result.original.length / 4, 1) - 1) * 100)}%)
+                            {t('moreContext', {
+                              percent: Math.round(
+                                (result.tokenEstimate / Math.max(result.original.length / 4, 1) - 1) * 100
+                              ),
+                            })}
                           </span>
                         </div>
                       </div>
@@ -373,7 +393,7 @@ export default function Optimizer() {
                     <div className="p-5 rounded-xl bg-surface/30 border border-white/5">
                       <h3 className="flex items-center gap-2 font-heading text-sm font-semibold text-[#F0F2F5] mb-3">
                         <Layers size={14} className="text-purple-code" />
-                        Structure
+                        {t('structure')}
                       </h3>
                       <div className="space-y-2">
                         {result.sections.map((section, i) => (
@@ -381,7 +401,9 @@ export default function Optimizer() {
                             <div className="w-6 h-6 rounded-full bg-cyan/10 flex items-center justify-center flex-shrink-0">
                               <span className="text-cyan text-xs font-heading">{i + 1}</span>
                             </div>
-                            <span className="text-xs text-[#F0F2F5] font-heading">{section.title}</span>
+                            <span className="text-xs text-[#F0F2F5] font-heading">
+                              {sectionTitles[section.title] ?? section.title}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -395,28 +417,28 @@ export default function Optimizer() {
           {/* How It Works */}
           <div className="mt-16 p-8 rounded-2xl bg-gradient-to-br from-cyan/5 to-purple-code/5 border border-cyan/10">
             <h2 className="font-heading text-xl font-semibold text-[#F0F2F5] mb-6">
-              How the Optimizer Works
+              {t('howItWorksTitle')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <Step
                 number="1"
-                title="Intent Detection"
-                description="Analyzes your prompt to identify if it's a feature, bugfix, refactor, test, or docs task."
+                title={t('step1Title')}
+                description={t('step1Description')}
               />
               <Step
                 number="2"
-                title="Pattern Matching"
-                description="Selects the best prompting pattern: RICE, STAR, Chain-of-Thought, Few-Shot, or Structured."
+                title={t('step2Title')}
+                description={t('step2Description')}
               />
               <Step
                 number="3"
-                title="Context Enrichment"
-                description="Adds your project context from AGENTS.md to ground the AI in your specific stack and conventions."
+                title={t('step3Title')}
+                description={t('step3Description')}
               />
               <Step
                 number="4"
-                title="Optimization"
-                description="Generates a structured prompt with roles, constraints, acceptance criteria, and planning steps."
+                title={t('step4Title')}
+                description={t('step4Description')}
               />
             </div>
           </div>
