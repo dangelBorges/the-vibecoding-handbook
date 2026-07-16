@@ -285,9 +285,9 @@ A 9-step interactive wizard that helps you decide:
 - Deployment (Vercel vs Railway vs Self-hosted)
 - Team workflow (Branching, PRs, Code Review)
 
-### Community Prompt Library
+### Prompt Library
 
-Browse, upvote and copy prompts shared by the community, or submit your own via GitHub. Votes are persisted in the browser with localStorage; prompts live in `web/src/data/communityPrompts.ts` and are updated through PRs.
+Browse curated and community-submitted prompts, upvote the community ones, copy them into your agent, or submit your own via GitHub. Votes are persisted in the browser with localStorage; community prompts live in `web/src/data/communityPrompts.ts` and are updated through PRs.
 
 ---
 

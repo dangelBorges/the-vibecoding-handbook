@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router';
-import { Search, Copy, Check, Filter, ArrowLeft, ThumbsUp, Plus } from 'lucide-react';
+import { Search, Copy, Check, Filter, ThumbsUp, Plus } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { communityPrompts, type CommunityPrompt } from '../data/communityPrompts';
-import { categories, tools, stacks } from '../data/prompts';
+import { prompts as curatedPrompts, categories, tools, stacks } from '../data/prompts';
 
 const UPVOTES_KEY = 'vibe-upvotes';
+
+type UnifiedPrompt = CommunityPrompt & { source: 'curated' | 'community' };
+
+const unifiedPrompts: UnifiedPrompt[] = [
+  ...curatedPrompts.map((p) => ({ ...p, author: 'The Vibe Coding Handbook', submittedAt: '', votes: 0, source: 'curated' as const })),
+  ...communityPrompts.map((p) => ({ ...p, source: 'community' as const })),
+];
 
 const categoryColors: Record<string, string> = {
   feature: '#58A6B2',
@@ -30,7 +36,7 @@ function CommunityPromptCard({
   hasVoted,
   onVote,
 }: {
-  prompt: CommunityPrompt;
+  prompt: UnifiedPrompt;
   index: number;
   hasVoted: boolean;
   onVote: (id: string) => void;
@@ -88,6 +94,11 @@ function CommunityPromptCard({
                 {categoryLabels[prompt.category]}
               </span>
               <span className="text-[#8B92A8]/50 text-xs">{prompt.stack}</span>
+              {prompt.source === 'curated' && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-heading font-medium bg-cyan/10 text-cyan">
+                  Official
+                </span>
+              )}
             </div>
             <h3 className="font-heading text-lg font-semibold text-[#F0F2F5] group-hover:text-cyan transition-colors">
               {prompt.title}
@@ -129,19 +140,25 @@ function CommunityPromptCard({
 
       <div className="p-6 pt-4 flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => onVote(prompt.id)}
-            disabled={hasVoted}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-heading transition-colors ${
-              hasVoted
-                ? 'bg-cyan/20 text-cyan cursor-default'
-                : 'bg-white/5 text-[#8B92A8] hover:bg-cyan/10 hover:text-cyan'
-            }`}
-          >
-            <ThumbsUp size={14} />
-            {hasVoted ? 'Upvoted' : 'Upvote'}
-            <span className="ml-1">{prompt.votes + (hasVoted ? 1 : 0)}</span>
-          </button>
+          {prompt.source === 'community' ? (
+            <button
+              onClick={() => onVote(prompt.id)}
+              disabled={hasVoted}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-heading transition-colors ${
+                hasVoted
+                  ? 'bg-cyan/20 text-cyan cursor-default'
+                  : 'bg-white/5 text-[#8B92A8] hover:bg-cyan/10 hover:text-cyan'
+              }`}
+            >
+              <ThumbsUp size={14} />
+              {hasVoted ? 'Upvoted' : 'Upvote'}
+              <span className="ml-1">{prompt.votes + (hasVoted ? 1 : 0)}</span>
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-heading bg-cyan/10 text-cyan">
+              Curated
+            </span>
+          )}
           <span className="text-xs text-[#8B92A8]/60">by {prompt.author}</span>
         </div>
         <div className="text-xs text-[#8B92A8]/60">{prompt.whenToUse}</div>
@@ -176,7 +193,7 @@ export default function CommunityPrompts() {
     }
   };
 
-  const filtered = communityPrompts.filter((p) => {
+  const filtered = unifiedPrompts.filter((p) => {
     const matchesSearch =
       !search ||
       p.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -198,21 +215,13 @@ export default function CommunityPrompts() {
 
       <main className="pt-24 pb-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <Link
-            to="/prompts"
-            className="inline-flex items-center gap-2 text-[#8B92A8] hover:text-cyan transition-colors text-sm mb-6"
-          >
-            <ArrowLeft size={16} />
-            Back to Prompt Library
-          </Link>
-
           <div className="mb-12">
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-[#F0F2F5] mb-4">
-              Community Prompts
+              Prompt Library
             </h1>
             <p className="text-[#8B92A8] text-lg max-w-3xl">
-              Prompts shared by the community. Upvote the ones you find useful, copy them into your
-              agent, or submit your own via GitHub.
+              Curated prompts plus community submissions. Upvote the ones you find useful, copy them
+              into your agent, or submit your own via GitHub.
             </p>
           </div>
 
