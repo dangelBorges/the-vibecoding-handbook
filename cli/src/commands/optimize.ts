@@ -4,7 +4,8 @@ import pc from 'picocolors';
 import ora from 'ora';
 import { input, confirm } from '@inquirer/prompts';
 import { printSuccess, printInfo, printDivider } from '../utils/prompts.js';
-import { isInteractive } from '../utils/ui.js';
+import { isInteractive, warn } from '../utils/ui.js';
+import { detectLlmConfig, generateOptimizedPrompt as generateLlmOptimizedPrompt } from '../utils/llm.js';
 
 // Inline the optimizer engine (client-side code adapted for Node.js)
 type IntentType = 'feature' | 'bugfix' | 'refactor' | 'test' | 'docs' | 'review' | 'unknown';
@@ -166,10 +167,23 @@ export async function optimizeCommand(prompt: string | undefined, options: Optim
     }
   }
 
-  // Optimize
+  // Optimize (heuristics always run; LLM rewrites the prompt body when available)
   const spinner = ora('Optimizing prompt...').start();
   const result = optimize(rawPrompt, context);
   spinner.succeed('Prompt optimized');
+
+  const llm = detectLlmConfig();
+  if (llm) {
+    printInfo(`AI mode: ${llm.provider} (${llm.model})`);
+    const llmPrompt = await generateLlmOptimizedPrompt(rawPrompt, context, result.intent, llm);
+    if (llmPrompt) {
+      result.optimized = llmPrompt;
+    } else {
+      warn('LLM unavailable — using heuristic optimization');
+    }
+  } else {
+    printInfo('Local mode: heuristic optimization');
+  }
 
   // Output
   printDivider();

@@ -104,6 +104,7 @@ Features:
 - Role assignment (Senior Dev, Test Engineer, etc.)
 - Constraint injection (TypeScript strict, testing, patterns)
 - Token estimation
+- AI mode: when `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` is set, the final prompt is rewritten by the LLM (`VIBE_PROVIDER` / `VIBE_MODEL` to override); falls back to heuristics automatically
 
 ### `vibe chat`
 

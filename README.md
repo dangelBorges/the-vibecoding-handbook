@@ -286,7 +286,7 @@ See the [open issues](https://github.com/dangelBorges/the-vibecoding-handbook/is
 
 - [x] `vibe chat` with OpenAI/Claude API integration
 - [x] Auto-fix suggestions in `vibe review --fix`
-- [ ] AI-powered prompt templates
+- [x] AI-powered prompt templates
 - [x] Natural language to AGENTS.md generation
 
 ### Phase 3 — Community

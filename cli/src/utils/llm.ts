@@ -119,6 +119,31 @@ function buildScanSummary(scan: ProjectScan): Record<string, unknown> {
 }
 
 /**
+ * Rewrites a raw user prompt into a structured, high-signal prompt for AI coding
+ * agents. Returns null on any LLM failure so callers can fall back to the local
+ * heuristic optimizer.
+ */
+export async function generateOptimizedPrompt(
+  rawPrompt: string,
+  context: string | undefined,
+  intent: string,
+  config: LlmConfig
+): Promise<string | null> {
+  const system = `You are a prompt engineer for AI coding agents. Rewrite the user's raw prompt into a clear, structured Markdown prompt that an AI agent can execute effectively.
+Include these sections only when relevant: Role, Context, Task, Constraints, Expected Output.
+Be specific, concise, and actionable. Do not invent credentials, URLs, or implementation details not implied by the input.`;
+
+  const parts = [
+    `Detected intent: ${intent}`,
+    `Raw prompt:\n${rawPrompt}`,
+    context ? `Project context:\n${context}` : '',
+    'Return only the rewritten prompt in Markdown. Do not wrap it in code fences.',
+  ];
+
+  return generateText(config, system, parts.filter(Boolean).join('\n\n'));
+}
+
+/**
  * Generates a complete AGENTS.md from a natural-language description and a
  * project scan summary. Returns null on any LLM failure so callers can fall
  * back to the local heuristic generator.

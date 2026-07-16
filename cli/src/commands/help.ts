@@ -135,7 +135,7 @@ const TOPICS: Record<string, CommandHelp> = {
   optimize: {
     summary: 'Turn a vague prompt into a structured, high-signal prompt',
     description:
-      'Detects intent (feature, bugfix, refactor, test, docs, review — English and Spanish keywords), picks a pattern (RICE, STAR, Chain-of-Thought, Few-Shot, Structured) and enriches the prompt with your AGENTS.md context. 100% local — no AI API calls.',
+      'Detects intent (feature, bugfix, refactor, test, docs, review — English and Spanish keywords), picks a pattern (RICE, STAR, Chain-of-Thought, Few-Shot, Structured) and enriches the prompt with your AGENTS.md context. With OPENAI_API_KEY or ANTHROPIC_API_KEY in the environment, the final prompt is rewritten by the LLM (VIBE_PROVIDER / VIBE_MODEL to override); without a key, local heuristics.',
     usage: 'vibe optimize [prompt] [options]',
     options: [
       { flag: '-f, --file <file>', description: 'Read the prompt from a file (takes precedence over [prompt])' },
@@ -145,6 +145,7 @@ const TOPICS: Record<string, CommandHelp> = {
     modes: [
       { flag: 'Interactive', description: 'asks for the prompt, offers clipboard copy and save' },
       { flag: 'Non-interactive', description: 'auto-saves to optimized-prompt.md (or --output path)' },
+      { flag: 'AI mode', description: 'API key detected: LLM rewrites the optimized prompt body' },
     ],
     examples: [
       { cmd: 'vibe optimize "create a login form"', note: 'inline prompt' },

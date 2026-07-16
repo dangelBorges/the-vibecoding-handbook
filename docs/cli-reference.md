@@ -154,6 +154,7 @@ vibe optimize "fix the bug" -c context.md -o output.md
 - Constraint injection from project context
 - Token estimation
 - One-copy to clipboard
+- AI mode: with `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`, the final prompt is rewritten by the LLM; falls back to heuristics on failure
 
 ---
 
