@@ -31,6 +31,7 @@ Initialize project governance files.
 vibe init              # Interactive mode
 vibe init -y           # Skip prompts, use defaults
 vibe init -t saas      # Pre-configured template
+vibe init --merge      # Merge into existing AGENTS.md (preserves your edits)
 ```
 
 **Options:**
@@ -38,6 +39,11 @@ vibe init -t saas      # Pre-configured template
 |--------|-------------|
 | `-y, --yes` | Skip prompts and use defaults |
 | `-t, --type <type>` | Project type: saas, ecommerce, api, dashboard, content |
+| `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting |
+
+With `--merge`, the generated content is wrapped in `<!-- vibe:begin -->` / `<!-- vibe:end -->`
+markers. On subsequent runs only the block between the markers is updated — anything
+you wrote outside the markers is preserved.
 
 **Generated files:**
 - `AGENTS.md` — Project context for AI agents
@@ -58,6 +64,7 @@ Update AGENTS.md from current codebase. This is the **killer feature** — it re
 vibe context           # Interactive refresh
 vibe context --auto    # Full auto-detection
 vibe context --dry-run # Preview without writing
+vibe context --merge   # Update only the managed block, keep your custom notes
 ```
 
 **Options:**
@@ -65,6 +72,11 @@ vibe context --dry-run # Preview without writing
 |--------|-------------|
 | `-a, --auto` | Auto-detect everything (no prompts) |
 | `--dry-run` | Show what would change without writing files |
+| `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting |
+
+`--merge` uses the same `<!-- vibe:begin -->` / `<!-- vibe:end -->` marker mechanism as
+`vibe init --merge`: your content outside the markers is never touched. Combined with
+`--dry-run` it previews the final merged file.
 
 **Detected information:**
 - Framework (Next.js, React, Vue, Svelte, Astro, Fastify...)

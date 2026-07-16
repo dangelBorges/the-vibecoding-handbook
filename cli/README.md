@@ -22,7 +22,11 @@ Initialize project governance files:
 vibe init              # Interactive setup
 vibe init -y           # Skip prompts, use defaults
 vibe init -t saas      # Pre-configured for SaaS
+vibe init --merge      # Merge into existing AGENTS.md instead of overwriting
 ```
+
+With `--merge`, generated content lives between `<!-- vibe:begin -->` / `<!-- vibe:end -->`
+markers — your own notes outside the markers are preserved on every re-run.
 
 Creates:
 - `AGENTS.md` — Project context for AI agents (auto-detected from your code)
@@ -38,7 +42,11 @@ Creates:
 vibe context           # Interactive refresh
 vibe context --auto    # Full auto-detection, no prompts
 vibe context --dry-run # Preview changes without writing
+vibe context --merge   # Update only the managed block, keep your custom notes
 ```
+
+`--merge` uses the same `<!-- vibe:begin -->` / `<!-- vibe:end -->` markers as `vibe init --merge`,
+so refreshing AGENTS.md never destroys your manual edits. Add `--dry-run` to preview the merged result.
 
 Detects automatically:
 - Framework (Next.js, React, Vue, Svelte, Astro, Fastify...)

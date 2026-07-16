@@ -1,6 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 
+/** Per-package summary for monorepo roots (values reuse the detector's strings). */
+export interface PackageSummary {
+  name: string;
+  /** Path relative to the monorepo root (e.g. "packages/web"). */
+  path: string;
+  framework: string;
+  language: string;
+  testFramework: string;
+  styling: string;
+  database: string;
+  auth: string;
+}
+
 export interface ProjectScan {
   name: string;
   framework: string;
@@ -25,6 +38,36 @@ export interface ProjectScan {
   devDependencies: string[];
   scripts: Record<string, string>;
   conventions: string[];
+  isMonorepo: boolean;
+  monorepoTool?: string;
+  packages: PackageSummary[];
+}
+
+/** Minimal shape of a package.json we care about. */
+interface PackageJson {
+  name?: string;
+  scripts?: Record<string, string>;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  workspaces?: string[] | { packages?: string[] };
+}
+
+/** Stack details detected purely from a package.json's dependencies. */
+interface DependencyStack {
+  framework: string;
+  language: string;
+  hasTypeScript: boolean;
+  hasTests: boolean;
+  testFramework: string;
+  hasDatabase: boolean;
+  database: string;
+  hasAuth: boolean;
+  authProvider: string;
+  hasPayments: boolean;
+  paymentProvider: string;
+  hasRealtime: boolean;
+  styling: string;
+  apiStyle: string;
 }
 
 export function scanProject(projectPath: string = process.cwd()): ProjectScan {
@@ -52,78 +95,46 @@ export function scanProject(projectPath: string = process.cwd()): ProjectScan {
     devDependencies: [],
     scripts: {},
     conventions: [],
+    isMonorepo: false,
+    packages: [],
   };
 
   // ─── package.json ───
   const pkgPath = path.join(projectPath, 'package.json');
+  let rootPkg: PackageJson | null = null;
   if (fs.existsSync(pkgPath)) {
     try {
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+      const pkg: PackageJson = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+      rootPkg = pkg;
       result.name = pkg.name || result.name;
       result.scripts = pkg.scripts || {};
       result.dependencies = Object.keys(pkg.dependencies || {});
       result.devDependencies = Object.keys(pkg.devDependencies || {});
 
-      const allDeps = [...result.dependencies, ...result.devDependencies];
-
-      // Framework detection
-      if (allDeps.includes('next')) result.framework = 'Next.js';
-      else if (allDeps.includes('react')) result.framework = 'React';
-      else if (allDeps.includes('vue')) result.framework = 'Vue';
-      else if (allDeps.includes('svelte')) result.framework = 'Svelte';
-      else if (allDeps.includes('astro')) result.framework = 'Astro';
-      else if (allDeps.includes('nuxt')) result.framework = 'Nuxt';
-      else if (allDeps.includes('fastify') || allDeps.includes('express') || allDeps.includes('koa')) result.framework = 'Node.js API';
-
-      // TypeScript
-      result.hasTypeScript = allDeps.includes('typescript') || allDeps.includes('ts-node');
-      result.language = result.hasTypeScript ? 'TypeScript' : 'JavaScript';
-
-      // Test framework
-      if (allDeps.includes('vitest')) { result.hasTests = true; result.testFramework = 'Vitest'; }
-      else if (allDeps.includes('jest')) { result.hasTests = true; result.testFramework = 'Jest'; }
-      else if (allDeps.includes('mocha')) { result.hasTests = true; result.testFramework = 'Mocha'; }
-      else if (allDeps.includes('playwright')) { result.hasTests = true; result.testFramework = 'Playwright'; }
-      else if (allDeps.includes('cypress')) { result.hasTests = true; result.testFramework = 'Cypress'; }
-
-      // Database
-      if (allDeps.includes('prisma') || allDeps.includes('@prisma/client')) { result.hasDatabase = true; result.database = 'PostgreSQL (Prisma)'; }
-      else if (allDeps.includes('mongoose')) { result.hasDatabase = true; result.database = 'MongoDB (Mongoose)'; }
-      else if (allDeps.includes('drizzle-orm')) { result.hasDatabase = true; result.database = 'PostgreSQL (Drizzle)'; }
-      else if (allDeps.includes('@supabase/supabase-js')) { result.hasDatabase = true; result.database = 'Supabase'; }
-      else if (allDeps.includes('firebase')) { result.hasDatabase = true; result.database = 'Firebase'; }
-      else if (allDeps.includes('better-sqlite3') || allDeps.includes('@libsql/client')) { result.hasDatabase = true; result.database = 'SQLite'; }
-
-      // Auth
-      if (allDeps.includes('next-auth') || allDeps.includes('@auth/core')) { result.hasAuth = true; result.authProvider = 'NextAuth.js'; }
-      else if (allDeps.includes('@clerk')) { result.hasAuth = true; result.authProvider = 'Clerk'; }
-      else if (allDeps.includes('@supabase/supabase-js')) { result.hasAuth = true; result.authProvider = 'Supabase Auth'; }
-      else if (allDeps.includes('firebase')) { result.hasAuth = true; result.authProvider = 'Firebase Auth'; }
-      else if (allDeps.includes('passport')) { result.hasAuth = true; result.authProvider = 'Passport.js'; }
-      else if (allDeps.includes('jsonwebtoken') || allDeps.includes('jose')) { result.hasAuth = true; result.authProvider = 'Custom JWT'; }
-
-      // Payments
-      if (allDeps.includes('stripe')) { result.hasPayments = true; result.paymentProvider = 'Stripe'; }
-      else if (allDeps.includes('@lemonsqueezy')) { result.hasPayments = true; result.paymentProvider = 'LemonSqueezy'; }
-
-      // Realtime
-      if (allDeps.includes('socket.io') || allDeps.includes('ws')) { result.hasRealtime = true; }
-      else if (allDeps.includes('@supabase/supabase-js')) { result.hasRealtime = true; }
-
-      // Styling
-      if (allDeps.includes('tailwindcss')) result.styling = 'Tailwind CSS';
-      else if (allDeps.includes('styled-components')) result.styling = 'Styled Components';
-      else if (allDeps.includes('@emotion')) result.styling = 'Emotion';
-      else if (allDeps.includes('sass') || allDeps.includes('node-sass')) result.styling = 'Sass/SCSS';
-      else if (allDeps.includes('postcss')) result.styling = 'PostCSS';
-
-      // API style
-      if (allDeps.includes('trpc') || allDeps.includes('@trpc')) result.apiStyle = 'tRPC';
-      else if (allDeps.includes('graphql')) result.apiStyle = 'GraphQL';
-      else if (allDeps.includes('@tanstack/react-query')) result.apiStyle = 'REST + React Query';
-      else if (allDeps.includes('axios') || allDeps.includes('fetch')) result.apiStyle = 'REST';
-
+      // Stack detection (framework, language, tests, database, auth, ...)
+      Object.assign(result, detectFromPackageJson(pkg));
     } catch { /* ignore */ }
+  }
+
+  // ─── Monorepo / workspaces ───
+  const monorepo = detectMonorepo(projectPath, rootPkg);
+  if (monorepo) {
+    result.isMonorepo = true;
+    result.monorepoTool = monorepo.tool;
+    for (const dir of expandWorkspaceGlobs(projectPath, monorepo.globs)) {
+      const summary = scanWorkspacePackage(projectPath, dir);
+      if (summary) result.packages.push(summary);
+    }
+
+    // Aggregate key facts from packages into the root scan
+    if (result.packages.length > 0) {
+      result.hasTypeScript = result.hasTypeScript || result.packages.some((p) => p.language === 'TypeScript');
+      result.hasTests = result.hasTests || result.packages.some((p) => p.testFramework !== 'none');
+      if (result.testFramework === 'none') {
+        const firstWithTests = result.packages.find((p) => p.testFramework !== 'none');
+        if (firstWithTests) result.testFramework = firstWithTests.testFramework;
+      }
+    }
   }
 
   // ─── Directory structure ───
@@ -181,6 +192,207 @@ export function scanProject(projectPath: string = process.cwd()): ProjectScan {
   return result;
 }
 
+/** Detects the stack (framework, language, tests, ...) from a parsed package.json. */
+function detectFromPackageJson(pkg: PackageJson): DependencyStack {
+  const stack: DependencyStack = {
+    framework: 'unknown',
+    language: 'javascript',
+    hasTypeScript: false,
+    hasTests: false,
+    testFramework: 'none',
+    hasDatabase: false,
+    database: 'none',
+    hasAuth: false,
+    authProvider: 'none',
+    hasPayments: false,
+    paymentProvider: 'none',
+    hasRealtime: false,
+    styling: 'none',
+    apiStyle: 'none',
+  };
+
+  const allDeps = [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})];
+
+  // Framework detection
+  if (allDeps.includes('next')) stack.framework = 'Next.js';
+  else if (allDeps.includes('react')) stack.framework = 'React';
+  else if (allDeps.includes('vue')) stack.framework = 'Vue';
+  else if (allDeps.includes('svelte')) stack.framework = 'Svelte';
+  else if (allDeps.includes('astro')) stack.framework = 'Astro';
+  else if (allDeps.includes('nuxt')) stack.framework = 'Nuxt';
+  else if (allDeps.includes('fastify') || allDeps.includes('express') || allDeps.includes('koa')) stack.framework = 'Node.js API';
+
+  // TypeScript
+  stack.hasTypeScript = allDeps.includes('typescript') || allDeps.includes('ts-node');
+  stack.language = stack.hasTypeScript ? 'TypeScript' : 'JavaScript';
+
+  // Test framework
+  if (allDeps.includes('vitest')) { stack.hasTests = true; stack.testFramework = 'Vitest'; }
+  else if (allDeps.includes('jest')) { stack.hasTests = true; stack.testFramework = 'Jest'; }
+  else if (allDeps.includes('mocha')) { stack.hasTests = true; stack.testFramework = 'Mocha'; }
+  else if (allDeps.includes('playwright')) { stack.hasTests = true; stack.testFramework = 'Playwright'; }
+  else if (allDeps.includes('cypress')) { stack.hasTests = true; stack.testFramework = 'Cypress'; }
+
+  // Database
+  if (allDeps.includes('prisma') || allDeps.includes('@prisma/client')) { stack.hasDatabase = true; stack.database = 'PostgreSQL (Prisma)'; }
+  else if (allDeps.includes('mongoose')) { stack.hasDatabase = true; stack.database = 'MongoDB (Mongoose)'; }
+  else if (allDeps.includes('drizzle-orm')) { stack.hasDatabase = true; stack.database = 'PostgreSQL (Drizzle)'; }
+  else if (allDeps.includes('@supabase/supabase-js')) { stack.hasDatabase = true; stack.database = 'Supabase'; }
+  else if (allDeps.includes('firebase')) { stack.hasDatabase = true; stack.database = 'Firebase'; }
+  else if (allDeps.includes('better-sqlite3') || allDeps.includes('@libsql/client')) { stack.hasDatabase = true; stack.database = 'SQLite'; }
+
+  // Auth
+  if (allDeps.includes('next-auth') || allDeps.includes('@auth/core')) { stack.hasAuth = true; stack.authProvider = 'NextAuth.js'; }
+  else if (allDeps.includes('@clerk')) { stack.hasAuth = true; stack.authProvider = 'Clerk'; }
+  else if (allDeps.includes('@supabase/supabase-js')) { stack.hasAuth = true; stack.authProvider = 'Supabase Auth'; }
+  else if (allDeps.includes('firebase')) { stack.hasAuth = true; stack.authProvider = 'Firebase Auth'; }
+  else if (allDeps.includes('passport')) { stack.hasAuth = true; stack.authProvider = 'Passport.js'; }
+  else if (allDeps.includes('jsonwebtoken') || allDeps.includes('jose')) { stack.hasAuth = true; stack.authProvider = 'Custom JWT'; }
+
+  // Payments
+  if (allDeps.includes('stripe')) { stack.hasPayments = true; stack.paymentProvider = 'Stripe'; }
+  else if (allDeps.includes('@lemonsqueezy')) { stack.hasPayments = true; stack.paymentProvider = 'LemonSqueezy'; }
+
+  // Realtime
+  if (allDeps.includes('socket.io') || allDeps.includes('ws')) { stack.hasRealtime = true; }
+  else if (allDeps.includes('@supabase/supabase-js')) { stack.hasRealtime = true; }
+
+  // Styling
+  if (allDeps.includes('tailwindcss')) stack.styling = 'Tailwind CSS';
+  else if (allDeps.includes('styled-components')) stack.styling = 'Styled Components';
+  else if (allDeps.includes('@emotion')) stack.styling = 'Emotion';
+  else if (allDeps.includes('sass') || allDeps.includes('node-sass')) stack.styling = 'Sass/SCSS';
+  else if (allDeps.includes('postcss')) stack.styling = 'PostCSS';
+
+  // API style
+  if (allDeps.includes('trpc') || allDeps.includes('@trpc')) stack.apiStyle = 'tRPC';
+  else if (allDeps.includes('graphql')) stack.apiStyle = 'GraphQL';
+  else if (allDeps.includes('@tanstack/react-query')) stack.apiStyle = 'REST + React Query';
+  else if (allDeps.includes('axios') || allDeps.includes('fetch')) stack.apiStyle = 'REST';
+
+  return stack;
+}
+
+interface MonorepoInfo {
+  tool: string;
+  globs: string[];
+}
+
+/**
+ * Detects whether projectPath is the root of a monorepo.
+ * Priority: lerna.json > pnpm-workspace.yaml > package.json "workspaces"
+ * (lerna repos usually also declare npm/yarn workspaces, so lerna wins;
+ * yarn = workspaces field + yarn.lock, npm workspaces otherwise).
+ */
+function detectMonorepo(projectPath: string, pkg: PackageJson | null): MonorepoInfo | null {
+  const lernaPath = path.join(projectPath, 'lerna.json');
+  if (fs.existsSync(lernaPath)) {
+    let globs: string[] = [];
+    try {
+      const lerna: { packages?: unknown } = JSON.parse(fs.readFileSync(lernaPath, 'utf-8'));
+      if (Array.isArray(lerna.packages)) globs = lerna.packages.filter((g): g is string => typeof g === 'string');
+    } catch { /* ignore */ }
+    if (globs.length === 0) globs = readWorkspacesField(pkg);
+    if (globs.length === 0) globs = ['packages/*']; // lerna's own default
+    return { tool: 'lerna', globs };
+  }
+
+  const pnpmWorkspacePath = path.join(projectPath, 'pnpm-workspace.yaml');
+  if (fs.existsSync(pnpmWorkspacePath)) {
+    try {
+      const globs = parsePnpmWorkspaceGlobs(fs.readFileSync(pnpmWorkspacePath, 'utf-8'));
+      if (globs.length > 0) return { tool: 'pnpm', globs };
+    } catch { /* ignore */ }
+  }
+
+  const workspaceGlobs = readWorkspacesField(pkg);
+  if (workspaceGlobs.length > 0) {
+    const tool = fs.existsSync(path.join(projectPath, 'yarn.lock')) ? 'yarn workspaces' : 'npm workspaces';
+    return { tool, globs: workspaceGlobs };
+  }
+
+  return null;
+}
+
+/** Reads the "workspaces" field — both valid forms: array or { packages: [...] }. */
+function readWorkspacesField(pkg: PackageJson | null): string[] {
+  if (!pkg || !pkg.workspaces) return [];
+  if (Array.isArray(pkg.workspaces)) return pkg.workspaces.filter((g): g is string => typeof g === 'string');
+  if (Array.isArray(pkg.workspaces.packages)) return pkg.workspaces.packages.filter((g): g is string => typeof g === 'string');
+  return [];
+}
+
+/**
+ * Minimal pnpm-workspace.yaml parser: collects the list items under the
+ * top-level "packages:" key (simple form: lines like  - 'apps/*').
+ * Negation patterns (!...) are ignored.
+ */
+function parsePnpmWorkspaceGlobs(content: string): string[] {
+  const globs: string[] = [];
+  let inPackages = false;
+  for (const line of content.split('\n')) {
+    if (!inPackages) {
+      if (/^packages\s*:\s*$/.test(line)) inPackages = true;
+      continue;
+    }
+    const item = line.match(/^\s*-\s*['"]?([^'"\s#]+)['"]?\s*$/);
+    if (item) {
+      if (!item[1].startsWith('!')) globs.push(item[1]);
+      continue;
+    }
+    if (line.trim() === '' || line.trimStart().startsWith('#')) continue; // tolerate blanks/comments
+    break; // a new top-level key — end of the packages list
+  }
+  return globs;
+}
+
+/**
+ * Expands workspace globs into package directories (relative to projectPath).
+ * Supports single-level globs ("packages/*") and exact paths ("packages/foo").
+ * Ignores node_modules, dot-directories, and dirs without a package.json.
+ */
+function expandWorkspaceGlobs(projectPath: string, globs: string[]): string[] {
+  const dirs = new Set<string>();
+  for (const glob of globs) {
+    const pattern = glob.replace(/\\/g, '/').replace(/\/+$/, '');
+    if (!pattern || pattern.split('/').includes('node_modules')) continue;
+
+    if (pattern.endsWith('/*')) {
+      const base = pattern.slice(0, -2);
+      let entries: fs.Dirent[];
+      try {
+        entries = fs.readdirSync(path.join(projectPath, base), { withFileTypes: true });
+      } catch { continue; }
+      for (const entry of entries) {
+        if (!entry.isDirectory() || entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
+        const rel = `${base}/${entry.name}`;
+        if (fs.existsSync(path.join(projectPath, rel, 'package.json'))) dirs.add(rel);
+      }
+    } else if (fs.existsSync(path.join(projectPath, pattern, 'package.json'))) {
+      dirs.add(pattern);
+    }
+  }
+  return [...dirs];
+}
+
+/** Builds the per-package summary used by the monorepo table. */
+function scanWorkspacePackage(projectPath: string, relPath: string): PackageSummary | null {
+  try {
+    const pkg: PackageJson = JSON.parse(fs.readFileSync(path.join(projectPath, relPath, 'package.json'), 'utf-8'));
+    const stack = detectFromPackageJson(pkg);
+    return {
+      name: pkg.name || path.basename(relPath),
+      path: relPath,
+      framework: stack.framework,
+      language: stack.language,
+      testFramework: stack.testFramework,
+      styling: stack.styling,
+      database: stack.database,
+      auth: stack.authProvider,
+    };
+  } catch { return null; }
+}
+
 function detectPackageManager(projectPath: string): string {
   if (fs.existsSync(path.join(projectPath, 'pnpm-lock.yaml'))) return 'pnpm';
   if (fs.existsSync(path.join(projectPath, 'yarn.lock'))) return 'yarn';
@@ -216,14 +428,38 @@ export function generateSmartAgentsMd(scan: ProjectScan): string {
   if (scan.hasRealtime) features.push('- **Real-time**: WebSocket/Supabase realtime');
   if (scan.hasTests) features.push('- **Testing**: ' + scan.testFramework);
 
+  // Monorepo section (rendered right after the overview)
+  const orDash = (value: string): string => (value === 'unknown' || value === 'none' ? '—' : value);
+  const monorepoSection =
+    scan.isMonorepo && scan.packages.length > 0
+      ? [
+          '',
+          '## Monorepo',
+          '',
+          `Managed with **${scan.monorepoTool}** (${scan.packages.length} package${scan.packages.length === 1 ? '' : 's'} detected).`,
+          '',
+          '| Package | Path | Framework | Language | Tests |',
+          '|---------|------|-----------|----------|-------|',
+          ...scan.packages.map(
+            (p) => `| ${p.name} | \`${p.path}\` | ${orDash(p.framework)} | ${orDash(p.language)} | ${orDash(p.testFramework)} |`
+          ),
+          '',
+        ].join('\n')
+      : '';
+
+  const overviewLine =
+    scan.isMonorepo && scan.framework === 'unknown'
+      ? `A monorepo managed with ${scan.monorepoTool ?? 'workspaces'} containing ${scan.packages.length} package${scan.packages.length === 1 ? '' : 's'}.`
+      : `A ${scan.framework} application using ${scan.language}.`;
+
   return `# ${scan.name} — Agent Context
 
 > Auto-generated by \`vibe context --auto\`
 > Last updated: ${new Date().toISOString().split('T')[0]}
 
 ## Overview
-A ${scan.framework} application using ${scan.language}.
-
+${overviewLine}
+${monorepoSection}
 ## Tech Stack (Detected)
 
 | Layer | Technology | Status |

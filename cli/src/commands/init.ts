@@ -3,8 +3,9 @@ import path from 'path';
 import { prompt } from 'enquirer';
 import { header, section, success, info, fileTree, spinner, isInteractive } from '../utils/ui.js';
 import { scanProject, generateSmartAgentsMd, generateCursorRules } from '../utils/scanner.js';
+import { wrapInMarkers, mergeIntoExisting } from '../utils/merge.js';
 
-export async function initCommand(options: { yes?: boolean; type?: string }): Promise<void> {
+export async function initCommand(options: { yes?: boolean; type?: string; merge?: boolean }): Promise<void> {
   header('Vibe Coding — Initialize Project');
 
   const cwd = process.cwd();
@@ -16,8 +17,9 @@ export async function initCommand(options: { yes?: boolean; type?: string }): Pr
   if (scan.hasAuth) info(`Auth: ${scan.authProvider}`);
   console.log();
 
-  // Confirm before overwriting existing AGENTS.md (interactive only; CI always proceeds)
-  if (!options.yes && isInteractive() && fs.existsSync(path.join(cwd, 'AGENTS.md'))) {
+  // Confirm before overwriting existing AGENTS.md (interactive only; CI always proceeds).
+  // --merge is an explicit decision to preserve user content, so it never asks.
+  if (!options.merge && !options.yes && isInteractive() && fs.existsSync(path.join(cwd, 'AGENTS.md'))) {
     const overwriteRes = await prompt<{ overwrite: boolean }>({
       type: 'confirm',
       name: 'overwrite',
@@ -71,7 +73,17 @@ export async function initCommand(options: { yes?: boolean; type?: string }): Pr
   }
 
   // Generate AGENTS.md (smart, based on actual project)
-  fs.writeFileSync(path.join(cwd, 'AGENTS.md'), generateSmartAgentsMd(scan));
+  const agentsPath = path.join(cwd, 'AGENTS.md');
+  const agentsContent = generateSmartAgentsMd(scan);
+  if (options.merge && fs.existsSync(agentsPath)) {
+    // --merge: update only the managed block, preserve user content outside it
+    fs.writeFileSync(agentsPath, mergeIntoExisting(fs.readFileSync(agentsPath, 'utf-8'), agentsContent));
+  } else if (options.merge) {
+    // --merge on a fresh file: wrap in markers so future merges work
+    fs.writeFileSync(agentsPath, wrapInMarkers(agentsContent));
+  } else {
+    fs.writeFileSync(agentsPath, agentsContent);
+  }
 
   // Generate .cursorrules
   fs.writeFileSync(path.join(cwd, '.cursorrules'), generateCursorRules(scan));

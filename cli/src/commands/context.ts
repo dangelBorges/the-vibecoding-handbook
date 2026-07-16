@@ -2,8 +2,19 @@ import fs from 'fs';
 import path from 'path';
 import { section, success, info, warn, spinner } from '../utils/ui.js';
 import { scanProject, generateSmartAgentsMd, generateCursorRules } from '../utils/scanner.js';
+import { wrapInMarkers, mergeIntoExisting } from '../utils/merge.js';
 
-export async function contextCommand(options: { auto?: boolean; dryRun?: boolean }): Promise<void> {
+/** Computes the final AGENTS.md content, applying --merge semantics when requested. */
+function finalAgentsContent(cwd: string, generated: string, merge?: boolean): string {
+  if (!merge) return generated;
+  const agentsPath = path.join(cwd, 'AGENTS.md');
+  if (fs.existsSync(agentsPath)) {
+    return mergeIntoExisting(fs.readFileSync(agentsPath, 'utf-8'), generated);
+  }
+  return wrapInMarkers(generated);
+}
+
+export async function contextCommand(options: { auto?: boolean; dryRun?: boolean; merge?: boolean }): Promise<void> {
   const cwd = process.cwd();
   const s = spinner('Scanning your codebase...');
   s.start();
@@ -23,7 +34,7 @@ export async function contextCommand(options: { auto?: boolean; dryRun?: boolean
 
   if (options.dryRun) {
     section('Dry Run — AGENTS.md Preview (first 30 lines)');
-    const content = generateSmartAgentsMd(scan);
+    const content = finalAgentsContent(cwd, generateSmartAgentsMd(scan), options.merge);
     console.log(content.split('\n').slice(0, 30).join('\n'));
     console.log();
     warn('Dry run — no files were written');
@@ -36,9 +47,10 @@ export async function contextCommand(options: { auto?: boolean; dryRun?: boolean
   const agentsPath = path.join(cwd, 'AGENTS.md');
   const oldExists = fs.existsSync(agentsPath);
 
-  const agentsContent = generateSmartAgentsMd(scan);
+  const agentsContent = finalAgentsContent(cwd, generateSmartAgentsMd(scan), options.merge);
   fs.writeFileSync(agentsPath, agentsContent);
-  success(`${oldExists ? 'Updated' : 'Created'} AGENTS.md (${agentsContent.split('\n').length} lines)`);
+  const action = oldExists ? (options.merge ? 'Merged into' : 'Updated') : 'Created';
+  success(`${action} AGENTS.md (${agentsContent.split('\n').length} lines)`);
 
   // Update .cursorrules
   const cursorPath = path.join(cwd, '.cursorrules');
