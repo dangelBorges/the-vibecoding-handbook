@@ -48,6 +48,8 @@ program
   .option('-s, --staged', 'Review only git staged files')
   .option('-f, --file <file>', 'Review a specific file')
   .option('--fix', 'Auto-fix safe issues (removes console.log), suggests fixes for the rest')
+  .option('--base <ref>', 'Review files changed since a git ref (e.g. origin/main)')
+  .option('--strict', 'Exit with code 1 when errors or warnings are found (CI mode)')
   .action(reviewCommand);
 
 // ─── vibe optimize ───

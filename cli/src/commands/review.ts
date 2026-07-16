@@ -10,6 +10,8 @@ interface ReviewOptions {
   staged?: boolean;
   file?: string;
   fix?: boolean;
+  base?: string;
+  strict?: boolean;
 }
 
 const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx'];
@@ -18,12 +20,20 @@ function selectFiles(options: ReviewOptions, cwd: string): string[] | null {
   if (options.file) {
     return [options.file];
   }
-  const gitCommand = options.staged ? 'git diff --cached --name-only' : 'git diff --name-only';
+  let gitCommand: string;
+  if (options.base) {
+    gitCommand = `git diff --name-only ${options.base}...HEAD`;
+  } else if (options.staged) {
+    gitCommand = 'git diff --cached --name-only';
+  } else {
+    gitCommand = 'git diff --name-only';
+  }
   try {
     const output = execSync(gitCommand, { cwd, encoding: 'utf-8' });
     return output.split('\n').filter((f) => SOURCE_EXTENSIONS.some((ext) => f.endsWith(ext)));
   } catch {
-    error(options.staged ? 'Not a git repository or no staged files' : 'Not a git repository');
+    const context = options.base ? `base ref "${options.base}"` : options.staged ? 'staged files' : 'working tree';
+    error(`Not a git repository or no changes for ${context}`);
     return null;
   }
 }
@@ -139,4 +149,8 @@ export async function reviewCommand(options: ReviewOptions): Promise<void> {
   }
 
   printReport(issues, Boolean(options.fix));
+
+  if (options.strict && issues.some((i) => i.severity === 'error' || i.severity === 'warning')) {
+    process.exit(1);
+  }
 }

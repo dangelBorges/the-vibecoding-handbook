@@ -1,0 +1,62 @@
+name: 'Vibe Coding Check'
+description: 'Run vibe check and vibe review in CI/CD'
+author: 'The Vibecoding Handbook'
+branding:
+  icon: 'shield'
+  color: 'purple'
+
+inputs:
+  version:
+    description: 'Version of @vibecoding/cli to install (e.g. 1.0.0 or latest)'
+    required: false
+    default: 'latest'
+  check-strict:
+    description: 'Run vibe check --strict'
+    required: false
+    default: 'true'
+  review-base:
+    description: 'Git ref to diff against for vibe review --base (e.g. origin/main). Leave empty to skip review.'
+    required: false
+    default: ''
+  review-strict:
+    description: 'Add --strict to vibe review'
+    required: false
+    default: 'false'
+  working-directory:
+    description: 'Working directory for the commands'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install @vibecoding/cli
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm install -g @vibecoding/cli@${{ inputs.version }}
+
+    - name: Run vibe check
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ "${{ inputs.check-strict }}" = "true" ]; then
+          vibe check --strict
+        else
+          vibe check
+        fi
+
+    - name: Run vibe review
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      if: ${{ inputs.review-base != '' }}
+      run: |
+        if [ "${{ inputs.review-strict }}" = "true" ]; then
+          vibe review --base ${{ inputs.review-base }} --strict
+        else
+          vibe review --base ${{ inputs.review-base }}
+        fi

@@ -75,6 +75,7 @@ vibe review            # Review modified files
 vibe review -s         # Review staged files only
 vibe review -f src/... # Review specific file
 vibe review --fix      # Auto-fix safe issues, suggest fixes for the rest
+vibe review --base origin/main --strict  # CI: review PR diff and fail on issues
 ```
 
 Checks:
@@ -87,6 +88,10 @@ Checks:
 With `--fix`, standalone `console.log(...)` statements are removed automatically
 (inline or multi-line usages are left untouched), the files are re-scanned, and
 the remaining issues are printed with a fix suggestion for each rule.
+
+`--base <ref>` reviews files changed since a git ref (e.g. `origin/main`), and
+`--strict` exits with code 1 when errors or warnings are found — use it in CI
+workflows to gate pull requests.
 
 ### `vibe optimize`
 

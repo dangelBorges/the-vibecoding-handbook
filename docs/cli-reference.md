@@ -113,6 +113,7 @@ vibe review            # Review modified files
 vibe review -s         # Review staged files only
 vibe review -f src/... # Review specific file
 vibe review --fix      # Auto-fix safe issues, suggest fixes for the rest
+vibe review --base origin/main --strict  # CI: review PR diff and fail on issues
 ```
 
 **Options:**
@@ -121,6 +122,8 @@ vibe review --fix      # Auto-fix safe issues, suggest fixes for the rest
 | `-s, --staged` | Review only git staged files |
 | `-f, --file <file>` | Review a specific file |
 | `--fix` | Remove standalone `console.log(...)` statements and print fix suggestions for the remaining issues |
+| `--base <ref>` | Review files changed since a git ref (e.g. `origin/main`) |
+| `--strict` | Exit code 1 when errors or warnings are found (CI mode) |
 
 **Checks performed:**
 - console.log statements in production code

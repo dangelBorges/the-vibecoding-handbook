@@ -189,6 +189,33 @@ Visit **[vibecoding.guide](https://vibecoding.guide)** to start learning.
 
 ---
 
+## GitHub Action
+
+Add the Vibe Check action to your CI to validate governance and review PR diffs:
+
+```yaml
+name: Vibe Check
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  vibe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dangelBorges/the-vibecoding-handbook/.github/actions/vibe-check@v1
+        with:
+          version: '1.0.0'
+          review-base: 'origin/main'
+          review-strict: 'true'
+```
+
+See `.github/actions/vibe-check/action.yml` for all inputs.
+
+---
+
 ## Project Structure
 
 ```

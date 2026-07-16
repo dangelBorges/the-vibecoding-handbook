@@ -116,20 +116,26 @@ const TOPICS: Record<string, CommandHelp> = {
   review: {
     summary: 'Review changed files against project policies',
     description:
-      'Heuristic review of your changes: console.log, explicit any, hardcoded secrets, .then() chains and oversized functions. Adapts to your .iderules / AGENTS.md. Score: 100 − 15 per error − 5 per warning. With --fix it removes standalone console.log statements and suggests how to fix the rest.',
+      'Heuristic review of your changes: console.log, explicit any, hardcoded secrets, .then() chains and oversized functions. Adapts to your .iderules / AGENTS.md. Score: 100 − 15 per error − 5 per warning. With --fix it removes standalone console.log statements and suggests how to fix the rest. With --base you can review PR diffs; --strict makes it fail the build on errors or warnings.',
     usage: 'vibe review [options]',
     options: [
       { flag: '-s, --staged', description: 'Review only git staged files' },
       { flag: '-f, --file <file>', description: 'Review a single file' },
       { flag: '--fix', description: 'Auto-fix safe issues (removes console.log), suggests fixes for the rest' },
+      { flag: '--base <ref>', description: 'Review files changed since a git ref (e.g. origin/main)' },
+      { flag: '--strict', description: 'Exit code 1 when errors or warnings are found (CI mode)' },
     ],
-    modes: [{ flag: 'Default', description: 'reviews modified-but-unstaged files (git diff)' }],
+    modes: [
+      { flag: 'Default', description: 'reviews modified-but-unstaged files (git diff)' },
+      { flag: 'PR mode', description: '--base origin/main reviews the PR diff' },
+    ],
     examples: [
       { cmd: 'vibe review -s', note: 'pre-commit: only what is staged' },
       { cmd: 'vibe review -f src/auth.ts', note: 'single file' },
       { cmd: 'vibe review --fix', note: 'strip console.log and get fix suggestions' },
+      { cmd: 'vibe review --base origin/main --strict', note: 'CI: fail the PR on review findings' },
     ],
-    tips: ['Works great as a pre-commit step before handing code to an AI agent. Run --fix first to clear the trivial noise.'],
+    tips: ['Works great as a pre-commit step before handing code to an AI agent. Run --fix first to clear the trivial noise. Use --base origin/main --strict in PR workflows.'],
   },
 
   optimize: {
