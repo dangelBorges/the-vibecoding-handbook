@@ -14,6 +14,9 @@ Or use without installing:
 npx @vibecoding/cli <command>
 ```
 
+On install, a welcome banner shows the first steps. It stays silent in CI and
+non-interactive terminals; set `VIBE_NO_BANNER=1` to disable it permanently.
+
 ## Global Options
 
 | Option | Description |

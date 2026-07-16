@@ -5,6 +5,7 @@
  * interactive / non-interactive matrix for every command.
  */
 import { c, header, section, divider } from '../utils/ui.js';
+import { renderBanner } from '../utils/banner.js';
 
 interface HelpLine {
   flag: string;
@@ -202,12 +203,7 @@ function line(flag: string, description: string): void {
 }
 
 function renderOverview(): void {
-  header('VIBE — AI-first project governance');
-  console.log(
-    c.dim('  Generate project context (AGENTS.md, .cursorrules), enforce') + '\n' +
-    c.dim('  policies and level up prompts for AI coding agents.')
-  );
-
+  renderBanner();
   section('Usage');
   console.log('  ' + c.bold('vibe <command> [options]'));
 
