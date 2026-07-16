@@ -117,11 +117,26 @@ export function scanProject(projectPath: string = process.cwd()): ProjectScan {
   }
 
   // ─── Monorepo / workspaces ───
-  const monorepo = detectMonorepo(projectPath, rootPkg);
-  if (monorepo) {
+  // Formal tooling first (workspaces field, pnpm-workspace.yaml, lerna.json);
+  // if none is declared, fall back to directory-structure inference.
+  const formalMonorepo = detectMonorepo(projectPath, rootPkg);
+  let monorepoTool: string | undefined;
+  let packageDirs: string[] = [];
+  if (formalMonorepo) {
+    monorepoTool = formalMonorepo.tool;
+    packageDirs = expandWorkspaceGlobs(projectPath, formalMonorepo.globs);
+  } else {
+    const inferredDirs = detectImplicitPackages(projectPath);
+    if (inferredDirs.length >= 2) {
+      monorepoTool = 'implicit';
+      packageDirs = inferredDirs;
+    }
+  }
+
+  if (monorepoTool) {
     result.isMonorepo = true;
-    result.monorepoTool = monorepo.tool;
-    for (const dir of expandWorkspaceGlobs(projectPath, monorepo.globs)) {
+    result.monorepoTool = monorepoTool;
+    for (const dir of packageDirs) {
       const summary = scanWorkspacePackage(projectPath, dir);
       if (summary) result.packages.push(summary);
     }
@@ -174,7 +189,7 @@ export function scanProject(projectPath: string = process.cwd()): ProjectScan {
     // Check for specific patterns
     const checkFile = (pattern: string): boolean => {
       try {
-        const files = findFiles(codeRoot, pattern);
+        const files = findFiles(codeRoot, pattern, 1);
         return files.length > 0;
       } catch { return false; }
     };
@@ -346,6 +361,53 @@ function parsePnpmWorkspaceGlobs(content: string): string[] {
   return globs;
 }
 
+/** Directories that never count as monorepo packages (false-positive guards). */
+const IMPLICIT_EXCLUDE = new Set([
+  'node_modules', 'dist', 'build', 'out', 'coverage',
+  'example', 'examples', 'demo', 'demos',
+  'fixture', 'fixtures', 'template', 'templates', 'sample', 'samples',
+]);
+
+/** Conventional container dirs worth scanning one level deeper (packages/, apps/, ...). */
+const IMPLICIT_CONTAINERS = new Set(['packages', 'apps', 'libs', 'services', 'components', 'modules']);
+
+/**
+ * Infers monorepo packages from the directory structure when no workspace
+ * tooling is declared: direct subdirectories with their own package.json,
+ * plus one level deeper inside conventional container dirs (apps/*, packages/*).
+ */
+function detectImplicitPackages(projectPath: string): string[] {
+  const dirs = new Set<string>();
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(projectPath, { withFileTypes: true });
+  } catch { return []; }
+
+  const hasPackageJson = (rel: string): boolean =>
+    fs.existsSync(path.join(projectPath, rel, 'package.json'));
+  const isCandidate = (name: string): boolean =>
+    !name.startsWith('.') && !IMPLICIT_EXCLUDE.has(name);
+
+  for (const entry of entries) {
+    if (!entry.isDirectory() || !isCandidate(entry.name)) continue;
+    if (hasPackageJson(entry.name)) {
+      dirs.add(entry.name);
+      continue;
+    }
+    if (!IMPLICIT_CONTAINERS.has(entry.name)) continue;
+    let subEntries: fs.Dirent[];
+    try {
+      subEntries = fs.readdirSync(path.join(projectPath, entry.name), { withFileTypes: true });
+    } catch { continue; }
+    for (const sub of subEntries) {
+      if (!sub.isDirectory() || !isCandidate(sub.name)) continue;
+      const rel = `${entry.name}/${sub.name}`;
+      if (hasPackageJson(rel)) dirs.add(rel);
+    }
+  }
+  return [...dirs].sort();
+}
+
 /**
  * Expands workspace globs into package directories (relative to projectPath).
  * Supports single-level globs ("packages/*") and exact paths ("packages/foo").
@@ -401,20 +463,36 @@ function detectPackageManager(projectPath: string): string {
   return 'npm';
 }
 
-function findFiles(dir: string, pattern: string): string[] {
+const WALK_SKIP_DIRS = new Set([
+  'node_modules', '.git', 'dist', 'build', 'out', 'coverage',
+  '.next', '.nuxt', '.turbo', '.cache', '.vscode',
+]);
+
+/**
+ * Recursively finds files matching a simple glob ("*.test.ts" or "loading.tsx").
+ * Skips dependency/build dirs and never follows symlinks/junctions (pnpm
+ * stores form cycles). Anchored match; stops after `maxResults` hits.
+ */
+function findFiles(dir: string, pattern: string, maxResults = 50, depth = 0): string[] {
+  if (depth > 10) return [];
   const results: string[] = [];
+  const regex = new RegExp(
+    '^' + pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$'
+  );
+  let entries: fs.Dirent[];
   try {
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      const fullPath = path.join(dir, file);
-      const stat = fs.statSync(fullPath);
-      if (stat.isDirectory()) {
-        results.push(...findFiles(fullPath, pattern));
-      } else if (file.match(pattern.replace('*', '.*').replace('.', '\\.'))) {
-        results.push(fullPath);
-      }
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch { return results; }
+  for (const entry of entries) {
+    if (results.length >= maxResults) break;
+    if (WALK_SKIP_DIRS.has(entry.name)) continue;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...findFiles(fullPath, pattern, maxResults - results.length, depth + 1));
+    } else if (entry.isFile() && regex.test(entry.name)) {
+      results.push(fullPath);
     }
-  } catch { /* ignore permission errors */ }
+  }
   return results;
 }
 
@@ -430,13 +508,18 @@ export function generateSmartAgentsMd(scan: ProjectScan): string {
 
   // Monorepo section (rendered right after the overview)
   const orDash = (value: string): string => (value === 'unknown' || value === 'none' ? '—' : value);
+  const isImplicitMonorepo = scan.monorepoTool === 'implicit';
+  const packageCount = scan.packages.length;
+  const plural = packageCount === 1 ? '' : 's';
   const monorepoSection =
-    scan.isMonorepo && scan.packages.length > 0
+    scan.isMonorepo && packageCount > 0
       ? [
           '',
           '## Monorepo',
           '',
-          `Managed with **${scan.monorepoTool}** (${scan.packages.length} package${scan.packages.length === 1 ? '' : 's'} detected).`,
+          isImplicitMonorepo
+            ? `Inferred from directory structure — no workspace tooling detected (${packageCount} package${plural} found). Consider formalizing with pnpm or npm workspaces.`
+            : `Managed with **${scan.monorepoTool}** (${packageCount} package${plural} detected).`,
           '',
           '| Package | Path | Framework | Language | Tests |',
           '|---------|------|-----------|----------|-------|',
@@ -449,7 +532,9 @@ export function generateSmartAgentsMd(scan: ProjectScan): string {
 
   const overviewLine =
     scan.isMonorepo && scan.framework === 'unknown'
-      ? `A monorepo managed with ${scan.monorepoTool ?? 'workspaces'} containing ${scan.packages.length} package${scan.packages.length === 1 ? '' : 's'}.`
+      ? isImplicitMonorepo
+        ? `A monorepo (inferred from directory structure) containing ${packageCount} package${plural}.`
+        : `A monorepo managed with ${scan.monorepoTool ?? 'workspaces'} containing ${packageCount} package${plural}.`
       : `A ${scan.framework} application using ${scan.language}.`;
 
   return `# ${scan.name} — Agent Context
