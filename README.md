@@ -6,7 +6,7 @@
 <br />
 
 <!-- Logo -->
-<img src="./web/public/favicon180x180.png" width="180" alt="Vibe Coding Handbook logo" />
+<img src="./web/public/favicon16x16.png" width="180" alt="Vibe Coding Handbook logo" />
 
 <br />
 
