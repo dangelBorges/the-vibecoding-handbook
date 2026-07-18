@@ -57,7 +57,7 @@ jobs:
           cd /tmp/sample-project
           node ${{ github.workspace }}/cli/dist/index.js init -y -t saas
           test -f AGENTS.md
-          test -f .cursorrules
+          test -f .iderules
           test -d .vibecoding/policies
 
       - name: Test vibe context --auto
