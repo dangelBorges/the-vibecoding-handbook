@@ -23,7 +23,7 @@ export async function initCommand(): Promise<void> {
   // Quick picks for project configuration
   const projectName = await vscode.window.showInputBox({
     prompt: 'Project name',
-    value: wsPath.split('/').pop() || 'my-project',
+    value: path.basename(wsPath) || 'my-project',
   });
   if (!projectName) return;
 
@@ -111,7 +111,7 @@ A ${stack.framework} project using ${stack.language}.
 | Branch | Purpose |
 |--------|---------|
 | \`main\` | Production — no direct commits |
-| \`develop\` | Integration branch |
+| \`dev\` | Integration branch |
 | \`feature/*\` | New features |
 
 ## Deployment Checklist
