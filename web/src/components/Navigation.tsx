@@ -53,7 +53,8 @@ export default function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link to="/" className="font-heading text-sm tracking-[0.2em] text-[#F0F2F5] hover:text-cyan transition-colors">
+        <Link to="/" className="flex items-center gap-2 font-heading text-sm tracking-[0.2em] text-[#F0F2F5] hover:text-cyan transition-colors">
+          <img src="/favicon32x32.png" alt="" className="h-8 w-8 rounded" />
           {t('logo')}
         </Link>
 
