@@ -142,3 +142,34 @@ jobs:
 
       - name: Run ESLint
         run: cd web && pnpm run lint
+
+  # ─── VS Code Extension Tests ───
+  vscode-extension:
+    name: VS Code Extension — Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: vscode-extension/package-lock.json
+
+      - name: Install extension dependencies
+        run: cd vscode-extension && npm ci
+
+      - name: Compile extension
+        run: cd vscode-extension && npm run compile
+
+      - name: Run unit tests
+        run: cd vscode-extension && npm run test:unit
+
+      - name: Install xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Run integration tests
+        run: cd vscode-extension && xvfb-run -a npm test
