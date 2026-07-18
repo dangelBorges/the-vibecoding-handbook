@@ -7,7 +7,7 @@ import { initCommand } from './commands/init';
 import { checkCommand } from './commands/check';
 import { contextCommand } from './commands/context';
 import { optimizeCommand } from './commands/optimize';
-import { checkVibeSetup } from './utils/fileReader';
+import { checkVibeSetup, getWorkspacePath } from './utils/fileReader';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('Vibe Coding extension activated');
@@ -54,6 +54,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Show Context Panel
     vscode.commands.registerCommand('vibecoding.showContext', () => {
+      if (!getWorkspacePath()) {
+        vscode.window.showErrorMessage('No workspace folder open.');
+        return;
+      }
       ContextPanel.createOrShow(context.extensionUri);
     }),
 
@@ -123,7 +127,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument(() => {
       const autoCheck = vscode.workspace.getConfiguration('vibecoding').get('autoCheckOnSave', false);
-      if (autoCheck && checkVibeSetup()) {
+      if (autoCheck && getWorkspacePath() && checkVibeSetup()) {
         checkCommand(true);
       }
     })

@@ -11,11 +11,14 @@ export class PolicyItem extends vscode.TreeItem {
     super(label, collapsibleState);
     this.tooltip = filePath || label;
     if (filePath) {
-      this.command = {
-        command: 'vscode.open',
-        title: 'Open',
-        arguments: [vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, filePath)],
-      };
+      const folder = vscode.workspace.workspaceFolders?.[0];
+      if (folder) {
+        this.command = {
+          command: 'vscode.open',
+          title: 'Open',
+          arguments: [vscode.Uri.joinPath(folder.uri, filePath)],
+        };
+      }
       this.iconPath = new vscode.ThemeIcon('shield');
     }
     if (description) {

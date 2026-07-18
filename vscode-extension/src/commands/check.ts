@@ -84,6 +84,9 @@ export async function checkCommand(silent = false): Promise<void> {
       } catch {
         // ignore
       }
+    } else {
+      results.push({ name: 'Test Script', status: 'warn', message: 'No package.json' });
+      results.push({ name: 'Lint Script', status: 'warn', message: 'No package.json' });
     }
 
     // Calculate score
