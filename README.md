@@ -14,7 +14,7 @@
 <br />
 
 <!-- Quick Links -->
-<a href="https://vibecoding.guide"><strong>Website</strong></a> ·
+<a href="http://the-vibecoding-handbook.com/"><strong>Website</strong></a> ·
 <a href="./cli/README.md"><strong>CLI Docs</strong></a> ·
 <a href="./vscode-extension/README.md"><strong>VS Code Extension</strong></a> ·
 <a href="./docs/"><strong>Handbook</strong></a> ·
