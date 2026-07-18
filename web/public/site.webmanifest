@@ -1,0 +1,14 @@
+{
+  "name": "The Vibe Coding Handbook",
+  "short_name": "Vibecoding",
+  "description": "The complete open-source handbook for AI-first development.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0C10",
+  "theme_color": "#0B0C10",
+  "icons": [
+    { "src": "/favicon16x16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "/favicon32x32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/favicon180x180.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
