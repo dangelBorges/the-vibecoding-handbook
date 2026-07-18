@@ -7,9 +7,13 @@ branding:
 
 inputs:
   version:
-    description: 'Version of @vibecoding/cli to install (e.g. 1.0.0 or latest)'
+    description: 'Version of @vibecoding/cli to install (e.g. 1.0.0 or latest). Ignored when cli-path is set.'
     required: false
     default: 'latest'
+  cli-path:
+    description: 'Path to a local @vibecoding/cli checkout to use instead of installing from npm.'
+    required: false
+    default: ''
   check-strict:
     description: 'Run vibe check --strict'
     required: false
@@ -35,7 +39,22 @@ runs:
       with:
         node-version: '20'
 
+    - name: Setup pnpm
+      if: ${{ inputs.cli-path != '' }}
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10.26.2
+
+    - name: Build local CLI
+      if: ${{ inputs.cli-path != '' }}
+      shell: bash
+      run: |
+        cd "${{ github.workspace }}/${{ inputs.cli-path }}"
+        pnpm install --frozen-lockfile
+        pnpm run build
+
     - name: Install @vibecoding/cli
+      if: ${{ inputs.cli-path == '' }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: npm install -g @vibecoding/cli@${{ inputs.version }}
@@ -44,10 +63,15 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        if [ "${{ inputs.check-strict }}" = "true" ]; then
-          vibe check --strict
+        if [ "${{ inputs.cli-path }}" != "" ]; then
+          CLI_CMD="node ${{ github.workspace }}/${{ inputs.cli-path }}/dist/index.js"
         else
-          vibe check
+          CLI_CMD="vibe"
+        fi
+        if [ "${{ inputs.check-strict }}" = "true" ]; then
+          $CLI_CMD check --strict
+        else
+          $CLI_CMD check
         fi
 
     - name: Run vibe review
@@ -55,8 +79,13 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       if: ${{ inputs.review-base != '' }}
       run: |
-        if [ "${{ inputs.review-strict }}" = "true" ]; then
-          vibe review --base ${{ inputs.review-base }} --strict
+        if [ "${{ inputs.cli-path }}" != "" ]; then
+          CLI_CMD="node ${{ github.workspace }}/${{ inputs.cli-path }}/dist/index.js"
         else
-          vibe review --base ${{ inputs.review-base }}
+          CLI_CMD="vibe"
+        fi
+        if [ "${{ inputs.review-strict }}" = "true" ]; then
+          $CLI_CMD review --base ${{ inputs.review-base }} --strict
+        else
+          $CLI_CMD review --base ${{ inputs.review-base }}
         fi
