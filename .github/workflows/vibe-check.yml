@@ -19,13 +19,20 @@ jobs:
       - name: Prepare sample project
         run: |
           mkdir -p /tmp/sample-project
-          cat > /tmp/sample-project/package.json << 'EOF'
+          cd /tmp/sample-project
+          cat > package.json << 'EOF'
           {
             "name": "test-app",
             "dependencies": { "next": "^14", "react": "^18", "tailwindcss": "^3" },
             "devDependencies": { "typescript": "^5", "vitest": "^1" },
-            "scripts": { "test": "vitest", "lint": "eslint ." }
+            "scripts": { "test": "vitest", "lint": "eslint .", "typecheck": "tsc --noEmit" }
           }
+          EOF
+          git init
+          cat > .gitignore << 'EOF'
+          node_modules
+          .env
+          dist
           EOF
 
       - name: Run vibe init and check on sample project
