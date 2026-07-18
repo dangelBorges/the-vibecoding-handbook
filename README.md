@@ -5,6 +5,11 @@
 
 <br />
 
+<!-- Logo -->
+<img src="./web/public/favicon180x180.png" width="180" alt="Vibe Coding Handbook logo" />
+
+<br />
+
 <!-- Badges -->
 <a href="https://github.com/dangelBorges/the-vibecoding-handbook/stargazers"><img src="https://img.shields.io/github/stars/dangelBorges/the-vibecoding-handbook?style=for-the-badge&logo=github&color=FFD700&labelColor=1a1a2e" alt="Stars" /></a>
 <a href="https://github.com/dangelBorges/the-vibecoding-handbook/network/members"><img src="https://img.shields.io/github/forks/dangelBorges/the-vibecoding-handbook?style=for-the-badge&logo=github&color=0EA5E9&labelColor=1a1a2e" alt="Forks" /></a>
@@ -185,7 +190,7 @@ vibe check
 
 ### Web Handbook
 
-Visit **[vibecoding.guide](https://vibecoding.guide)** to start learning.
+Visit **[vibecoding.guide](https://www.the-vibecoding-handbook.com/)** to start learning.
 
 ---
 
