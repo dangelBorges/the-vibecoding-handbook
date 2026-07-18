@@ -157,7 +157,8 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "test:unit": "tsc -p ./ && node --test dist/test/utils/optimizer.test.js"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
