@@ -19,6 +19,6 @@ jobs:
       - name: Run Vibe checks
         uses: ./.github/actions/vibe-check
         with:
-          version: '1.0.0'
+          cli-path: 'cli'
           review-base: 'origin/main'
           review-strict: 'false'
