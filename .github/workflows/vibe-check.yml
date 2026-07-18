@@ -16,9 +16,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Vibe checks
+      - name: Prepare sample project
+        run: |
+          mkdir -p /tmp/sample-project
+          cat > /tmp/sample-project/package.json << 'EOF'
+          {
+            "name": "test-app",
+            "dependencies": { "next": "^14", "react": "^18", "tailwindcss": "^3" },
+            "devDependencies": { "typescript": "^5", "vitest": "^1" },
+            "scripts": { "test": "vitest", "lint": "eslint ." }
+          }
+          EOF
+
+      - name: Run vibe init and check on sample project
         uses: ./.github/actions/vibe-check
         with:
           cli-path: 'cli'
+          working-directory: '/tmp/sample-project'
+          init-template: 'saas'
+          review-base: ''
+          run-review: 'false'
+
+      - name: Run vibe review on repository
+        uses: ./.github/actions/vibe-check
+        with:
+          cli-path: 'cli'
+          run-check: 'false'
           review-base: 'origin/main'
           review-strict: 'false'

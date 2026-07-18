@@ -14,8 +14,16 @@ inputs:
     description: 'Path to a local @vibecoding/cli checkout to use instead of installing from npm.'
     required: false
     default: ''
+  init-template:
+    description: 'Run vibe init -y -t <template> before the check. Leave empty to skip.'
+    required: false
+    default: ''
   check-strict:
     description: 'Run vibe check --strict'
+    required: false
+    default: 'true'
+  run-check:
+    description: 'Run vibe check'
     required: false
     default: 'true'
   review-base:
@@ -26,6 +34,10 @@ inputs:
     description: 'Add --strict to vibe review'
     required: false
     default: 'false'
+  run-review:
+    description: 'Run vibe review when review-base is set'
+    required: false
+    default: 'true'
   working-directory:
     description: 'Working directory for the commands'
     required: false
@@ -59,7 +71,19 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: npm install -g @vibecoding/cli@${{ inputs.version }}
 
+    - name: Run vibe init
+      if: ${{ inputs.init-template != '' }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ "${{ inputs.cli-path }}" != "" ]; then
+          node ${{ github.workspace }}/${{ inputs.cli-path }}/dist/index.js init -y -t ${{ inputs.init-template }}
+        else
+          vibe init -y -t ${{ inputs.init-template }}
+        fi
+
     - name: Run vibe check
+      if: ${{ inputs.run-check == 'true' }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
@@ -75,9 +99,9 @@ runs:
         fi
 
     - name: Run vibe review
+      if: ${{ inputs.review-base != '' && inputs.run-review == 'true' }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      if: ${{ inputs.review-base != '' }}
       run: |
         if [ "${{ inputs.cli-path }}" != "" ]; then
           CLI_CMD="node ${{ github.workspace }}/${{ inputs.cli-path }}/dist/index.js"
