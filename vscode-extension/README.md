@@ -47,8 +47,10 @@ project/
 
 ## Install
 
-From the VS Code Marketplace (coming soon) or install from VSIX.
+Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook).
+
+Visit [the-vibecoding-handbook.com](https://www.the-vibecoding-handbook.com/) for the complete handbook.
 
 ## Learn More
 
-Visit [vibecoding.guide](https://vibecoding.guide) for the complete handbook.
+Visit [The-vibecoding-handbook.com](https://www.the-vibecoding-handbook.com/) for the complete handbook.
