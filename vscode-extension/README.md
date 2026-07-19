@@ -11,6 +11,9 @@
 - **🔍 Check Project** — Validate governance setup (6 checks)
 - **🔄 Refresh Context** — Auto-update AGENTS.md from current codebase
 - **✨ Optimize Prompt** — Transform vague prompts into structured instructions
+- **💬 Chat / Plan Task** — Generate `vibe-plan.md` and `vibe-prompt.md` from a task description
+- **🗂️ Sync Templates & Prompts** — Install starter templates and reusable AI prompts
+- **👁️ Review Code** — Scan active, changed, staged, or base-ref files for common issues
 - **📖 Context Panel** — Rich webview with project overview, AGENTS.md, and .iderules
 
 ## Commands
@@ -21,6 +24,8 @@
 | `Vibe: Check Project` | Run 6 validation checks |
 | `Vibe: Refresh Context` | Update AGENTS.md from codebase |
 | `Vibe: Optimize Prompt` | Optimize a prompt for AI agents |
+| `Vibe: Chat / Plan Task` | Generate vibe-plan.md and vibe-prompt.md |
+| `Vibe: Sync Templates & Prompts` | Install templates or reusable prompts |
 | `Vibe: Show Project Context` | Open context webview panel |
 | `Open AGENTS.md` | Open project's AGENTS.md |
 | `Open .iderules` | Open project's .iderules |

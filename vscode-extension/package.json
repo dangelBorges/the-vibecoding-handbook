@@ -112,6 +112,18 @@
         "icon": "$(wrench)"
       },
       {
+        "command": "vibecoding.chat",
+        "title": "Vibe: Chat / Plan Task",
+        "category": "Vibe Coding",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "vibecoding.sync",
+        "title": "Vibe: Sync Templates & Prompts",
+        "category": "Vibe Coding",
+        "icon": "$(library)"
+      },
+      {
         "command": "vibecoding.showContext",
         "title": "Vibe: Show Project Context",
         "category": "Vibe Coding",
@@ -164,6 +176,12 @@
         },
         {
           "command": "vibecoding.reviewFix"
+        },
+        {
+          "command": "vibecoding.chat"
+        },
+        {
+          "command": "vibecoding.sync"
         },
         {
           "command": "vibecoding.showContext"

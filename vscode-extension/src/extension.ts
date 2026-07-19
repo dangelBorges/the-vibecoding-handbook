@@ -8,6 +8,8 @@ import { checkCommand } from './commands/check';
 import { contextCommand } from './commands/context';
 import { optimizeCommand } from './commands/optimize';
 import { reviewCommand } from './commands/review';
+import { chatCommand } from './commands/chat';
+import { syncCommand } from './commands/sync';
 import { checkVibeSetup, getWorkspacePath } from './utils/fileReader';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -77,6 +79,16 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('vibecoding.reviewFix', async () => {
       await reviewCommand(diagnosticCollection, 'changed', { fix: true });
+    }),
+
+    // Chat
+    vscode.commands.registerCommand('vibecoding.chat', async () => {
+      await chatCommand();
+    }),
+
+    // Sync
+    vscode.commands.registerCommand('vibecoding.sync', async () => {
+      await syncCommand();
     }),
 
     // Show Context Panel
