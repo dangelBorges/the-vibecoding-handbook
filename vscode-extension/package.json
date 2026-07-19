@@ -146,6 +146,12 @@
         "title": "Refresh Context",
         "category": "Vibe Coding",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecoding.changeLanguage",
+        "title": "Change Language",
+        "category": "Vibe Coding",
+        "icon": "$(globe)"
       }
     ],
     "menus": {
@@ -191,6 +197,9 @@
         },
         {
           "command": "vibecoding.openIdeRules"
+        },
+        {
+          "command": "vibecoding.changeLanguage"
         }
       ],
       "view/title": [

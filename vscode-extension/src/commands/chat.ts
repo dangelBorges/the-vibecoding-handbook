@@ -9,19 +9,20 @@ import {
   generateOptimizedPrompt,
   getAgentsMdContext,
 } from '../utils/chatPlanner';
+import { t } from '../i18n';
 
 export async function chatCommand(): Promise<void> {
   const wsPath = getWorkspacePath();
   if (!wsPath) {
-    vscode.window.showErrorMessage('No workspace folder open.');
+    vscode.window.showErrorMessage(t('errNoWorkspace'));
     return;
   }
 
   const task = await vscode.window.showInputBox({
-    prompt: 'What do you want to do?',
-    placeHolder: 'e.g., "create a login page with Google auth"',
+    prompt: t('chatPrompt'),
+    placeHolder: t('chatPlaceholder'),
     validateInput: (value) => {
-      if (!value || value.trim().length === 0) return 'Please describe your task';
+      if (!value || value.trim().length === 0) return t('chatEmptyError');
       return null;
     },
   });
@@ -45,7 +46,7 @@ export async function chatCommand(): Promise<void> {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: 'Generating vibe plan...',
+      title: t('chatGenerating'),
       cancellable: false,
     },
     async () => {
@@ -62,7 +63,7 @@ export async function chatCommand(): Promise<void> {
       await vscode.env.clipboard.writeText(optimizedPrompt);
 
       showChatPanel(plan, optimizedPrompt);
-      vscode.window.showInformationMessage('Vibe plan generated! Optimized prompt copied to clipboard.');
+      vscode.window.showInformationMessage(t('chatGenerated'));
     }
   );
 }
@@ -70,7 +71,7 @@ export async function chatCommand(): Promise<void> {
 function showChatPanel(plan: string, prompt: string): void {
   const panel = vscode.window.createWebviewPanel(
     'vibecodingChat',
-    'Vibe Chat Results',
+    t('chatPanelTitle'),
     vscode.ViewColumn.Two,
     { enableScripts: true }
   );
@@ -143,20 +144,20 @@ function getChatHtml(plan: string, prompt: string): string {
   </style>
 </head>
 <body>
-  <h1>Vibe Chat Results</h1>
-  <p class="subtitle">Files saved: <code>vibe-plan.md</code> and <code>vibe-prompt.md</code></p>
+  <h1>${t('chatPanelTitle')}</h1>
+  <p class="subtitle">${t('chatFilesSaved')}</p>
 
   <div class="tabs">
-    <button class="tab active" onclick="showTab('plan')">Plan</button>
-    <button class="tab" onclick="showTab('prompt')">Optimized Prompt</button>
+    <button class="tab active" onclick="showTab('plan')">${t('chatTabPlan')}</button>
+    <button class="tab" onclick="showTab('prompt')">${t('chatTabPrompt')}</button>
   </div>
 
   <div id="tab-plan" class="tab-content active">
-    <p class="meta">Pasted into vibe-plan.md</p>
+    <p class="meta">${t('chatPlanMeta')}</p>
     <pre>${escapeHtml(plan)}</pre>
   </div>
   <div id="tab-prompt" class="tab-content">
-    <p class="meta">Copied to clipboard and saved to vibe-prompt.md</p>
+    <p class="meta">${t('chatPromptMeta')}</p>
     <pre>${escapeHtml(prompt)}</pre>
   </div>
 

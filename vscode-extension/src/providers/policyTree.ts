@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { listPolicyFiles, readVibeFile } from '../utils/fileReader';
+import { t } from '../i18n';
 
 export class PolicyItem extends vscode.TreeItem {
   constructor(
@@ -62,7 +63,7 @@ export class PolicyTreeProvider implements vscode.TreeDataProvider<PolicyItem> {
     const policies = listPolicyFiles();
     if (policies.length === 0) {
       return Promise.resolve([
-        new PolicyItem('No policies found', vscode.TreeItemCollapsibleState.None, undefined, 'Run "Vibe: Initialize Project"'),
+        new PolicyItem(t('panelNoData'), vscode.TreeItemCollapsibleState.None, undefined, t('cmdInitDesc')),
       ]);
     }
 

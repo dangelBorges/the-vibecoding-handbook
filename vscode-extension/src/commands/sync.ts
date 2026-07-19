@@ -13,23 +13,24 @@ import {
   listTemplates,
   defaultPromptFileName,
 } from '../utils/syncLibrary';
+import { t } from '../i18n';
 
 type SyncMode = 'templates' | 'prompts' | 'both';
 
 export async function syncCommand(): Promise<void> {
   const wsPath = getWorkspacePath();
   if (!wsPath) {
-    vscode.window.showErrorMessage('No workspace folder open.');
+    vscode.window.showErrorMessage(t('errNoWorkspace'));
     return;
   }
 
   const mode = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: SyncMode }>(
     [
-      { label: 'Templates', description: 'Install AGENTS.md / .iderules templates', value: 'templates' },
-      { label: 'Prompts', description: 'Save reusable AI prompts', value: 'prompts' },
-      { label: 'Both', description: 'Templates and prompts', value: 'both' },
+      { label: t('syncTemplates'), description: t('syncTemplatesDesc'), value: 'templates' },
+      { label: t('syncPrompts'), description: t('syncPromptsDesc'), value: 'prompts' },
+      { label: t('syncBoth'), description: t('syncBothDesc'), value: 'both' },
     ],
-    { placeHolder: 'What do you want to sync?' }
+    { placeHolder: t('syncWhatToSync') }
   );
 
   if (!mode) return;
@@ -41,7 +42,7 @@ export async function syncCommand(): Promise<void> {
     await syncPrompts(wsPath);
   }
 
-  vscode.window.showInformationMessage('Vibe sync complete!');
+  vscode.window.showInformationMessage(t('syncComplete'));
 }
 
 async function syncTemplates(wsPath: string): Promise<void> {
@@ -53,7 +54,7 @@ async function syncTemplates(wsPath: string): Promise<void> {
   }));
 
   const selected = await vscode.window.showQuickPick(choices, {
-    placeHolder: 'Choose a template to install (or Esc to skip)',
+    placeHolder: t('syncChooseTemplate'),
   });
   if (!selected) return;
 
@@ -65,10 +66,10 @@ async function syncTemplates(wsPath: string): Promise<void> {
     const exists = fs.existsSync(fullPath);
 
     if (exists) {
-      const overwrite = await vscode.window.showQuickPick(['Yes', 'No'], {
-        placeHolder: `${fileName} already exists. Overwrite?`,
+      const overwrite = await vscode.window.showQuickPick([t('yes'), t('no')], {
+        placeHolder: `${fileName} ${t('syncFileExists')}`,
       });
-      if (overwrite !== 'Yes') continue;
+      if (overwrite !== t('yes')) continue;
     }
 
     writeVibeFile(fileName, content);
@@ -86,7 +87,7 @@ async function syncPrompts(wsPath: string): Promise<void> {
   }));
 
   const selectedCategory = await vscode.window.showQuickPick(categoryChoices, {
-    placeHolder: 'Choose a prompt category (or Esc to skip)',
+    placeHolder: t('syncChooseCategory'),
   });
   if (!selectedCategory) return;
 
@@ -98,7 +99,7 @@ async function syncPrompts(wsPath: string): Promise<void> {
   }));
 
   const selectedPrompt = await vscode.window.showQuickPick(promptChoices, {
-    placeHolder: 'Choose a prompt',
+    placeHolder: t('syncChoosePrompt'),
   });
   if (!selectedPrompt) return;
 
@@ -106,24 +107,24 @@ async function syncPrompts(wsPath: string): Promise<void> {
   if (!promptItem) return;
 
   const fileName = await vscode.window.showInputBox({
-    prompt: 'File name for the prompt',
+    prompt: t('syncFileName'),
     value: defaultPromptFileName(promptItem.name),
   });
   if (!fileName) return;
 
-  const save = await vscode.window.showQuickPick(['Yes', 'No'], {
-    placeHolder: 'Save this prompt to a file?',
+  const save = await vscode.window.showQuickPick([t('yes'), t('no')], {
+    placeHolder: t('syncSavePrompt'),
   });
 
-  if (save === 'Yes') {
+  if (save === t('yes')) {
     writeVibeFile(fileName, formatPromptFileContent(promptItem));
   }
 
-  const copy = await vscode.window.showQuickPick(['Yes', 'No'], {
-    placeHolder: 'Copy prompt to clipboard?',
+  const copy = await vscode.window.showQuickPick([t('yes'), t('no')], {
+    placeHolder: t('syncCopyPrompt'),
   });
 
-  if (copy === 'Yes') {
+  if (copy === t('yes')) {
     await vscode.env.clipboard.writeText(promptItem.prompt);
   }
 }

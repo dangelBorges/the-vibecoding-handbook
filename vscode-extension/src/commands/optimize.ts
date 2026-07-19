@@ -1,14 +1,15 @@
 import * as vscode from 'vscode';
 import { optimizePrompt } from '../utils/optimizer';
 import { readVibeFile } from '../utils/fileReader';
+import { t } from '../i18n';
 
 export async function optimizeCommand(): Promise<void> {
   // Get raw prompt from user
   const rawPrompt = await vscode.window.showInputBox({
-    prompt: 'Enter your prompt to optimize',
-    placeHolder: 'e.g., "create a login page with Google auth"',
+    prompt: t('optimizePrompt'),
+    placeHolder: t('optimizePlaceholder'),
     validateInput: (value) => {
-      if (!value || value.trim().length === 0) return 'Prompt cannot be empty';
+      if (!value || value.trim().length === 0) return t('optimizeEmptyError');
       return null;
     },
   });
@@ -21,10 +22,10 @@ export async function optimizeCommand(): Promise<void> {
 
   if (agentsContent) {
     const useContext = await vscode.window.showQuickPick(
-      ['Yes', 'No'],
-      { placeHolder: 'Include AGENTS.md context in optimization?' }
+      [t('yes'), t('no')],
+      { placeHolder: t('optimizeIncludeContext') }
     );
-    if (useContext === 'Yes') {
+    if (useContext === t('yes')) {
       // Extract key sections
       const stackMatch = agentsContent.match(/## Tech Stack[\s\S]*?(?=\n## |$)/);
       const standardsMatch = agentsContent.match(/## Coding Standards[\s\S]*?(?=\n## |$)/);
@@ -36,7 +37,7 @@ export async function optimizeCommand(): Promise<void> {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: 'Optimizing prompt...',
+      title: t('optimizing'),
       cancellable: false,
     },
     async () => {
@@ -45,7 +46,7 @@ export async function optimizeCommand(): Promise<void> {
       // Show result in webview panel
       const panel = vscode.window.createWebviewPanel(
         'vibecodingOptimize',
-        'Optimized Prompt',
+        t('optimizedPrompt'),
         vscode.ViewColumn.Two,
         { enableScripts: true }
       );
@@ -54,7 +55,7 @@ export async function optimizeCommand(): Promise<void> {
 
       // Also copy to clipboard
       await vscode.env.clipboard.writeText(result.optimized);
-      vscode.window.showInformationMessage('Optimized prompt copied to clipboard!');
+      vscode.window.showInformationMessage(t('optimizeCopied'));
     }
   );
 }
@@ -77,17 +78,17 @@ function getOptimizeHtml(result: {
   };
 
   const intentLabels: Record<string, string> = {
-    feature: 'Feature',
-    bugfix: 'Bug Fix',
-    refactor: 'Refactor',
-    test: 'Test',
-    docs: 'Documentation',
-    review: 'Code Review',
-    unknown: 'General',
+    feature: t('intentFeature'),
+    bugfix: t('intentBugfix'),
+    refactor: t('intentRefactor'),
+    test: t('intentTest'),
+    docs: t('intentDocs'),
+    review: t('intentReview'),
+    unknown: t('intentUnknown'),
   };
 
   const color = intentColors[result.intent] || '#8B92A8';
-  const label = intentLabels[result.intent] || 'General';
+  const label = intentLabels[result.intent] || t('intentUnknown');
 
   return `<!DOCTYPE html>
 <html>
@@ -184,37 +185,37 @@ function getOptimizeHtml(result: {
 <body>
   <div class="header">
     <div class="badge" style="background: ${color}20; color: ${color};">${label}</div>
-    <span style="font-size: 12px; color: #8B92A8;">${Math.round(result.confidence * 100)}% confidence</span>
+    <span style="font-size: 12px; color: #8B92A8;">${Math.round(result.confidence * 100)}% ${t('confidence')}</span>
   </div>
 
   <div class="stats">
-    <span>Original: ~${Math.round(result.original.length / 4)} tokens</span>
+    <span>${t('original')}: ~${Math.round(result.original.length / 4)} tokens</span>
     <span>→</span>
-    <span style="color: #58A6B2;">Optimized: ~${Math.round(result.optimized.length / 4)} tokens</span>
+    <span style="color: #58A6B2;">${t('optimized')}: ~${Math.round(result.optimized.length / 4)} tokens</span>
     <span style="color: #C3E88D;">+${Math.round((result.optimized.length / Math.max(result.original.length, 1) - 1) * 100)}%</span>
   </div>
 
   <div class="section">
-    <h3>Optimized Prompt (copied to clipboard)</h3>
+    <h3>${t('optimizedPromptCopied')}</h3>
     <pre>${escapeHtml(result.optimized)}</pre>
   </div>
 
   <div class="section">
-    <h3>Improvements</h3>
+    <h3>${t('improvements')}</h3>
     <ul class="improvements">
       ${result.improvements.map((i) => `<li>${escapeHtml(i)}</li>`).join('')}
     </ul>
   </div>
 
   <div class="section">
-    <h3>Before vs After</h3>
+    <h3>${t('beforeVsAfter')}</h3>
     <div class="comparison">
       <div class="comparison-box before">
-        <strong style="color: #8B92A8;">Before</strong><br>
+        <strong style="color: #8B92A8;">${t('before')}</strong><br>
         ${escapeHtml(result.original.slice(0, 200))}${result.original.length > 200 ? '...' : ''}
       </div>
       <div class="comparison-box after">
-        <strong style="color: #58A6B2;">After</strong><br>
+        <strong style="color: #58A6B2;">${t('after')}</strong><br>
         ${escapeHtml(result.optimized.slice(0, 200))}...
       </div>
     </div>
