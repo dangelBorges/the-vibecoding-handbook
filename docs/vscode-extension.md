@@ -4,7 +4,9 @@ The **Vibe Coding** extension brings the CLI's governance workflow directly into
 
 ## Install
 
-The extension is not yet published to the VS Code Marketplace. You can install it from a local `.vsix`:
+Install the extension directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook).
+
+Or install from a local `.vsix`:
 
 ```bash
 cd vscode-extension
@@ -18,8 +20,6 @@ Then in VS Code:
 1. Open the Extensions view (`Ctrl+Shift+X`).
 2. Click the `...` menu → **Install from VSIX...**.
 3. Select `vscode-extension/vibecoding-1.0.0.vsix`.
-
-A Marketplace release is coming soon.
 
 ## Quick Start
 

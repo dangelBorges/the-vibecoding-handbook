@@ -56,7 +56,7 @@ Open your AI-powered editor (Cursor, GitHub Copilot, etc.) and start prompting. 
 
 You can run the same workflow without leaving the editor:
 
-1. Install the extension from a local `.vsix` (Marketplace release coming soon).
+1. Install the extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook).
 2. Open the Command Palette (`Ctrl+Shift+P`) and run **Vibe: Initialize Project**.
 3. Run **Vibe: Check Project** to validate your setup.
 4. Run **Vibe: Review Changed Files** before committing.

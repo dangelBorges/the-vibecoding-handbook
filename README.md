@@ -187,7 +187,7 @@ vibe check
 
 1. Open VS Code
 2. Go to Extensions (Ctrl+Shift+X)
-3. Search "Vibe Coding"
+3. Search "Vibe Coding" or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook)
 4. Click Install
 5. Open the Command Palette (Ctrl+Shift+P) → "Vibe: Initialize Project"
 

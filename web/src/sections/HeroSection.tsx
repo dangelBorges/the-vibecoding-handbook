@@ -77,7 +77,7 @@ export default function HeroSection() {
 
             {/* VS Code Extension */}
             <a
-              href="https://github.com/dangelBorges/the-vibecoding-handbook/tree/main/vscode-extension"
+              href="https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook"
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center justify-center gap-2 px-7 py-3 border border-purple-code/30 text-purple-code font-heading rounded-full hover:border-purple-code/60 hover:bg-purple-code/10 transition-all duration-300"
