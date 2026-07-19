@@ -51,13 +51,13 @@ export async function initCommand(): Promise<void> {
       writeVibeFile('.iderules', generateIdeRules(stack));
 
       progress.report({ increment: 50, message: t('msgCreatingPolicies') });
-      writeVibeFile('.vibecoding/policies/git-policy.md', generateGitPolicy());
-      writeVibeFile('.vibecoding/policies/security-policy.md', generateSecurityPolicy());
-      writeVibeFile('.vibecoding/policies/testing-policy.md', generateTestingPolicy());
+      writeVibeFile('.the-vibecoding-handbook/policies/git-policy.md', generateGitPolicy());
+      writeVibeFile('.the-vibecoding-handbook/policies/security-policy.md', generateSecurityPolicy());
+      writeVibeFile('.the-vibecoding-handbook/policies/testing-policy.md', generateTestingPolicy());
 
       progress.report({ increment: 75, message: t('msgCreatingAdr') });
       writeVibeFile(
-        '.vibecoding/decisions/ADR-001-architecture.md',
+        '.the-vibecoding-handbook/decisions/ADR-001-architecture.md',
         generateAdr(projectName, projectType, stack)
       );
 
@@ -66,14 +66,14 @@ export async function initCommand(): Promise<void> {
     }
   );
 
-  const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
+  const showNotifications = vscode.workspace.getConfiguration('the-vibecoding-handbook').get('showNotifications', true);
   if (showNotifications) {
     vscode.window.showInformationMessage(
       t('msgInitSuccess'),
       t('cmdOpenAgents')
     ).then((selection) => {
       if (selection === t('cmdOpenAgents')) {
-        vscode.commands.executeCommand('vibecoding.openAgents');
+        vscode.commands.executeCommand('the-vibecoding-handbook.openAgents');
       }
     });
   }
@@ -222,3 +222,4 @@ Building ${projectName} — a ${projectType} project.
 ${new Date().toISOString().split('T')[0]}
 `;
 }
+

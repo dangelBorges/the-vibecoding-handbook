@@ -38,3 +38,4 @@ describe('scanFileContent', () => {
     assert.strictEqual(issues.length, 0);
   });
 });
+

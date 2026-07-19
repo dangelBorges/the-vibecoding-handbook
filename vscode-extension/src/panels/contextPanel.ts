@@ -21,7 +21,7 @@ export class ContextPanel {
     }
 
     const panel = vscode.window.createWebviewPanel(
-      'vibecodingContext',
+      'the-vibecoding-handbookContext',
       'Vibe Coding Context',
       column,
       { enableScripts: true }
@@ -226,3 +226,4 @@ export class ContextPanel {
     }
   }
 }
+

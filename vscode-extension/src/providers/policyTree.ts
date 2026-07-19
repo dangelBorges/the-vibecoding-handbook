@@ -86,3 +86,4 @@ export class PolicyTreeProvider implements vscode.TreeDataProvider<PolicyItem> {
       .join(' ');
   }
 }
+

@@ -20,10 +20,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Check if project has vibe coding setup
   const hasSetup = checkVibeSetup();
-  vscode.commands.executeCommand('setContext', 'vibecoding.hasSetup', hasSetup);
+  vscode.commands.executeCommand('setContext', 'the-vibecoding-handbook.hasSetup', hasSetup);
 
   // ─── Diagnostics ───
-  const diagnosticCollection = vscode.languages.createDiagnosticCollection('vibecoding');
+  const diagnosticCollection = vscode.languages.createDiagnosticCollection('the-vibecoding-handbook');
   context.subscriptions.push(diagnosticCollection);
 
   // ─── Tree Data Providers ───
@@ -31,48 +31,48 @@ export function activate(context: vscode.ExtensionContext) {
   const decisionProvider = new DecisionTreeProvider();
   const stackProvider = new StackTreeProvider();
 
-  vscode.window.registerTreeDataProvider('vibecoding.policies', policyProvider);
-  vscode.window.registerTreeDataProvider('vibecoding.decisions', decisionProvider);
-  vscode.window.registerTreeDataProvider('vibecoding.stack', stackProvider);
+  vscode.window.registerTreeDataProvider('the-vibecoding-handbook.policies', policyProvider);
+  vscode.window.registerTreeDataProvider('the-vibecoding-handbook.decisions', decisionProvider);
+  vscode.window.registerTreeDataProvider('the-vibecoding-handbook.stack', stackProvider);
 
   // ─── Commands ───
   const disposables = [
     // Init
-    vscode.commands.registerCommand('vibecoding.init', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.init', async () => {
       await initCommand();
       policyProvider.refresh();
       decisionProvider.refresh();
       stackProvider.refresh();
-      vscode.commands.executeCommand('setContext', 'vibecoding.hasSetup', checkVibeSetup());
+      vscode.commands.executeCommand('setContext', 'the-vibecoding-handbook.hasSetup', checkVibeSetup());
     }),
 
     // Check
-    vscode.commands.registerCommand('vibecoding.check', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.check', async () => {
       await checkCommand();
     }),
 
     // Refresh Context
-    vscode.commands.registerCommand('vibecoding.context', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.context', async () => {
       await contextCommand();
       stackProvider.refresh();
     }),
 
     // Optimize Prompt
-    vscode.commands.registerCommand('vibecoding.optimize', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.optimize', async () => {
       await optimizeCommand();
     }),
 
     // Review
-    vscode.commands.registerCommand('vibecoding.reviewActive', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.reviewActive', async () => {
       await reviewCommand(diagnosticCollection, 'active');
     }),
-    vscode.commands.registerCommand('vibecoding.reviewChanged', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.reviewChanged', async () => {
       await reviewCommand(diagnosticCollection, 'changed');
     }),
-    vscode.commands.registerCommand('vibecoding.reviewStaged', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.reviewStaged', async () => {
       await reviewCommand(diagnosticCollection, 'staged');
     }),
-    vscode.commands.registerCommand('vibecoding.reviewBase', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.reviewBase', async () => {
       const baseRef = await vscode.window.showInputBox({
         prompt: 'Git base ref to diff against',
         value: 'origin/main',
@@ -80,22 +80,22 @@ export function activate(context: vscode.ExtensionContext) {
       if (!baseRef) return;
       await reviewCommand(diagnosticCollection, 'base', { baseRef });
     }),
-    vscode.commands.registerCommand('vibecoding.reviewFix', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.reviewFix', async () => {
       await reviewCommand(diagnosticCollection, 'changed', { fix: true });
     }),
 
     // Chat
-    vscode.commands.registerCommand('vibecoding.chat', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.chat', async () => {
       await chatCommand();
     }),
 
     // Sync
-    vscode.commands.registerCommand('vibecoding.sync', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.sync', async () => {
       await syncCommand();
     }),
 
     // Change Language
-    vscode.commands.registerCommand('vibecoding.changeLanguage', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.changeLanguage', async () => {
       const locales = getAvailableLocales();
       const currentLocale = getLocale();
       const items: vscode.QuickPickItem[] = locales.map(({ locale, name }) => ({
@@ -112,7 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
     }),
 
     // Show Context Panel
-    vscode.commands.registerCommand('vibecoding.showContext', () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.showContext', () => {
       if (!getWorkspacePath()) {
         vscode.window.showErrorMessage('No workspace folder open.');
         return;
@@ -121,7 +121,7 @@ export function activate(context: vscode.ExtensionContext) {
     }),
 
     // Open AGENTS.md
-    vscode.commands.registerCommand('vibecoding.openAgents', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.openAgents', async () => {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) return;
       const uri = vscode.Uri.joinPath(workspaceFolders[0].uri, 'AGENTS.md');
@@ -134,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
     }),
 
     // Open .iderules
-    vscode.commands.registerCommand('vibecoding.openIdeRules', async () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.openIdeRules', async () => {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) return;
       const uri = vscode.Uri.joinPath(workspaceFolders[0].uri, '.iderules');
@@ -147,7 +147,7 @@ export function activate(context: vscode.ExtensionContext) {
     }),
 
     // Refresh tree views
-    vscode.commands.registerCommand('vibecoding.refreshContext', () => {
+    vscode.commands.registerCommand('the-vibecoding-handbook.refreshContext', () => {
       policyProvider.refresh();
       decisionProvider.refresh();
       stackProvider.refresh();
@@ -160,7 +160,7 @@ export function activate(context: vscode.ExtensionContext) {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (workspaceFolders) {
     const watcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(workspaceFolders[0], '.vibecoding/**/*')
+      new vscode.RelativePattern(workspaceFolders[0], '.the-vibecoding-handbook/**/*')
     );
     watcher.onDidChange(() => {
       policyProvider.refresh();
@@ -168,13 +168,13 @@ export function activate(context: vscode.ExtensionContext) {
       stackProvider.refresh();
     });
     watcher.onDidCreate(() => {
-      vscode.commands.executeCommand('setContext', 'vibecoding.hasSetup', checkVibeSetup());
+      vscode.commands.executeCommand('setContext', 'the-vibecoding-handbook.hasSetup', checkVibeSetup());
       policyProvider.refresh();
       decisionProvider.refresh();
       stackProvider.refresh();
     });
     watcher.onDidDelete(() => {
-      vscode.commands.executeCommand('setContext', 'vibecoding.hasSetup', checkVibeSetup());
+      vscode.commands.executeCommand('setContext', 'the-vibecoding-handbook.hasSetup', checkVibeSetup());
       policyProvider.refresh();
       decisionProvider.refresh();
       stackProvider.refresh();
@@ -185,7 +185,7 @@ export function activate(context: vscode.ExtensionContext) {
   // ─── Auto check on save ───
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument(() => {
-      const autoCheck = vscode.workspace.getConfiguration('vibecoding').get('autoCheckOnSave', false);
+      const autoCheck = vscode.workspace.getConfiguration('the-vibecoding-handbook').get('autoCheckOnSave', false);
       if (autoCheck && getWorkspacePath() && checkVibeSetup()) {
         checkCommand(true);
       }
@@ -193,7 +193,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // ─── Welcome message ───
-  const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
+  const showNotifications = vscode.workspace.getConfiguration('the-vibecoding-handbook').get('showNotifications', true);
   if (!hasSetup && workspaceFolders && showNotifications) {
     vscode.window.showInformationMessage(
       t('msgNoProject'),
@@ -201,7 +201,7 @@ export function activate(context: vscode.ExtensionContext) {
       'Later'
     ).then((selection) => {
       if (selection === t('cmdInit')) {
-        vscode.commands.executeCommand('vibecoding.init');
+        vscode.commands.executeCommand('the-vibecoding-handbook.init');
       }
     });
   }
@@ -210,3 +210,4 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
   console.log('Vibe Coding extension deactivated');
 }
+

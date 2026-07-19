@@ -521,3 +521,4 @@ export function defaultPromptFileName(promptName: string): string {
 export function formatPromptFileContent(item: PromptItem): string {
   return `# ${item.name}\n\n> ${item.description}\n\n## Prompt\n\n${item.prompt}\n\n---\n*From Vibe Coding Prompt Library — vibe sync --prompts*\n`;
 }
+

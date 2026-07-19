@@ -35,3 +35,4 @@ describe('optimizePrompt', () => {
     assert.ok(result.optimized.includes(original));
   });
 });
+

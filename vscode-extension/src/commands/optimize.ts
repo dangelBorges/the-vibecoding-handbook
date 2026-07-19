@@ -45,7 +45,7 @@ export async function optimizeCommand(): Promise<void> {
 
       // Show result in webview panel
       const panel = vscode.window.createWebviewPanel(
-        'vibecodingOptimize',
+        'the-vibecoding-handbookOptimize',
         t('optimizedPrompt'),
         vscode.ViewColumn.Two,
         { enableScripts: true }
@@ -232,3 +232,4 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+

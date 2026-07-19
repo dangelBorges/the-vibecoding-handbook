@@ -81,3 +81,4 @@ test('formatPromptFileContent', async (t) => {
     assert.match(content, /Do something useful/);
   });
 });
+

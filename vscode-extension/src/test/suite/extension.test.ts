@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-const EXTENSION_ID = 'vibecoding.vibecoding';
+const EXTENSION_ID = 'the-vibecoding-handbook.the-vibecoding-handbook';
 
 suite('Vibe Coding Extension', () => {
   test('extension is activated on startup', () => {
@@ -13,14 +13,14 @@ suite('Vibe Coding Extension', () => {
   test('vibe commands are registered', async () => {
     const commands = await vscode.commands.getCommands(true);
     const expectedCommands = [
-      'vibecoding.init',
-      'vibecoding.check',
-      'vibecoding.context',
-      'vibecoding.optimize',
-      'vibecoding.showContext',
-      'vibecoding.openAgents',
-      'vibecoding.openIdeRules',
-      'vibecoding.refreshContext',
+      'the-vibecoding-handbook.init',
+      'the-vibecoding-handbook.check',
+      'the-vibecoding-handbook.context',
+      'the-vibecoding-handbook.optimize',
+      'the-vibecoding-handbook.showContext',
+      'the-vibecoding-handbook.openAgents',
+      'the-vibecoding-handbook.openIdeRules',
+      'the-vibecoding-handbook.refreshContext',
     ];
 
     for (const command of expectedCommands) {
@@ -34,3 +34,4 @@ suite('Vibe Coding Extension', () => {
     assert.strictEqual(folders![0].name, 'test-workspace');
   });
 });
+
