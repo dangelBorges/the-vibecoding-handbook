@@ -138,13 +138,16 @@ $ vibe sync --templates
 
 ### 3. VS Code Extension
 
-Brings vibe coding governance directly into your IDE.
+Brings the full vibe coding workflow directly into your IDE.
 
-- **Policy Sidebar** — Browse and validate project policies
-- **Decision Tree** — Track Architecture Decision Records (ADRs)
-- **Stack Detector** — Auto-detects your tech stack from dependencies
+- **Initialize Project** — Generate AGENTS.md, .iderules, and policies from the Command Palette
+- **Project Check** — Validate governance setup and see a score
+- **Refresh Context** — Re-scan dependencies and update AGENTS.md
+- **Optimize Prompt** — Turn vague prompts into structured instructions
+- **Review Code** — Scan active, changed, staged, or base-ref files for issues
+- **Chat / Plan Task** — Generate vibe-plan.md and vibe-prompt.md from a task description
+- **Sync Templates & Prompts** — Install starter templates and reusable AI prompts
 - **Context Panel** — Preview AGENTS.md and .iderules without leaving the editor
-- **Quick Commands** — `Ctrl+Shift+P` → "Vibe: Initialize Project", "Vibe: Check Policies", "Vibe: Optimize Prompt"
 
 ---
 
