@@ -53,4 +53,4 @@ Visit [the-vibecoding-handbook.com](https://www.the-vibecoding-handbook.com/) fo
 
 ## Learn More
 
-Visit [vibecoding.guide](https://vibecoding.guide) for the complete handbook.
+Visit [The-vibecoding-handbook.com](https://www.the-vibecoding-handbook.com/) for the complete handbook.
