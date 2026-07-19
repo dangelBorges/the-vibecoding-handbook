@@ -7,6 +7,7 @@ import { initCommand } from './commands/init';
 import { checkCommand } from './commands/check';
 import { contextCommand } from './commands/context';
 import { optimizeCommand } from './commands/optimize';
+import { reviewCommand } from './commands/review';
 import { checkVibeSetup, getWorkspacePath } from './utils/fileReader';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -15,6 +16,10 @@ export function activate(context: vscode.ExtensionContext) {
   // Check if project has vibe coding setup
   const hasSetup = checkVibeSetup();
   vscode.commands.executeCommand('setContext', 'vibecoding.hasSetup', hasSetup);
+
+  // ─── Diagnostics ───
+  const diagnosticCollection = vscode.languages.createDiagnosticCollection('vibecoding');
+  context.subscriptions.push(diagnosticCollection);
 
   // ─── Tree Data Providers ───
   const policyProvider = new PolicyTreeProvider();
@@ -50,6 +55,28 @@ export function activate(context: vscode.ExtensionContext) {
     // Optimize Prompt
     vscode.commands.registerCommand('vibecoding.optimize', async () => {
       await optimizeCommand();
+    }),
+
+    // Review
+    vscode.commands.registerCommand('vibecoding.reviewActive', async () => {
+      await reviewCommand(diagnosticCollection, 'active');
+    }),
+    vscode.commands.registerCommand('vibecoding.reviewChanged', async () => {
+      await reviewCommand(diagnosticCollection, 'changed');
+    }),
+    vscode.commands.registerCommand('vibecoding.reviewStaged', async () => {
+      await reviewCommand(diagnosticCollection, 'staged');
+    }),
+    vscode.commands.registerCommand('vibecoding.reviewBase', async () => {
+      const baseRef = await vscode.window.showInputBox({
+        prompt: 'Git base ref to diff against',
+        value: 'origin/main',
+      });
+      if (!baseRef) return;
+      await reviewCommand(diagnosticCollection, 'base', { baseRef });
+    }),
+    vscode.commands.registerCommand('vibecoding.reviewFix', async () => {
+      await reviewCommand(diagnosticCollection, 'changed', { fix: true });
     }),
 
     // Show Context Panel
