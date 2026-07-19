@@ -3,7 +3,7 @@
   "displayName": "Vibe Coding",
   "description": "AI-first project governance — context, policies, and prompt optimization for vibe coding",
   "version": "1.0.0",
-  "publisher": "vibecoding",
+  "publisher": "TheVibecoder",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
