@@ -82,6 +82,36 @@
         "icon": "$(wand)"
       },
       {
+        "command": "vibecoding.reviewActive",
+        "title": "Vibe: Review Active File",
+        "category": "Vibe Coding",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "vibecoding.reviewChanged",
+        "title": "Vibe: Review Changed Files",
+        "category": "Vibe Coding",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "vibecoding.reviewStaged",
+        "title": "Vibe: Review Staged Files",
+        "category": "Vibe Coding",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "vibecoding.reviewBase",
+        "title": "Vibe: Review Against Base",
+        "category": "Vibe Coding",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "vibecoding.reviewFix",
+        "title": "Vibe: Review & Fix Changed Files",
+        "category": "Vibe Coding",
+        "icon": "$(wrench)"
+      },
+      {
         "command": "vibecoding.showContext",
         "title": "Vibe: Show Project Context",
         "category": "Vibe Coding",
@@ -121,6 +151,21 @@
           "command": "vibecoding.optimize"
         },
         {
+          "command": "vibecoding.reviewActive"
+        },
+        {
+          "command": "vibecoding.reviewChanged"
+        },
+        {
+          "command": "vibecoding.reviewStaged"
+        },
+        {
+          "command": "vibecoding.reviewBase"
+        },
+        {
+          "command": "vibecoding.reviewFix"
+        },
+        {
           "command": "vibecoding.showContext"
         },
         {
@@ -158,7 +203,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "test:unit": "tsc -p ./ && node --test dist/test/utils/optimizer.test.js",
+    "test:unit": "tsc -p ./ && node --test dist/test/utils",
     "test": "tsc -p ./ && vscode-test"
   },
   "devDependencies": {
