@@ -11,8 +11,11 @@ import { reviewCommand } from './commands/review';
 import { chatCommand } from './commands/chat';
 import { syncCommand } from './commands/sync';
 import { checkVibeSetup, getWorkspacePath } from './utils/fileReader';
+import { initI18n, t, getAvailableLocales, setLocale, getLocale, Locale } from './i18n';
 
 export function activate(context: vscode.ExtensionContext) {
+  // Initialize i18n with VS Code's language
+  initI18n(vscode.env.language);
   console.log('Vibe Coding extension activated');
 
   // Check if project has vibe coding setup
@@ -89,6 +92,23 @@ export function activate(context: vscode.ExtensionContext) {
     // Sync
     vscode.commands.registerCommand('vibecoding.sync', async () => {
       await syncCommand();
+    }),
+
+    // Change Language
+    vscode.commands.registerCommand('vibecoding.changeLanguage', async () => {
+      const locales = getAvailableLocales();
+      const currentLocale = getLocale();
+      const items: vscode.QuickPickItem[] = locales.map(({ locale, name }) => ({
+        label: locale === currentLocale ? `✓ ${name}` : name,
+        description: locale,
+      }));
+      const selected = await vscode.window.showQuickPick(items, {
+        placeHolder: t('msgSelectLanguage'),
+      });
+      if (selected?.description) {
+        setLocale(selected.description as Locale);
+        vscode.window.showInformationMessage(t('msgLanguageChanged'));
+      }
     }),
 
     // Show Context Panel
@@ -176,11 +196,11 @@ export function activate(context: vscode.ExtensionContext) {
   const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
   if (!hasSetup && workspaceFolders && showNotifications) {
     vscode.window.showInformationMessage(
-      'This project doesn\'t have Vibe Coding governance yet. Initialize it?',
-      'Initialize',
+      t('msgNoProject'),
+      t('cmdInit'),
       'Later'
     ).then((selection) => {
-      if (selection === 'Initialize') {
+      if (selection === t('cmdInit')) {
         vscode.commands.executeCommand('vibecoding.init');
       }
     });

@@ -1,5 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
-import { Code2, ArrowRight, Puzzle, ShieldCheck, Sparkles, RefreshCw, Wand2, BookOpen } from 'lucide-react';
+import {
+  Code2,
+  ArrowRight,
+  Puzzle,
+  ShieldCheck,
+  Sparkles,
+  RefreshCw,
+  Wand2,
+  BookOpen,
+  Rocket,
+  Eye,
+  MessagesSquare,
+} from 'lucide-react';
 import { useNamespace } from '../i18n/useNamespace';
 import vscode from '../i18n/translations/vscode';
 
@@ -15,6 +27,9 @@ export default function VSCodeSection() {
     { icon: RefreshCw, label: t('feature4Label'), desc: t('feature4Desc') },
     { icon: Wand2, label: t('feature5Label'), desc: t('feature5Desc') },
     { icon: BookOpen, label: t('feature6Label'), desc: t('feature6Desc') },
+    { icon: Rocket, label: t('feature7Label'), desc: t('feature7Desc') },
+    { icon: Eye, label: t('feature8Label'), desc: t('feature8Desc') },
+    { icon: MessagesSquare, label: t('feature9Label'), desc: t('feature9Desc') },
   ];
 
   useEffect(() => {
@@ -152,7 +167,7 @@ export default function VSCodeSection() {
             </p>
 
             {/* Feature grid */}
-            <div className="mt-8 grid grid-cols-2 gap-3">
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-3 gap-3">
               {features.map((f) => {
                 const Icon = f.icon;
                 return (

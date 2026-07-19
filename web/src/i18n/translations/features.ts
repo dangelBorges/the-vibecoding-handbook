@@ -7,6 +7,8 @@ const features: Namespace<{
   explore: string;
   cliTitle: string;
   cliDescription: string;
+  vscodeTitle: string;
+  vscodeDescription: string;
   wizardTitle: string;
   wizardDescription: string;
   chaptersTitle: string;
@@ -28,11 +30,13 @@ const features: Namespace<{
     subtitle: 'A complete toolkit for AI-first development. From your first prompt to production deployment.',
     explore: 'Explore',
     cliTitle: 'CLI Tool',
-    cliDescription: 'npm install -g @vibecoding/cli. Run vibe init, vibe check, vibe context, and vibe optimize from your terminal.',
+    cliDescription: 'npm install -g @vibecoding/cli. Run vibe init, check, context, optimize, review, chat, and sync from your terminal.',
+    vscodeTitle: 'VS Code Extension',
+    vscodeDescription: 'Run the full vibe workflow from the Command Palette: initialize, check, review, optimize, chat, and sync without leaving your editor.',
     wizardTitle: 'Project Wizard',
     wizardDescription: 'Answer a few questions and get a complete governance setup: AGENTS.md, .iderules, Git policy, Security policy, and more.',
     chaptersTitle: '10+ Chapters',
-    chaptersDescription: 'From fundamentals to advanced multi-agent workflows. Structured guides covering every aspect of vibe coding.',
+    chaptersDescription: 'From fundamentals to advanced patterns. Structured guides covering every aspect of vibe coding.',
     promptsTitle: '50+ Prompts',
     promptsDescription: 'Copy-paste prompts for features, bugfixes, refactors, tests, and documentation. Filtered by tool and stack.',
     toolsTitle: 'Tool Comparisons',
@@ -50,7 +54,9 @@ const features: Namespace<{
     subtitle: 'Un kit completo para el desarrollo con IA primero. Desde tu primer prompt hasta el despliegue en producción.',
     explore: 'Explorar',
     cliTitle: 'Herramienta CLI',
-    cliDescription: 'npm install -g @vibecoding/cli. Ejecuta vibe init, vibe check, vibe context y vibe optimize desde tu terminal.',
+    cliDescription: 'npm install -g @vibecoding/cli. Ejecuta vibe init, check, context, optimize, review, chat y sync desde tu terminal.',
+    vscodeTitle: 'Extensión de VS Code',
+    vscodeDescription: 'Ejecuta el flujo completo de Vibe desde la paleta de comandos: inicializar, revisar, optimizar, chatear y sincronizar sin salir del editor.',
     wizardTitle: 'Asistente de proyecto',
     wizardDescription: 'Responde algunas preguntas y obtén una configuración de gobernanza completa: AGENTS.md, .iderules, política de Git, política de seguridad y más.',
     chaptersTitle: '10+ capítulos',
@@ -72,7 +78,9 @@ const features: Namespace<{
     subtitle: 'Um kit completo para desenvolvimento com IA primeiro. Do seu primeiro prompt à implantação em produção.',
     explore: 'Explorar',
     cliTitle: 'Ferramenta CLI',
-    cliDescription: 'npm install -g @vibecoding/cli. Execute vibe init, vibe check, vibe context e vibe optimize no seu terminal.',
+    cliDescription: 'npm install -g @vibecoding/cli. Execute vibe init, check, context, optimize, review, chat e sync no seu terminal.',
+    vscodeTitle: 'Extensão do VS Code',
+    vscodeDescription: 'Execute o fluxo completo do Vibe pela paleta de comandos: inicializar, verificar, revisar, otimizar, chat e sync sem sair do editor.',
     wizardTitle: 'Assistente de projeto',
     wizardDescription: 'Responda algumas perguntas e obtenha uma configuração completa de governança: AGENTS.md, .iderules, política de Git, política de segurança e mais.',
     chaptersTitle: '10+ capítulos',
@@ -94,7 +102,9 @@ const features: Namespace<{
     subtitle: '一套完整的 AI 优先开发工具包。从第一个提示到生产部署。',
     explore: '探索',
     cliTitle: 'CLI 工具',
-    cliDescription: 'npm install -g @vibecoding/cli。在终端运行 vibe init、vibe check、vibe context 和 vibe optimize。',
+    cliDescription: 'npm install -g @vibecoding/cli。在终端运行 vibe init、check、context、optimize、review、chat 和 sync。',
+    vscodeTitle: 'VS Code 扩展',
+    vscodeDescription: '通过命令面板运行完整的 Vibe 工作流：初始化、检查、审查、优化、聊天和同步，无需离开编辑器。',
     wizardTitle: '项目向导',
     wizardDescription: '回答几个问题，获得完整的项目治理配置：AGENTS.md、.iderules、Git 策略、安全策略等。',
     chaptersTitle: '10+ 章节',

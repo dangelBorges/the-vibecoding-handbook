@@ -52,6 +52,21 @@ Open your AI-powered editor (Cursor, GitHub Copilot, etc.) and start prompting. 
 - Your security rules
 - Your Git workflow
 
+## VS Code Extension Quick Start
+
+You can run the same workflow without leaving the editor:
+
+1. Install the extension from a local `.vsix` (Marketplace release coming soon).
+2. Open the Command Palette (`Ctrl+Shift+P`) and run **Vibe: Initialize Project**.
+3. Run **Vibe: Check Project** to validate your setup.
+4. Run **Vibe: Review Changed Files** before committing.
+5. Run **Vibe: Chat / Plan Task** to generate a plan and an optimized prompt.
+6. Run **Vibe: Sync Templates & Prompts** to install starter templates or reusable prompts.
+
+Available commands mirror the CLI: `init`, `check`, `context`, `optimize`, `review`, `chat`, and `sync`.
+
+See the full [VS Code Extension reference](./vscode-extension.md).
+
 ## Writing Effective Prompts
 
 ### Bad Prompts

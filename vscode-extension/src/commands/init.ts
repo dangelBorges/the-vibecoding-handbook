@@ -1,35 +1,36 @@
 import * as vscode from 'vscode';
 import { detectStack, writeVibeFile, getWorkspacePath } from '../utils/fileReader';
+import { t } from '../i18n';
 import * as fs from 'fs';
 import * as path from 'path';
 
 export async function initCommand(): Promise<void> {
   const wsPath = getWorkspacePath();
   if (!wsPath) {
-    vscode.window.showErrorMessage('No workspace folder open.');
+    vscode.window.showErrorMessage(t('errNoWorkspace'));
     return;
   }
 
   // Confirm before overwriting an existing AGENTS.md
   if (fs.existsSync(path.join(wsPath, 'AGENTS.md'))) {
     const choice = await vscode.window.showWarningMessage(
-      'AGENTS.md already exists. Overwrite it?',
-      'Overwrite',
-      'Cancel'
+      t('msgOverwriteAgents'),
+      t('cmdOverwrite'),
+      t('cmdCancel')
     );
-    if (choice !== 'Overwrite') return;
+    if (choice !== t('cmdOverwrite')) return;
   }
 
   // Quick picks for project configuration
   const projectName = await vscode.window.showInputBox({
-    prompt: 'Project name',
+    prompt: t('msgProjectName'),
     value: path.basename(wsPath) || 'my-project',
   });
   if (!projectName) return;
 
   const projectType = await vscode.window.showQuickPick(
-    ['SaaS / Web App', 'E-commerce', 'Content Platform', 'API / Backend', 'Dashboard', 'Other'],
-    { placeHolder: 'Select project type' }
+    [t('typeSaaS'), t('typeEcommerce'), t('typeContent'), t('typeAPI'), t('typeDashboard'), t('typeOther')],
+    { placeHolder: t('msgSelectType') }
   );
   if (!projectType) return;
 
@@ -39,28 +40,28 @@ export async function initCommand(): Promise<void> {
   const progress = await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: 'Initializing Vibe Coding governance',
+      title: t('msgInitializing'),
       cancellable: false,
     },
     async (progress) => {
-      progress.report({ increment: 0, message: 'Creating AGENTS.md...' });
+      progress.report({ increment: 0, message: t('msgCreatingAgents') });
       writeVibeFile('AGENTS.md', generateAgentsMd(projectName, stack));
 
-      progress.report({ increment: 25, message: 'Creating .iderules...' });
+      progress.report({ increment: 25, message: t('msgCreatingIdeRules') });
       writeVibeFile('.iderules', generateIdeRules(stack));
 
-      progress.report({ increment: 50, message: 'Creating policies...' });
+      progress.report({ increment: 50, message: t('msgCreatingPolicies') });
       writeVibeFile('.vibecoding/policies/git-policy.md', generateGitPolicy());
       writeVibeFile('.vibecoding/policies/security-policy.md', generateSecurityPolicy());
       writeVibeFile('.vibecoding/policies/testing-policy.md', generateTestingPolicy());
 
-      progress.report({ increment: 75, message: 'Creating ADR...' });
+      progress.report({ increment: 75, message: t('msgCreatingAdr') });
       writeVibeFile(
         '.vibecoding/decisions/ADR-001-architecture.md',
         generateAdr(projectName, projectType, stack)
       );
 
-      progress.report({ increment: 100, message: 'Done!' });
+      progress.report({ increment: 100, message: t('msgDone') });
       await new Promise((r) => setTimeout(r, 500));
     }
   );
@@ -68,10 +69,10 @@ export async function initCommand(): Promise<void> {
   const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
   if (showNotifications) {
     vscode.window.showInformationMessage(
-      `Vibe Coding governance initialized for ${projectName}!`,
-      'Open AGENTS.md'
+      t('msgInitSuccess'),
+      t('cmdOpenAgents')
     ).then((selection) => {
-      if (selection === 'Open AGENTS.md') {
+      if (selection === t('cmdOpenAgents')) {
         vscode.commands.executeCommand('vibecoding.openAgents');
       }
     });

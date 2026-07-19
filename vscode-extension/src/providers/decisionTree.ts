@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { listDecisionFiles, readVibeFile } from '../utils/fileReader';
+import { t } from '../i18n';
 
 export class DecisionItem extends vscode.TreeItem {
   constructor(
@@ -59,7 +60,7 @@ export class DecisionTreeProvider implements vscode.TreeDataProvider<DecisionIte
     const decisions = listDecisionFiles();
     if (decisions.length === 0) {
       return Promise.resolve([
-        new DecisionItem('No ADRs found', vscode.TreeItemCollapsibleState.None, undefined, 'Run "Vibe: Initialize Project"'),
+        new DecisionItem(t('panelNoData'), vscode.TreeItemCollapsibleState.None, undefined, t('cmdInitDesc')),
       ]);
     }
 

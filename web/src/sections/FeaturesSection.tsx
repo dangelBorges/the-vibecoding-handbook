@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import {
   BookOpen,
+  Code2,
   MessageSquareCode,
   Wrench,
   FileDown,
@@ -26,6 +27,13 @@ export default function FeaturesSection() {
       title: t('cliTitle'),
       description: t('cliDescription'),
       href: 'https://github.com/dangelBorges/the-vibecoding-handbook/tree/main/cli',
+      color: '#58A6B2',
+    },
+    {
+      icon: Code2,
+      title: t('vscodeTitle'),
+      description: t('vscodeDescription'),
+      href: 'https://github.com/dangelBorges/the-vibecoding-handbook/tree/main/vscode-extension',
       color: '#58A6B2',
     },
     {

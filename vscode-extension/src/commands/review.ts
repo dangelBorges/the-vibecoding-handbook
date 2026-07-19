@@ -6,6 +6,7 @@ import { promisify } from 'util';
 import { getWorkspacePath, readVibeFile } from '../utils/fileReader';
 import { scanFileContent, ReviewIssue } from '../utils/reviewScanner';
 import { removeConsoleLogStatements, FIX_SUGGESTIONS } from '../utils/fixer';
+import { t } from '../i18n';
 
 const execAsync = promisify(exec);
 const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx'];
@@ -14,7 +15,7 @@ let outputChannel: vscode.OutputChannel | undefined;
 
 function getOutputChannel(): vscode.OutputChannel {
   if (!outputChannel) {
-    outputChannel = vscode.window.createOutputChannel('Vibe Review');
+    outputChannel = vscode.window.createOutputChannel(t('reviewOutputChannel'));
   }
   return outputChannel;
 }
@@ -26,7 +27,7 @@ async function selectFiles(mode: 'active' | 'changed' | 'staged' | 'base', baseR
   if (mode === 'active') {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-      vscode.window.showWarningMessage('No active editor to review.');
+      vscode.window.showWarningMessage(t('reviewNoActiveEditor'));
       return null;
     }
     const relative = vscode.workspace.asRelativePath(editor.document.uri, false);
@@ -50,7 +51,7 @@ async function selectFiles(mode: 'active' | 'changed' | 'staged' | 'base', baseR
       .filter((f) => SOURCE_EXTENSIONS.some((ext) => f.endsWith(ext)));
   } catch {
     const context = mode === 'base' ? `base ref "${baseRef}"` : mode === 'staged' ? 'staged files' : 'working tree';
-    vscode.window.showErrorMessage(`Could not read git ${context}. Is this a git repository?`);
+    vscode.window.showErrorMessage(t('reviewGitError'));
     return null;
   }
 }
@@ -136,16 +137,16 @@ function publishDiagnostics(issues: ReviewIssue[], collection: vscode.Diagnostic
 function showReport(issues: ReviewIssue[], mode: string, fixedCount?: number): void {
   const output = getOutputChannel();
   output.clear();
-  output.appendLine(`=== Vibe Code Review (${mode}) ===\n`);
+  output.appendLine(t('reviewReportHeader', { mode }));
 
   if (fixedCount !== undefined && fixedCount > 0) {
-    output.appendLine(`Auto-removed ${fixedCount} console.log statement(s).\n`);
+    output.appendLine(t('reviewAutoRemoved', { count: fixedCount }));
   }
 
   if (issues.length === 0) {
-    output.appendLine('No issues found! Code looks clean.');
+    output.appendLine(t('reviewNoIssues'));
     output.show();
-    vscode.window.showInformationMessage('Vibe Review: no issues found.');
+    vscode.window.showInformationMessage(t('reviewNoIssuesMessage'));
     return;
   }
 
@@ -153,7 +154,7 @@ function showReport(issues: ReviewIssue[], mode: string, fixedCount?: number): v
     const icon = issue.severity === 'error' ? '✖' : issue.severity === 'warning' ? '⚠' : 'ℹ';
     output.appendLine(`${icon} ${issue.file}${issue.line ? `:${issue.line}` : ''}`);
     output.appendLine(`   ${issue.message}`);
-    output.appendLine(`   Rule: ${issue.rule}\n`);
+    output.appendLine(`   ${t('reviewRule')}: ${issue.rule}\n`);
   }
 
   const errors = issues.filter((i) => i.severity === 'error').length;
@@ -161,11 +162,11 @@ function showReport(issues: ReviewIssue[], mode: string, fixedCount?: number): v
   const infos = issues.filter((i) => i.severity === 'info').length;
   const score = Math.max(0, 100 - errors * 15 - warnings * 5);
 
-  output.appendLine(`Score: ${score}% (${errors} errors, ${warnings} warnings, ${infos} suggestions)`);
+  output.appendLine(t('reviewScore', { score, errors, warnings, infos }));
 
   const suggestions = [...new Set(issues.map((i) => i.rule))].filter((rule) => FIX_SUGGESTIONS[rule]);
   if (suggestions.length > 0) {
-    output.appendLine('\nHow to fix the rest:');
+    output.appendLine(`\n${t('reviewHowToFix')}:`);
     for (const rule of suggestions) {
       output.appendLine(`  • ${rule} — ${FIX_SUGGESTIONS[rule]}`);
     }
@@ -174,11 +175,11 @@ function showReport(issues: ReviewIssue[], mode: string, fixedCount?: number): v
   output.show();
 
   if (errors > 0) {
-    vscode.window.showErrorMessage(`Vibe Review: ${score}% — ${errors} error(s) found. Check output panel.`);
+    vscode.window.showErrorMessage(t('reviewErrorsFound', { score, errors }));
   } else if (warnings > 0) {
-    vscode.window.showWarningMessage(`Vibe Review: ${score}% — ${warnings} warning(s) found. Check output panel.`);
+    vscode.window.showWarningMessage(t('reviewWarningsFound', { score, warnings }));
   } else {
-    vscode.window.showInformationMessage(`Vibe Review: ${score}% — only suggestions.`);
+    vscode.window.showInformationMessage(t('reviewSuggestionsOnly', { score }));
   }
 }
 
@@ -189,21 +190,21 @@ export async function reviewCommand(
 ): Promise<void> {
   const wsPath = getWorkspacePath();
   if (!wsPath) {
-    vscode.window.showErrorMessage('No workspace folder open.');
+    vscode.window.showErrorMessage(t('errNoWorkspace'));
     return;
   }
 
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: `Running vibe review (${mode})...`,
+      title: t('reviewRunning', { mode }),
       cancellable: false,
     },
     async () => {
       const files = await selectFiles(mode, options.baseRef);
       if (files === null) return;
       if (files.length === 0) {
-        vscode.window.showInformationMessage('No files to review.');
+        vscode.window.showInformationMessage(t('reviewNoFiles'));
         collection.clear();
         return;
       }

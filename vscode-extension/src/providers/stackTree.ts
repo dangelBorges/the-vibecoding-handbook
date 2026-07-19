@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { detectStack, readVibeFile } from '../utils/fileReader';
+import { t } from '../i18n';
 
 export class StackItem extends vscode.TreeItem {
   constructor(
@@ -34,11 +35,11 @@ export class StackTreeProvider implements vscode.TreeDataProvider<StackItem> {
     const stack = detectStack();
     const items: StackItem[] = [];
 
-    items.push(new StackItem('Framework', stack.framework, 'window'));
-    items.push(new StackItem('Language', stack.language, 'code'));
-    items.push(new StackItem('Database', stack.hasDatabase ? 'Configured' : 'Not detected', stack.hasDatabase ? 'database' : 'circle-slash'));
+    items.push(new StackItem(t('stackFramework'), stack.framework, 'window'));
+    items.push(new StackItem(t('stackLanguage'), stack.language, 'code'));
+    items.push(new StackItem(t('stackDatabase'), stack.hasDatabase ? 'Configured' : 'Not detected', stack.hasDatabase ? 'database' : 'circle-slash'));
     items.push(new StackItem('Auth', stack.hasAuth ? 'Configured' : 'Not detected', stack.hasAuth ? 'shield' : 'circle-slash'));
-    items.push(new StackItem('Tests', stack.hasTests ? 'Configured' : 'Not detected', stack.hasTests ? 'check' : 'circle-slash'));
+    items.push(new StackItem(t('stackTesting'), stack.hasTests ? 'Configured' : 'Not detected', stack.hasTests ? 'check' : 'circle-slash'));
 
     // Add AGENTS.md status
     const agentsContent = readVibeFile('AGENTS.md');

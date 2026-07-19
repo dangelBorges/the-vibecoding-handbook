@@ -6,6 +6,7 @@ Welcome to The Vibe Coding Handbook documentation.
 
 - [Getting Started](./getting-started.md) — Your first 5 minutes with vibe coding
 - [CLI Reference](./cli-reference.md) — Complete command reference
+- [VS Code Extension](./vscode-extension.md) — Extension install guide and command reference
 
 ## Topics
 
@@ -17,7 +18,7 @@ Welcome to The Vibe Coding Handbook documentation.
 
 ### Tools
 - [CLI (`@vibecoding/cli`)](../cli/README.md)
-- [VS Code Extension](../vscode-extension/README.md)
+- [VS Code Extension](./vscode-extension.md)
 - [Web Handbook](https://vibecoding.guide)
 
 ### Best Practices
