@@ -1,13 +1,13 @@
 {
-  "name": "the-the-vibecoding-handbook-handbook",
-  "displayName": "Vibe Coding",
+  "name": "the-vibecoding-handbook",
+  "displayName": "The Vibe Coding Handbook",
   "description": "AI-first project governance — context, policies, and prompt optimization for vibe coding",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "TheVibecoder",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dangelBorges/the-the-vibecoding-handbook-handbook"
+    "url": "https://github.com/dangelBorges/the-vibecoding-handbook"
   },
   "engines": {
     "vscode": "^1.90.0"
