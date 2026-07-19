@@ -1,10 +1,11 @@
 {
-  "name": "vibecoding",
-  "displayName": "Vibe Coding",
+  "name": "the-vibecoding-handbook",
+  "displayName": "The Vibe Coding Handbook",
   "description": "AI-first project governance — context, policies, and prompt optimization for vibe coding",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "publisher": "TheVibecoder",
   "license": "MIT",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/dangelBorges/the-vibecoding-handbook"
@@ -35,124 +36,124 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "vibecoding-sidebar",
+          "id": "the-vibecoding-handbook-sidebar",
           "title": "Vibe Coding",
           "icon": "media/icon.svg"
         }
       ]
     },
     "views": {
-      "vibecoding-sidebar": [
+      "the-vibecoding-handbook-sidebar": [
         {
-          "id": "vibecoding.policies",
+          "id": "the-vibecoding-handbook.policies",
           "name": "Policies",
-          "when": "vibecoding.hasSetup"
+          "when": "the-vibecoding-handbook.hasSetup"
         },
         {
-          "id": "vibecoding.decisions",
+          "id": "the-vibecoding-handbook.decisions",
           "name": "Decisions",
-          "when": "vibecoding.hasSetup"
+          "when": "the-vibecoding-handbook.hasSetup"
         },
         {
-          "id": "vibecoding.stack",
+          "id": "the-vibecoding-handbook.stack",
           "name": "Stack",
-          "when": "vibecoding.hasSetup"
+          "when": "the-vibecoding-handbook.hasSetup"
         }
       ]
     },
     "commands": [
       {
-        "command": "vibecoding.init",
+        "command": "the-vibecoding-handbook.init",
         "title": "Vibe: Initialize Project",
         "category": "Vibe Coding",
         "icon": "$(rocket)"
       },
       {
-        "command": "vibecoding.check",
+        "command": "the-vibecoding-handbook.check",
         "title": "Vibe: Check Project",
         "category": "Vibe Coding",
         "icon": "$(check)"
       },
       {
-        "command": "vibecoding.context",
+        "command": "the-vibecoding-handbook.context",
         "title": "Vibe: Refresh Context",
         "category": "Vibe Coding",
         "icon": "$(refresh)"
       },
       {
-        "command": "vibecoding.optimize",
+        "command": "the-vibecoding-handbook.optimize",
         "title": "Vibe: Optimize Prompt",
         "category": "Vibe Coding",
         "icon": "$(wand)"
       },
       {
-        "command": "vibecoding.reviewActive",
+        "command": "the-vibecoding-handbook.reviewActive",
         "title": "Vibe: Review Active File",
         "category": "Vibe Coding",
         "icon": "$(eye)"
       },
       {
-        "command": "vibecoding.reviewChanged",
+        "command": "the-vibecoding-handbook.reviewChanged",
         "title": "Vibe: Review Changed Files",
         "category": "Vibe Coding",
         "icon": "$(eye)"
       },
       {
-        "command": "vibecoding.reviewStaged",
+        "command": "the-vibecoding-handbook.reviewStaged",
         "title": "Vibe: Review Staged Files",
         "category": "Vibe Coding",
         "icon": "$(eye)"
       },
       {
-        "command": "vibecoding.reviewBase",
+        "command": "the-vibecoding-handbook.reviewBase",
         "title": "Vibe: Review Against Base",
         "category": "Vibe Coding",
         "icon": "$(git-compare)"
       },
       {
-        "command": "vibecoding.reviewFix",
+        "command": "the-vibecoding-handbook.reviewFix",
         "title": "Vibe: Review & Fix Changed Files",
         "category": "Vibe Coding",
         "icon": "$(wrench)"
       },
       {
-        "command": "vibecoding.chat",
+        "command": "the-vibecoding-handbook.chat",
         "title": "Vibe: Chat / Plan Task",
         "category": "Vibe Coding",
         "icon": "$(comment-discussion)"
       },
       {
-        "command": "vibecoding.sync",
+        "command": "the-vibecoding-handbook.sync",
         "title": "Vibe: Sync Templates & Prompts",
         "category": "Vibe Coding",
         "icon": "$(library)"
       },
       {
-        "command": "vibecoding.showContext",
+        "command": "the-vibecoding-handbook.showContext",
         "title": "Vibe: Show Project Context",
         "category": "Vibe Coding",
         "icon": "$(book)"
       },
       {
-        "command": "vibecoding.openAgents",
+        "command": "the-vibecoding-handbook.openAgents",
         "title": "Open AGENTS.md",
         "category": "Vibe Coding",
         "icon": "$(file-code)"
       },
       {
-        "command": "vibecoding.openIdeRules",
+        "command": "the-vibecoding-handbook.openIdeRules",
         "title": "Open .iderules",
         "category": "Vibe Coding",
         "icon": "$(file-code)"
       },
       {
-        "command": "vibecoding.refreshContext",
+        "command": "the-vibecoding-handbook.refreshContext",
         "title": "Refresh Context",
         "category": "Vibe Coding",
         "icon": "$(refresh)"
       },
       {
-        "command": "vibecoding.changeLanguage",
+        "command": "the-vibecoding-handbook.changeLanguage",
         "title": "Change Language",
         "category": "Vibe Coding",
         "icon": "$(globe)"
@@ -161,55 +162,55 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "vibecoding.init"
+          "command": "the-vibecoding-handbook.init"
         },
         {
-          "command": "vibecoding.check"
+          "command": "the-vibecoding-handbook.check"
         },
         {
-          "command": "vibecoding.context"
+          "command": "the-vibecoding-handbook.context"
         },
         {
-          "command": "vibecoding.optimize"
+          "command": "the-vibecoding-handbook.optimize"
         },
         {
-          "command": "vibecoding.reviewActive"
+          "command": "the-vibecoding-handbook.reviewActive"
         },
         {
-          "command": "vibecoding.reviewChanged"
+          "command": "the-vibecoding-handbook.reviewChanged"
         },
         {
-          "command": "vibecoding.reviewStaged"
+          "command": "the-vibecoding-handbook.reviewStaged"
         },
         {
-          "command": "vibecoding.reviewBase"
+          "command": "the-vibecoding-handbook.reviewBase"
         },
         {
-          "command": "vibecoding.reviewFix"
+          "command": "the-vibecoding-handbook.reviewFix"
         },
         {
-          "command": "vibecoding.chat"
+          "command": "the-vibecoding-handbook.chat"
         },
         {
-          "command": "vibecoding.sync"
+          "command": "the-vibecoding-handbook.sync"
         },
         {
-          "command": "vibecoding.showContext"
+          "command": "the-vibecoding-handbook.showContext"
         },
         {
-          "command": "vibecoding.openAgents"
+          "command": "the-vibecoding-handbook.openAgents"
         },
         {
-          "command": "vibecoding.openIdeRules"
+          "command": "the-vibecoding-handbook.openIdeRules"
         },
         {
-          "command": "vibecoding.changeLanguage"
+          "command": "the-vibecoding-handbook.changeLanguage"
         }
       ],
       "view/title": [
         {
-          "command": "vibecoding.refreshContext",
-          "when": "view == vibecoding.policies",
+          "command": "the-vibecoding-handbook.refreshContext",
+          "when": "view == the-vibecoding-handbook.policies",
           "group": "navigation"
         }
       ]
@@ -217,12 +218,12 @@
     "configuration": {
       "title": "Vibe Coding",
       "properties": {
-        "vibecoding.showNotifications": {
+        "the-vibecoding-handbook.showNotifications": {
           "type": "boolean",
           "default": true,
           "description": "Show status notifications"
         },
-        "vibecoding.autoCheckOnSave": {
+        "the-vibecoding-handbook.autoCheckOnSave": {
           "type": "boolean",
           "default": false,
           "description": "Run vibe check on file save"
@@ -243,6 +244,7 @@
     "@types/vscode": "^1.90.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "sharp": "^0.35.3",
     "typescript": "^5.7.0"
   }
 }

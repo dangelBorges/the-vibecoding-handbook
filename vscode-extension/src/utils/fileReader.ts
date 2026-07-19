@@ -24,7 +24,7 @@ export function getWorkspacePath(): string | undefined {
 export function checkVibeSetup(): boolean {
   const wsPath = getWorkspacePath();
   if (!wsPath) return false;
-  return fs.existsSync(path.join(wsPath, '.vibecoding')) ||
+  return fs.existsSync(path.join(wsPath, '.the-vibecoding-handbook')) ||
          fs.existsSync(path.join(wsPath, 'AGENTS.md'));
 }
 
@@ -46,14 +46,14 @@ export function listPolicyFiles(): VibeFile[] {
   const wsPath = getWorkspacePath();
   if (!wsPath) return [];
 
-  const policiesDir = path.join(wsPath, '.vibecoding', 'policies');
+  const policiesDir = path.join(wsPath, '.the-vibecoding-handbook', 'policies');
   if (!fs.existsSync(policiesDir)) return [];
 
   return fs.readdirSync(policiesDir)
     .filter((f) => f.endsWith('.md'))
     .map((f) => ({
       name: f.replace('.md', ''),
-      path: path.join('.vibecoding/policies', f),
+      path: path.join('.the-vibecoding-handbook/policies', f),
       content: fs.readFileSync(path.join(policiesDir, f), 'utf-8'),
     }));
 }
@@ -62,14 +62,14 @@ export function listDecisionFiles(): VibeFile[] {
   const wsPath = getWorkspacePath();
   if (!wsPath) return [];
 
-  const decisionsDir = path.join(wsPath, '.vibecoding', 'decisions');
+  const decisionsDir = path.join(wsPath, '.the-vibecoding-handbook', 'decisions');
   if (!fs.existsSync(decisionsDir)) return [];
 
   return fs.readdirSync(decisionsDir)
     .filter((f) => f.endsWith('.md'))
     .map((f) => ({
       name: f.replace('.md', ''),
-      path: path.join('.vibecoding/decisions', f),
+      path: path.join('.the-vibecoding-handbook/decisions', f),
       content: fs.readFileSync(path.join(decisionsDir, f), 'utf-8'),
     }));
 }
@@ -157,3 +157,4 @@ export function writeVibeFile(relativePath: string, content: string): boolean {
     return false;
   }
 }
+

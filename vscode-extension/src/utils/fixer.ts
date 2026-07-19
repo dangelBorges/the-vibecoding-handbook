@@ -22,3 +22,4 @@ export function removeConsoleLogStatements(lines: string[], issueLines: number[]
   const nextLines = lines.filter((_, idx) => !removable.has(idx + 1));
   return { lines: nextLines, fixed, skipped };
 }
+

@@ -33,7 +33,7 @@ export default function FeaturesSection() {
       icon: Code2,
       title: t('vscodeTitle'),
       description: t('vscodeDescription'),
-      href: 'https://github.com/dangelBorges/the-vibecoding-handbook/tree/main/vscode-extension',
+      href: 'https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook',
       color: '#58A6B2',
     },
     {

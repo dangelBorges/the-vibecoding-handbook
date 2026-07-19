@@ -120,3 +120,4 @@ export function scanFileContent(file: string, lines: string[], ideRules: string,
     ...checkFunctionLength(file, lines),
   ];
 }
+

@@ -57,3 +57,4 @@ export class StackTreeProvider implements vscode.TreeDataProvider<StackItem> {
     return Promise.resolve(items);
   }
 }
+

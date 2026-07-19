@@ -70,7 +70,7 @@ export async function chatCommand(): Promise<void> {
 
 function showChatPanel(plan: string, prompt: string): void {
   const panel = vscode.window.createWebviewPanel(
-    'vibecodingChat',
+    'the-vibecoding-handbookChat',
     t('chatPanelTitle'),
     vscode.ViewColumn.Two,
     { enableScripts: true }
@@ -172,3 +172,4 @@ function getChatHtml(plan: string, prompt: string): string {
 </body>
 </html>`;
 }
+

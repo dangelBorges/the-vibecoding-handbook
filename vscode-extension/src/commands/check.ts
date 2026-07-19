@@ -46,9 +46,9 @@ export async function checkCommand(silent = false): Promise<void> {
       message: readVibeFile('.iderules') ? t('msgFound') : t('msgMissing'),
     });
 
-    // Check .vibecoding
+    // Check .the-vibecoding-handbook
     results.push({
-      name: '.vibecoding/',
+      name: '.the-vibecoding-handbook/',
       status: checkVibeSetup() ? 'pass' : 'warn',
       message: checkVibeSetup() ? t('msgDirectoryExists') : t('msgMissing'),
     });
@@ -118,7 +118,7 @@ export async function checkCommand(silent = false): Promise<void> {
     // Notifications are skipped in silent mode; errors are always shown
     if (silent) return;
 
-    const showNotifications = vscode.workspace.getConfiguration('vibecoding').get('showNotifications', true);
+    const showNotifications = vscode.workspace.getConfiguration('the-vibecoding-handbook').get('showNotifications', true);
     if (score >= 80) {
       if (showNotifications) {
         vscode.window.showInformationMessage(t('checkGood'), t('checkTitle'), `${score}%`);
@@ -129,7 +129,7 @@ export async function checkCommand(silent = false): Promise<void> {
       }
     } else {
       vscode.window.showErrorMessage(t('checkMultipleIssues'), t('cmdInit'))
-        .then((sel) => { if (sel === t('cmdInit')) vscode.commands.executeCommand('vibecoding.init'); });
+        .then((sel) => { if (sel === t('cmdInit')) vscode.commands.executeCommand('the-vibecoding-handbook.init'); });
     }
   };
 
@@ -146,3 +146,4 @@ export async function checkCommand(silent = false): Promise<void> {
     );
   }
 }
+

@@ -75,8 +75,8 @@ async function syncTemplates(wsPath: string): Promise<void> {
     writeVibeFile(fileName, content);
   }
 
-  writeVibeFile('.vibecoding/policies/git.md', defaultGitPolicy);
-  writeVibeFile('.vibecoding/policies/security.md', defaultSecurityPolicy);
+  writeVibeFile('.the-vibecoding-handbook/policies/git.md', defaultGitPolicy);
+  writeVibeFile('.the-vibecoding-handbook/policies/security.md', defaultSecurityPolicy);
 }
 
 async function syncPrompts(wsPath: string): Promise<void> {
@@ -128,3 +128,4 @@ async function syncPrompts(wsPath: string): Promise<void> {
     await vscode.env.clipboard.writeText(promptItem.prompt);
   }
 }
+
