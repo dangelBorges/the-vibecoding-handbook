@@ -5,6 +5,10 @@
   "version": "1.0.0",
   "publisher": "TheVibecoder",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dangelBorges/the-vibecoding-handbook"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
