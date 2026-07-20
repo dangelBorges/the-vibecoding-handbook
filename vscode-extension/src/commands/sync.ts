@@ -75,8 +75,8 @@ async function syncTemplates(wsPath: string): Promise<void> {
     writeVibeFile(fileName, content);
   }
 
-  writeVibeFile('.the-vibecoding-handbook/policies/git.md', defaultGitPolicy);
-  writeVibeFile('.the-vibecoding-handbook/policies/security.md', defaultSecurityPolicy);
+  writeVibeFile('.vibecoding/policies/git.md', defaultGitPolicy);
+  writeVibeFile('.vibecoding/policies/security.md', defaultSecurityPolicy);
 }
 
 async function syncPrompts(wsPath: string): Promise<void> {

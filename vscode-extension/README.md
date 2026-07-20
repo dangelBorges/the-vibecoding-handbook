@@ -45,6 +45,12 @@ project/
         └── ADR-001-architecture.md
 ```
 
+## CLI Integration
+
+When `@vibecoding/cli` is installed in the workspace (or globally available), the extension delegates `Vibe: Initialize Project` and `Vibe: Refresh Context` to it. This means the extension automatically uses your configured LLM (`OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) and preserves existing `AGENTS.md` content with merge markers. If the CLI is not available, the extension falls back to a built-in heuristic generator.
+
+You can disable LLM calls in the extension settings (`the-vibecoding-handbook.useLLM`).
+
 ## Install
 
 Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=TheVibecoder.the-vibecoding-handbook).

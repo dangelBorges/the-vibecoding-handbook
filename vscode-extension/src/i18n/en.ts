@@ -63,9 +63,11 @@ export const en = {
   msgLanguageChanged: 'Language changed to English',
 
   // Init Command
-  msgOverwriteAgents: 'AGENTS.md already exists. Overwrite it?',
+  msgAgentsExists: 'AGENTS.md already exists. Merge to keep your edits, overwrite, or abort?',
+  cmdMerge: 'Merge',
   cmdOverwrite: 'Overwrite',
-  cmdCancel: 'Cancel',
+  cmdAbort: 'Abort',
+  msgCliNotFound: 'CLI not found. Using built-in heuristic fallback.',
   msgProjectName: 'Project name',
   typeSaaS: 'SaaS / Web App',
   typeEcommerce: 'E-commerce',

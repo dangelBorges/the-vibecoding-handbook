@@ -45,6 +45,7 @@ vibe init --no-llm     # Force local heuristics, skip LLM
 |--------|-------------|
 | `-y, --yes` | Skip prompts and use defaults |
 | `-t, --type <type>` | Project type: saas, ecommerce, api, dashboard, content |
+| `--name <name>` | Project name (overrides detected folder/package name) |
 | `--describe <text>` | Generate AGENTS.md from a natural-language project description (requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) |
 | `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting |
 | `--overwrite` | Replace an existing AGENTS.md completely instead of merging |
@@ -90,7 +91,8 @@ vibe context --no-llm  # Force local heuristics, skip LLM
 | `-a, --auto` | Auto-detect everything (no prompts) |
 | `--describe <text>` | Generate AGENTS.md from a natural-language project description (requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) |
 | `--dry-run` | Show what would change without writing files |
-| `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting |
+| `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting (default when AGENTS.md exists) |
+| `--overwrite` | Replace an existing AGENTS.md completely instead of merging |
 | `--no-llm` | Skip the LLM and generate AGENTS.md from local heuristics only |
 
 `--describe` sends your description and the detected stack summary to the LLM; no
@@ -99,8 +101,9 @@ source file contents are transmitted.
 When an LLM API key is present and `--describe` is not used, `vibe context` automatically sends the detected stack summary to the model to generate a project-specific `AGENTS.md`. Use `--no-llm` to force local heuristics.
 
 `--merge` uses the same `<!-- vibe:begin -->` / `<!-- vibe:end -->` marker mechanism as
-`vibe init --merge`: your content outside the markers is never touched. Combined with
-`--dry-run` it previews the final merged file.
+`vibe init --merge`: your content outside the markers is never touched. `vibe context` now
+merges by default when `AGENTS.md` already exists; use `--overwrite` to replace the file completely.
+Combined with `--dry-run` it previews the final merged file.
 
 **Detected information:**
 - Framework (Next.js, React, Vue, Svelte, Astro, Fastify...)

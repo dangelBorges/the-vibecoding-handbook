@@ -64,9 +64,11 @@ export const pt = {
 
   // Init Command
   errNoWorkspace: 'Nenhuma pasta de trabalho aberta.',
-  msgOverwriteAgents: 'AGENTS.md já existe. Sobrescrever?',
+  msgAgentsExists: 'AGENTS.md já existe. Mesclar para manter suas anotações, sobrescrever ou cancelar?',
+  cmdMerge: 'Mesclar',
   cmdOverwrite: 'Sobrescrever',
-  cmdCancel: 'Cancelar',
+  cmdAbort: 'Cancelar',
+  msgCliNotFound: 'CLI não encontrada. Usando fallback heurístico integrado.',
   msgProjectName: 'Nome do projeto',
   typeSaaS: 'SaaS / Aplicação Web',
   typeEcommerce: 'E-commerce',

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { detectStack, writeVibeFile, getWorkspacePath } from '../utils/fileReader';
+import { findVibeCli, runVibe } from '../utils/cliRunner';
 import { t } from '../i18n';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -11,62 +12,109 @@ export async function initCommand(): Promise<void> {
     return;
   }
 
-  // Confirm before overwriting an existing AGENTS.md
-  if (fs.existsSync(path.join(wsPath, 'AGENTS.md'))) {
-    const choice = await vscode.window.showWarningMessage(
-      t('msgOverwriteAgents'),
-      t('cmdOverwrite'),
-      t('cmdCancel')
-    );
-    if (choice !== t('cmdOverwrite')) return;
-  }
-
-  // Quick picks for project configuration
   const projectName = await vscode.window.showInputBox({
     prompt: t('msgProjectName'),
     value: path.basename(wsPath) || 'my-project',
   });
   if (!projectName) return;
 
-  const projectType = await vscode.window.showQuickPick(
+  const projectTypeLabel = await vscode.window.showQuickPick(
     [t('typeSaaS'), t('typeEcommerce'), t('typeContent'), t('typeAPI'), t('typeDashboard'), t('typeOther')],
     { placeHolder: t('msgSelectType') }
   );
-  if (!projectType) return;
+  if (!projectTypeLabel) return;
 
-  const stack = detectStack();
+  const typeMap: Record<string, string> = {
+    [t('typeSaaS')]: 'saas',
+    [t('typeEcommerce')]: 'ecommerce',
+    [t('typeContent')]: 'content',
+    [t('typeAPI')]: 'api',
+    [t('typeDashboard')]: 'dashboard',
+    [t('typeOther')]: 'other',
+  };
+  const projectType = typeMap[projectTypeLabel] || 'saas';
 
-  // Generate files
-  const progress = await vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification,
-      title: t('msgInitializing'),
-      cancellable: false,
-    },
-    async (progress) => {
-      progress.report({ increment: 0, message: t('msgCreatingAgents') });
-      writeVibeFile('AGENTS.md', generateAgentsMd(projectName, stack));
+  const agentsPath = path.join(wsPath, 'AGENTS.md');
+  const agentsExists = fs.existsSync(agentsPath);
+  let mergeStrategy: 'merge' | 'overwrite' | 'abort' = 'merge';
 
-      progress.report({ increment: 25, message: t('msgCreatingIdeRules') });
-      writeVibeFile('.iderules', generateIdeRules(stack));
+  if (agentsExists) {
+    const choice = await vscode.window.showWarningMessage(
+      t('msgAgentsExists'),
+      { modal: false },
+      t('cmdMerge'),
+      t('cmdOverwrite'),
+      t('cmdAbort')
+    );
+    if (choice === t('cmdAbort') || !choice) return;
+    mergeStrategy = choice === t('cmdMerge') ? 'merge' : 'overwrite';
+  }
 
-      progress.report({ increment: 50, message: t('msgCreatingPolicies') });
-      writeVibeFile('.the-vibecoding-handbook/policies/git-policy.md', generateGitPolicy());
-      writeVibeFile('.the-vibecoding-handbook/policies/security-policy.md', generateSecurityPolicy());
-      writeVibeFile('.the-vibecoding-handbook/policies/testing-policy.md', generateTestingPolicy());
+  const config = vscode.workspace.getConfiguration('the-vibecoding-handbook');
+  const useLLM = config.get('useLLM', true);
+  const cliPath = findVibeCli(wsPath);
 
-      progress.report({ increment: 75, message: t('msgCreatingAdr') });
-      writeVibeFile(
-        '.the-vibecoding-handbook/decisions/ADR-001-architecture.md',
-        generateAdr(projectName, projectType, stack)
-      );
+  if (cliPath) {
+    const args = ['init', '-y', '-t', projectType, '--name', projectName];
+    if (mergeStrategy === 'overwrite') args.push('--overwrite');
+    if (!useLLM) args.push('--no-llm');
 
-      progress.report({ increment: 100, message: t('msgDone') });
-      await new Promise((r) => setTimeout(r, 500));
-    }
-  );
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: t('msgInitializing'),
+        cancellable: false,
+      },
+      async () => {
+        const result = await runVibe(cliPath, args, wsPath);
+        if (result.exitCode !== 0) {
+          const detail = result.stderr || result.stdout;
+          vscode.window.showErrorMessage(`${t('errCommandFailed')}${detail ? ': ' + detail : ''}`);
+        }
+      }
+    );
+  } else {
+    // CLI not found: use local heuristic fallback
+    vscode.window.showWarningMessage(t('msgCliNotFound'));
+    const stack = detectStack();
 
-  const showNotifications = vscode.workspace.getConfiguration('the-vibecoding-handbook').get('showNotifications', true);
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: t('msgInitializing'),
+        cancellable: false,
+      },
+      async (progress) => {
+        progress.report({ increment: 0, message: t('msgCreatingAgents') });
+        const agentsContent = generateAgentsMd(projectName, stack);
+        if (mergeStrategy === 'merge' && agentsExists) {
+          const existing = fs.readFileSync(agentsPath, 'utf-8');
+          writeVibeFile('AGENTS.md', mergeIntoExisting(existing, agentsContent));
+        } else {
+          writeVibeFile('AGENTS.md', agentsContent);
+        }
+
+        progress.report({ increment: 25, message: t('msgCreatingIdeRules') });
+        writeVibeFile('.iderules', generateIdeRules(stack));
+
+        progress.report({ increment: 50, message: t('msgCreatingPolicies') });
+        writeVibeFile('.vibecoding/policies/git-policy.md', generateGitPolicy());
+        writeVibeFile('.vibecoding/policies/security-policy.md', generateSecurityPolicy());
+        writeVibeFile('.vibecoding/policies/testing-policy.md', generateTestingPolicy());
+
+        progress.report({ increment: 75, message: t('msgCreatingAdr') });
+        writeVibeFile(
+          '.vibecoding/decisions/ADR-001-architecture.md',
+          generateAdr(projectName, projectTypeLabel, stack)
+        );
+
+        progress.report({ increment: 100, message: t('msgDone') });
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    );
+  }
+
+  const showNotifications = config.get('showNotifications', true);
   if (showNotifications) {
     vscode.window.showInformationMessage(
       t('msgInitSuccess'),
@@ -77,6 +125,39 @@ export async function initCommand(): Promise<void> {
       }
     });
   }
+}
+
+function wrapInMarkers(content: string): string {
+  return `<!-- vibe:begin — auto-generated by @vibecoding/cli; edit outside these markers -->\n${content.trimEnd()}\n<!-- vibe:end -->\n`;
+}
+
+function mergeIntoExisting(existing: string, generated: string): string {
+  const BEGIN_PREFIX = '<!-- vibe:begin';
+  const END_PREFIX = '<!-- vibe:end';
+  const wrapped = wrapInMarkers(generated);
+  if (existing.trim() === '') return wrapped;
+
+  const lines = existing.split('\n');
+  const beginLine = lines.findIndex((line) => line.includes(BEGIN_PREFIX));
+  let endLine = -1;
+  if (beginLine !== -1) {
+    for (let i = beginLine + 1; i < lines.length; i++) {
+      if (lines[i].includes(END_PREFIX)) {
+        endLine = i;
+        break;
+      }
+    }
+  }
+
+  if (beginLine !== -1 && endLine !== -1) {
+    return [
+      ...lines.slice(0, beginLine),
+      ...wrapped.trimEnd().split('\n'),
+      ...lines.slice(endLine + 1),
+    ].join('\n');
+  }
+
+  return existing.trimEnd() + '\n\n---\n\n' + wrapped;
 }
 
 function generateAgentsMd(projectName: string, stack: { framework: string; language: string }): string {
@@ -222,4 +303,3 @@ Building ${projectName} — a ${projectType} project.
 ${new Date().toISOString().split('T')[0]}
 `;
 }
-

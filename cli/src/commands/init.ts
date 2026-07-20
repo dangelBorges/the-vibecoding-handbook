@@ -6,7 +6,7 @@ import { scanProject, generateSmartAgentsMd, generateIdeRules } from '../utils/s
 import { detectLlmConfig, generateAgentsMd, generateAgentsMdFromScan } from '../utils/llm.js';
 import { wrapInMarkers, mergeIntoExisting } from '../utils/merge.js';
 
-export async function initCommand(options: { yes?: boolean; type?: string; merge?: boolean; describe?: string; llm?: boolean; overwrite?: boolean }): Promise<void> {
+export async function initCommand(options: { yes?: boolean; type?: string; name?: string; merge?: boolean; describe?: string; llm?: boolean; overwrite?: boolean }): Promise<void> {
   header('Vibe Coding — Initialize Project');
 
   const cwd = process.cwd();
@@ -47,17 +47,19 @@ export async function initCommand(options: { yes?: boolean; type?: string; merge
   }
 
   // Interactive or defaults
-  let projectName = scan.name;
+  let projectName = options.name || scan.name;
   let projectType = options.type || 'saas';
 
   if (!options.yes) {
-    const nameRes = await prompt<{ name: string }>({
-      type: 'input',
-      name: 'name',
-      message: 'Project name:',
-      initial: scan.name,
-    });
-    projectName = nameRes.name;
+    if (!options.name) {
+      const nameRes = await prompt<{ name: string }>({
+        type: 'input',
+        name: 'name',
+        message: 'Project name:',
+        initial: scan.name,
+      });
+      projectName = nameRes.name;
+    }
 
     const typeRes = await prompt<{ type: string }>({
       type: 'select',

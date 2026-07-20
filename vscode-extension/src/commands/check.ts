@@ -46,9 +46,9 @@ export async function checkCommand(silent = false): Promise<void> {
       message: readVibeFile('.iderules') ? t('msgFound') : t('msgMissing'),
     });
 
-    // Check .the-vibecoding-handbook
+    // Check .vibecoding
     results.push({
-      name: '.the-vibecoding-handbook/',
+      name: '.vibecoding/',
       status: checkVibeSetup() ? 'pass' : 'warn',
       message: checkVibeSetup() ? t('msgDirectoryExists') : t('msgMissing'),
     });

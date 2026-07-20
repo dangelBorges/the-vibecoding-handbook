@@ -160,7 +160,7 @@ export function activate(context: vscode.ExtensionContext) {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (workspaceFolders) {
     const watcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(workspaceFolders[0], '.the-vibecoding-handbook/**/*')
+      new vscode.RelativePattern(workspaceFolders[0], '.vibecoding/**/*')
     );
     watcher.onDidChange(() => {
       policyProvider.refresh();

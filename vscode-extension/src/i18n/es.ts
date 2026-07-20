@@ -64,9 +64,11 @@ export const es = {
 
   // Init Command
   errNoWorkspace: 'No hay carpeta de trabajo abierta.',
-  msgOverwriteAgents: 'AGENTS.md ya existe. ¿Sobrescribirlo?',
+  msgAgentsExists: 'AGENTS.md ya existe. ¿Fusionar para conservar tus notas, sobrescribir o cancelar?',
+  cmdMerge: 'Fusionar',
   cmdOverwrite: 'Sobrescribir',
-  cmdCancel: 'Cancelar',
+  cmdAbort: 'Cancelar',
+  msgCliNotFound: 'CLI no encontrada. Usando generación heurística integrada.',
   msgProjectName: 'Nombre del proyecto',
   typeSaaS: 'SaaS / Aplicación Web',
   typeEcommerce: 'E-commerce',
