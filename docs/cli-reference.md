@@ -34,8 +34,10 @@ Initialize project governance files.
 vibe init              # Interactive mode
 vibe init -y           # Skip prompts, use defaults
 vibe init -t saas      # Pre-configured template
-vibe init --describe "SaaS booking app with Stripe" # LLM-generated AGENTS.md
+vibe init --describe "SaaS booking app with Stripe" # LLM-generated AGENTS.md from description
 vibe init --merge      # Merge into existing AGENTS.md (preserves your edits)
+vibe init --overwrite  # Replace an existing AGENTS.md completely
+vibe init --no-llm     # Force local heuristics, skip LLM
 ```
 
 **Options:**
@@ -43,11 +45,16 @@ vibe init --merge      # Merge into existing AGENTS.md (preserves your edits)
 |--------|-------------|
 | `-y, --yes` | Skip prompts and use defaults |
 | `-t, --type <type>` | Project type: saas, ecommerce, api, dashboard, content |
-| `--describe <text>` | Generate AGENTS.md from a natural-language description (requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) |
+| `--describe <text>` | Generate AGENTS.md from a natural-language project description (requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) |
 | `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting |
+| `--overwrite` | Replace an existing AGENTS.md completely instead of merging |
+| `--no-llm` | Skip the LLM and generate AGENTS.md from local heuristics only |
 
-`--describe` sends your description and the detected stack summary to the LLM; no
-source file contents are transmitted. Without a key the command exits with an error.
+`vibe init` scans your project (framework, language, database, auth, payments, tests, styling, API style, monorepo layout, scripts, conventions). When an LLM API key is present, it sends **only the detected stack summary** to the model to generate a project-specific `AGENTS.md`. If no key is present or the API fails, it falls back to local heuristics automatically. No source file contents are ever transmitted.
+
+When `AGENTS.md` already exists, `vibe init` merges by default (updates only the managed block between `<!-- vibe:begin -->` / `<!-- vibe:end -->` markers). Use `--overwrite` to replace the file completely, or `--no-llm` to bypass the LLM.
+
+`--describe` still requires an API key and exits with an error if one is not found.
 
 With `--merge`, the generated content is wrapped in `<!-- vibe:begin -->` / `<!-- vibe:end -->`
 markers. On subsequent runs only the block between the markers is updated — anything
@@ -74,18 +81,22 @@ vibe context --auto    # Full auto-detection
 vibe context --describe "SaaS booking app with Stripe" # LLM-generated AGENTS.md
 vibe context --dry-run # Preview without writing
 vibe context --merge   # Update only the managed block, keep your custom notes
+vibe context --no-llm  # Force local heuristics, skip LLM
 ```
 
 **Options:**
 | Option | Description |
 |--------|-------------|
 | `-a, --auto` | Auto-detect everything (no prompts) |
-| `--describe <text>` | Generate AGENTS.md from a natural-language description (requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) |
+| `--describe <text>` | Generate AGENTS.md from a natural-language project description (requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`) |
 | `--dry-run` | Show what would change without writing files |
 | `--merge` | Merge into existing AGENTS.md using managed markers instead of overwriting |
+| `--no-llm` | Skip the LLM and generate AGENTS.md from local heuristics only |
 
 `--describe` sends your description and the detected stack summary to the LLM; no
 source file contents are transmitted.
+
+When an LLM API key is present and `--describe` is not used, `vibe context` automatically sends the detected stack summary to the model to generate a project-specific `AGENTS.md`. Use `--no-llm` to force local heuristics.
 
 `--merge` uses the same `<!-- vibe:begin -->` / `<!-- vibe:end -->` marker mechanism as
 `vibe init --merge`: your content outside the markers is never touched. Combined with
@@ -242,12 +253,16 @@ vibe sync --prompts    # Prompts only
 
 | Variable | Description |
 |----------|-------------|
-| `OPENAI_API_KEY` | For future AI-powered features |
-| `ANTHROPIC_API_KEY` | For future Claude integration |
+| `OPENAI_API_KEY` | OpenAI API key for AI mode |
+| `ANTHROPIC_API_KEY` | Anthropic API key for AI mode |
+| `VIBE_PROVIDER` | Force LLM provider: `openai` or `anthropic` |
+| `VIBE_MODEL` | Override the default LLM model |
+| `VIBE_NO_BANNER` | Set to `1` to disable the install welcome banner |
 
 ## Exit Codes
 
 | Code | Meaning |
-|------|---------|
-| 0 | Success |
-| 1 | Check failures or errors |
+|------|-------------|
+| `0` | Success |
+| `1` | Check failures or errors |
+| `1` | `--describe` used without a valid API key |

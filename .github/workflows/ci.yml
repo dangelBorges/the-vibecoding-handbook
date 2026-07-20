@@ -60,6 +60,23 @@ jobs:
           test -f .iderules
           test -d .vibecoding/policies
 
+      - name: Test vibe init merge preserves user content
+        run: |
+          cd /tmp/sample-project
+          echo "" >> AGENTS.md
+          echo "<!-- user:begin -->" >> AGENTS.md
+          echo "CUSTOM_USER_NOTE_PRESERVED_BY_MERGE" >> AGENTS.md
+          echo "<!-- user:end -->" >> AGENTS.md
+          node ${{ github.workspace }}/cli/dist/index.js init -y -t saas
+          grep -q "CUSTOM_USER_NOTE_PRESERVED_BY_MERGE" AGENTS.md
+
+      - name: Test vibe init --overwrite replaces AGENTS.md
+        run: |
+          cd /tmp/sample-project
+          node ${{ github.workspace }}/cli/dist/index.js init -y -t saas --overwrite
+          ! grep -q "CUSTOM_USER_NOTE_PRESERVED_BY_MERGE" AGENTS.md
+          test -f AGENTS.md
+
       - name: Test vibe context --auto
         run: |
           cd /tmp/sample-project

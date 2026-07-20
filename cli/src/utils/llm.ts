@@ -175,6 +175,41 @@ Return only the Markdown content. Do not wrap it in code fences.`;
 }
 
 /**
+ * Generates a complete AGENTS.md purely from the project scan summary. This is
+ * used by `vibe init` when no explicit `--describe` is provided but an LLM key
+ * is available. Returns null on any LLM failure so callers can fall back to the
+ * local heuristic generator.
+ */
+export async function generateAgentsMdFromScan(scan: ProjectScan, config: LlmConfig): Promise<string | null> {
+  const summary = buildScanSummary(scan);
+  const system = `You are a senior technical writer creating an AGENTS.md file for a team of AI coding agents working on an existing project.
+Be concise but specific. Use ONLY the detected project stack to infer rules, conventions, and architecture. Do not invent concrete URLs, credentials, or secrets. Do not add sections that are irrelevant to the detected stack.
+When the framework is unknown, keep the advice generic but practical. When a database, auth, payments, or tests are detected, include stack-specific rules for them.`;
+
+  const user = `Detected project stack:
+${JSON.stringify(summary, null, 2)}
+
+Write a complete AGENTS.md in Markdown tailored to the project above. Include only relevant sections from this list:
+- Overview (what kind of project this is, based on the stack)
+- Tech Stack (table with Layer | Technology | Notes)
+- Architecture (patterns implied by the stack, e.g. RSC for Next.js App Router, tRPC procedures, monorepo package layout)
+- Coding Standards (language-specific, framework-specific, and general rules)
+- Security Rules (auth, database, payments, env vars — only if detected)
+- Git Workflow (branching, commits, PRs)
+- Testing Standards (only if a test framework is detected or suggest one if not)
+- Deployment Checklist (framework-specific when possible, e.g. Vercel for Next.js)
+- Scripts Reference (only real scripts from the scan)
+
+Rules:
+- Mention specific technologies actually detected (e.g., Next.js, Prisma, Clerk, Vitest, Tailwind).
+- Do not invent scripts, files, or conventions not present in the stack.
+- Keep it scannable: use tables and bullet lists.
+- Return only the Markdown content. Do not wrap it in code fences.`;
+
+  return generateText(config, system, user);
+}
+
+/**
  * Calls the configured LLM and returns the text response.
  * Never throws: returns null on HTTP errors, network failures, timeouts or
  * malformed responses, so callers can fall back to local heuristics.
