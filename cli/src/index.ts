@@ -29,6 +29,8 @@ program
   .option('-t, --type <type>', 'Project type (saas, ecommerce, api, dashboard, content)')
   .option('--describe <text>', 'Generate AGENTS.md from a natural-language project description (requires an LLM API key)')
   .option('--merge', 'merge into existing AGENTS.md using managed markers instead of overwriting')
+  .option('--overwrite', 'replace an existing AGENTS.md completely instead of merging')
+  .option('--no-llm', 'skip the LLM and generate AGENTS.md from local heuristics only')
   .action(initCommand);
 
 // ─── vibe context ───
@@ -39,6 +41,7 @@ program
   .option('--describe <text>', 'Generate AGENTS.md from a natural-language project description (requires an LLM API key)')
   .option('--dry-run', 'Show what would change without writing files')
   .option('--merge', 'merge into existing AGENTS.md using managed markers instead of overwriting')
+  .option('--no-llm', 'skip the LLM and generate AGENTS.md from local heuristics only')
   .action(contextCommand);
 
 // ─── vibe review ───

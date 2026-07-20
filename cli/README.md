@@ -24,10 +24,13 @@ vibe init -y           # Skip prompts, use defaults
 vibe init -t saas      # Pre-configured for SaaS
 vibe init --describe "SaaS booking app with Stripe" # Generate AGENTS.md from natural language
 vibe init --merge      # Merge into existing AGENTS.md instead of overwriting
+vibe init --overwrite  # Replace an existing AGENTS.md completely
+vibe init --no-llm     # Force local heuristics, skip LLM
 ```
 
-With `--merge`, generated content lives between `<!-- vibe:begin -->` / `<!-- vibe:end -->`
-markers — your own notes outside the markers are preserved on every re-run.
+`vibe init` scans your project (framework, language, database, auth, payments, tests, styling, API style, monorepo layout, scripts, conventions). When an LLM API key is present, it sends **only the detected stack summary** to the model to generate a project-specific `AGENTS.md`. If no key is present or the API fails, it falls back to local heuristics automatically. No source file contents are ever transmitted.
+
+When `AGENTS.md` already exists, `vibe init` **merges by default** (updates only the managed block between `<!-- vibe:begin -->` / `<!-- vibe:end -->` markers). Use `--overwrite` to replace the file completely, or `--no-llm` to bypass the LLM.
 
 `--describe` uses an LLM (OpenAI or Anthropic) to generate `AGENTS.md` from your
 description plus the detected stack. Requires `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`
@@ -50,10 +53,13 @@ vibe context --auto    # Full auto-detection, no prompts
 vibe context --describe "SaaS booking app with Stripe" # LLM-generated AGENTS.md
 vibe context --dry-run # Preview changes without writing
 vibe context --merge   # Update only the managed block, keep your custom notes
+vibe context --no-llm  # Force local heuristics, skip LLM
 ```
 
 `--merge` uses the same `<!-- vibe:begin -->` / `<!-- vibe:end -->` markers as `vibe init --merge`,
 so refreshing AGENTS.md never destroys your manual edits. Add `--dry-run` to preview the merged result.
+
+When an LLM API key is present and `--describe` is not used, `vibe context` automatically sends the detected stack summary to the model to generate a project-specific `AGENTS.md`. Use `--no-llm` to force local heuristics.
 
 Detects automatically:
 - Framework (Next.js, React, Vue, Svelte, Astro, Fastify...)
@@ -185,8 +191,11 @@ Prompt library:
 
 | Variable | Description |
 |----------|-------------|
-| `OPENAI_API_KEY` | For future AI-powered features |
-| `ANTHROPIC_API_KEY` | For future Claude integration |
+| `OPENAI_API_KEY` | OpenAI API key for AI mode |
+| `ANTHROPIC_API_KEY` | Anthropic API key for AI mode |
+| `VIBE_PROVIDER` | Force LLM provider: `openai` or `anthropic` |
+| `VIBE_MODEL` | Override the default LLM model |
+| `VIBE_NO_BANNER` | Set to `1` to disable the install welcome banner |
 
 ## License
 

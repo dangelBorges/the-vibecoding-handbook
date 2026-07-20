@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { section, success, info, warn, error, spinner } from '../utils/ui.js';
 import { scanProject, generateSmartAgentsMd, generateIdeRules } from '../utils/scanner.js';
-import { detectLlmConfig, generateAgentsMd } from '../utils/llm.js';
+import { detectLlmConfig, generateAgentsMd, generateAgentsMdFromScan } from '../utils/llm.js';
 import { wrapInMarkers, mergeIntoExisting } from '../utils/merge.js';
 
 /** Computes the final AGENTS.md content, applying --merge semantics when requested. */
@@ -15,7 +15,7 @@ function finalAgentsContent(cwd: string, generated: string, merge?: boolean): st
   return wrapInMarkers(generated);
 }
 
-export async function contextCommand(options: { auto?: boolean; dryRun?: boolean; merge?: boolean; describe?: string }): Promise<void> {
+export async function contextCommand(options: { auto?: boolean; dryRun?: boolean; merge?: boolean; describe?: string; llm?: boolean }): Promise<void> {
   const cwd = process.cwd();
   const s = spinner('Scanning your codebase...');
   s.start();
@@ -33,7 +33,7 @@ export async function contextCommand(options: { auto?: boolean; dryRun?: boolean
   if (scan.apiStyle !== 'none') info(`API: ${scan.apiStyle}`);
   scan.conventions.forEach((c) => info(`Convention: ${c}`));
 
-  // Resolve AGENTS.md content (heuristic or LLM from natural-language description)
+  // Resolve AGENTS.md content (heuristic or LLM from natural-language description or auto-scan)
   let generatedAgents: string;
   if (options.describe) {
     const llm = detectLlmConfig();
@@ -47,6 +47,20 @@ export async function contextCommand(options: { auto?: boolean; dryRun?: boolean
       info('AGENTS.md generated from description');
     } else {
       warn('LLM unavailable — falling back to local heuristics');
+      generatedAgents = generateSmartAgentsMd(scan);
+    }
+  } else if (options.llm !== false) {
+    const llm = detectLlmConfig();
+    if (llm) {
+      const llmContent = await generateAgentsMdFromScan(scan, llm);
+      if (llmContent) {
+        generatedAgents = llmContent;
+        info('AGENTS.md generated from project scan using LLM');
+      } else {
+        warn('LLM unavailable — falling back to local heuristics');
+        generatedAgents = generateSmartAgentsMd(scan);
+      }
+    } else {
       generatedAgents = generateSmartAgentsMd(scan);
     }
   } else {
