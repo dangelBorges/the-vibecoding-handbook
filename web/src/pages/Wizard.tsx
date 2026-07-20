@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import {
   ArrowLeft, ArrowRight, Check, Sparkles, Info, List,
   Layout, Server, Database, Shield, Cloud, Plus, Wand2,
-  Lightbulb, ChevronRight, Zap,
+  Lightbulb, ChevronRight, Zap, Loader2,
 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -43,9 +43,9 @@ export default function Wizard() {
   // Redirect to the generator once the wizard is complete
   useEffect(() => {
     if (wizard.isLastStep) {
-      navigate('/generator', { state: { answers: wizard.answers } });
+      navigate('/generator', { state: { answers: wizard.answers, llmRationale: wizard.llmRationale } });
     }
-  }, [wizard.isLastStep, wizard.answers, navigate]);
+  }, [wizard.isLastStep, wizard.answers, wizard.llmRationale, navigate]);
 
   const handleApplyRecommendations = () => {
     wizard.applyRecommendations();
@@ -192,6 +192,48 @@ export default function Wizard() {
 
             {/* Sidebar: Recommendations & Comparisons */}
             <div className="space-y-6">
+              {/* AI Recommendation */}
+              {wizard.currentStep >= 1 && (
+                <div className="p-5 rounded-xl bg-gradient-to-br from-purple-code/5 to-cyan/5 border border-purple-code/10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles size={16} className="text-purple-code" />
+                    <h3 className="font-heading text-sm font-semibold text-[#F0F2F5]">
+                      {t('aiRecommend')}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#8B92A8] mb-3">
+                    {t('aiRationale')}
+                  </p>
+                  {wizard.isLoadingLLM ? (
+                    <div className="flex items-center gap-2 text-xs text-[#8B92A8]">
+                      <Loader2 size={14} className="animate-spin" />
+                      {t('aiLoading')}
+                    </div>
+                  ) : wizard.llmError ? (
+                    <div className="text-xs text-red-400">{wizard.llmError}</div>
+                  ) : wizard.llmRationale ? (
+                    <div className="space-y-3">
+                      <p className="text-xs text-[#8B92A8]">{wizard.llmRationale}</p>
+                      <button
+                        onClick={wizard.applyRecommendations}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-purple-code text-[#0B0C10] text-xs font-heading hover:bg-purple-code/90 transition-colors"
+                      >
+                        <Zap size={12} />
+                        {t('aiApply')}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={wizard.generateLLMRecommendations}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-code/10 text-purple-code text-xs font-heading hover:bg-purple-code/20 transition-colors"
+                    >
+                      <Sparkles size={14} />
+                      {t('aiRecommend')}
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Smart Recommendations */}
               {wizard.currentStep >= 2 && wizard.currentStep <= 7 && (
                 <div className="p-5 rounded-xl bg-gradient-to-br from-cyan/5 to-purple-code/5 border border-cyan/10">

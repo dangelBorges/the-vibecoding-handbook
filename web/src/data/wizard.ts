@@ -569,7 +569,7 @@ export interface GeneratedFile {
   content: string;
 }
 
-export function generateAgentsMd(answers: WizardAnswers): string {
+export function generateAgentsMd(answers: WizardAnswers, llmRationale?: string): string {
   const features = answers.features || [];
   const hasPayments = features.includes('payments');
   const paymentSection = `### Payments (CRITICAL)\n- NEVER log payment tokens or card data\n- All payment webhooks must verify signatures\n- Idempotency keys on all payment operations\n- Test with Stripe test keys only`;
@@ -605,7 +605,7 @@ ${hasUploads ? `| Storage | ${getTechLabel('storage', answers.storage)} | File u
 
 ## Architecture Decisions
 
-${hasMultiTenant ? '- **Multi-tenancy**: Organizations are implemented via row-level security (RLS) policies. Each table has an `org_id` column.' : ''}
+${llmRationale ? `${llmRationale}\n\n` : ''}${hasMultiTenant ? '- **Multi-tenancy**: Organizations are implemented via row-level security (RLS) policies. Each table has an `org_id` column.' : ''}
 ${hasRealtime ? '- **Real-time**: Using database subscriptions for live updates. WebSocket connections managed by the database provider.' : ''}
 ${hasApi ? '- **Public API**: REST API with API key authentication. Rate limiting applied per key.' : ''}
 ${hasAi ? '- **AI Integration**: LLM features use streaming responses. All AI calls are logged for monitoring.' : ''}

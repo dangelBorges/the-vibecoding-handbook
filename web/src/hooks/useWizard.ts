@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import type { WizardAnswers } from '../data/wizard';
 import { useI18n } from '../i18n/useI18n';
 import { getWizardData } from '../i18n/localizers/wizard';
+import { requestLLMRecommendations } from '../utils/llm';
 
 const initialAnswers: WizardAnswers = {
   projectName: '',
@@ -30,6 +31,9 @@ export function useWizard() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<WizardAnswers>(initialAnswers);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
+  const [llmRationale, setLlmRationale] = useState('');
+  const [isLoadingLLM, setIsLoadingLLM] = useState(false);
+  const [llmError, setLlmError] = useState<string | null>(null);
 
   const currentStepId = steps[currentStep]?.id || 'project-info';
 
@@ -50,7 +54,33 @@ export function useWizard() {
       auth: recs.auth,
       hosting: recs.hosting,
     }));
+    setLlmRationale('');
   }, [answers, getRecommendedStack]);
+
+  const generateLLMRecommendations = useCallback(async () => {
+    setIsLoadingLLM(true);
+    setLlmError(null);
+    try {
+      const result = await requestLLMRecommendations(answers, locale);
+      if (result.error || !result.recommendations) {
+        setLlmError(result.error || 'AI recommendation failed');
+        return;
+      }
+      setAnswers((prev) => ({
+        ...prev,
+        frontend: result.recommendations!.frontend,
+        backend: result.recommendations!.backend,
+        database: result.recommendations!.database,
+        auth: result.recommendations!.auth,
+        hosting: result.recommendations!.hosting,
+      }));
+      setLlmRationale(result.recommendations!.rationale);
+    } catch {
+      setLlmError('AI recommendation failed');
+    } finally {
+      setIsLoadingLLM(false);
+    }
+  }, [answers, locale]);
 
   const nextStep = useCallback(() => {
     if (currentStep < steps.length - 1) {
@@ -107,6 +137,10 @@ export function useWizard() {
     answers,
     updateAnswer,
     applyRecommendations,
+    generateLLMRecommendations,
+    llmRationale,
+    isLoadingLLM,
+    llmError,
     nextStep,
     prevStep,
     goToStep,
