@@ -44,6 +44,12 @@ const wizardPage: Namespace<{
   comparisonPros: string;
   comparisonCons: string;
 
+  // AI recommendation
+  aiRecommend: string;
+  aiRationale: string;
+  aiApply: string;
+  aiLoading: string;
+
   // Generator header
   backToWizard: string;
   generatedBadge: string;
@@ -109,6 +115,10 @@ const wizardPage: Namespace<{
     showRecommendations: 'Show Recommendations',
     applyAll: 'Apply All',
     applyAllRecommendations: 'Apply All Recommendations',
+    aiRecommend: 'AI Recommendation',
+    aiRationale: 'Get a tailored stack recommendation from an AI model based on your answers.',
+    aiApply: 'Apply AI recommendation',
+    aiLoading: 'Thinking...',
     currentSetup: 'Current Setup',
     summaryProject: 'Project',
     summaryType: 'Type',
@@ -181,6 +191,10 @@ const wizardPage: Namespace<{
     showRecommendations: 'Mostrar recomendaciones',
     applyAll: 'Aplicar todo',
     applyAllRecommendations: 'Aplicar todas las recomendaciones',
+    aiRecommend: 'Recomendación con IA',
+    aiRationale: 'Obtén una recomendación de stack personalizada por un modelo de IA basada en tus respuestas.',
+    aiApply: 'Aplicar recomendación de IA',
+    aiLoading: 'Pensando...',
     currentSetup: 'Configuración actual',
     summaryProject: 'Proyecto',
     summaryType: 'Tipo',
@@ -255,6 +269,10 @@ const wizardPage: Namespace<{
     showRecommendations: 'Mostrar recomendações',
     applyAll: 'Aplicar tudo',
     applyAllRecommendations: 'Aplicar todas as recomendações',
+    aiRecommend: 'Recomendação com IA',
+    aiRationale: 'Obtenha uma recomendação de stack personalizada por um modelo de IA com base nas suas respostas.',
+    aiApply: 'Aplicar recomendação de IA',
+    aiLoading: 'Pensando...',
     currentSetup: 'Configuração atual',
     summaryProject: 'Projeto',
     summaryType: 'Tipo',
@@ -327,6 +345,10 @@ const wizardPage: Namespace<{
     showRecommendations: '显示推荐',
     applyAll: '应用全部',
     applyAllRecommendations: '应用全部推荐',
+    aiRecommend: 'AI 推荐',
+    aiRationale: '根据你的回答，从 AI 模型获取量身定制的技术栈推荐。',
+    aiApply: '应用 AI 推荐',
+    aiLoading: '思考中……',
     currentSetup: '当前配置',
     summaryProject: '项目',
     summaryType: '类型',

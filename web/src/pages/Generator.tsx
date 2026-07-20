@@ -27,13 +27,14 @@ interface FileTab {
   label: string;
   filename: string;
   icon: React.ReactNode;
-  generator: (answers: WizardAnswers) => string;
+  generator: (answers: WizardAnswers, llmRationale?: string) => string;
 }
 
 export default function Generator() {
   const location = useLocation();
   const navigate = useNavigate();
   const answers = location.state?.answers as WizardAnswers | undefined;
+  const llmRationale = location.state?.llmRationale as string | undefined;
   const { t } = useNamespace(wizardPage);
 
   const [activeTab, setActiveTab] = useState('agents');
@@ -52,7 +53,7 @@ export default function Generator() {
       label: t('tabAgents'),
       filename: 'AGENTS.md',
       icon: <FileCode size={16} />,
-      generator: generateAgentsMd,
+      generator: (a, r) => generateAgentsMd(a, r),
     },
     {
       id: 'iderules',
@@ -103,7 +104,7 @@ export default function Generator() {
   }
 
   const activeFile = tabs.find((t) => t.id === activeTab) || tabs[0];
-  const content = activeFile.generator(answers);
+  const content = activeFile.generator(answers, llmRationale);
 
   const handleCopy = async () => {
     try {
@@ -126,7 +127,7 @@ export default function Generator() {
     const zip = new JSZip();
 
     // Add all generated files
-    zip.file('AGENTS.md', generateAgentsMd(answers));
+    zip.file('AGENTS.md', generateAgentsMd(answers, llmRationale));
     zip.file('.iderules', generateIdeRules(answers));
     zip.file('.vibecoding/policies/git-policy.md', generateGitPolicy());
     zip.file('.vibecoding/policies/security-policy.md', generateSecurityPolicy());

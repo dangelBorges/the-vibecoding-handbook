@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Web Handbook
+- AI-powered wizard recommendations — the Project Wizard can call NVIDIA NIM (via a Vercel serverless proxy) to suggest a tailored stack based on the user's answers; the generated `AGENTS.md` includes the LLM rationale when available
 - Template Marketplace (`/templates`) — official + community templates with downloads, copy, upvotes and GitHub submissions
 - Community Prompt Library (`/community-prompts`) — browse curated + community prompts, upvote with localStorage persistence, filter by category/tool/stack, and submit new prompts via GitHub issue template
 
