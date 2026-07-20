@@ -15,7 +15,7 @@ function finalAgentsContent(cwd: string, generated: string, merge?: boolean): st
   return wrapInMarkers(generated);
 }
 
-export async function contextCommand(options: { auto?: boolean; dryRun?: boolean; merge?: boolean; describe?: string; llm?: boolean }): Promise<void> {
+export async function contextCommand(options: { auto?: boolean; dryRun?: boolean; merge?: boolean; overwrite?: boolean; describe?: string; llm?: boolean }): Promise<void> {
   const cwd = process.cwd();
   const s = spinner('Scanning your codebase...');
   s.start();
@@ -81,10 +81,11 @@ export async function contextCommand(options: { auto?: boolean; dryRun?: boolean
 
   const agentsPath = path.join(cwd, 'AGENTS.md');
   const oldExists = fs.existsSync(agentsPath);
+  const shouldMerge = options.merge || (oldExists && !options.overwrite);
 
-  const agentsContent = finalAgentsContent(cwd, generatedAgents, options.merge);
+  const agentsContent = finalAgentsContent(cwd, generatedAgents, shouldMerge);
   fs.writeFileSync(agentsPath, agentsContent);
-  const action = oldExists ? (options.merge ? 'Merged into' : 'Updated') : 'Created';
+  const action = oldExists ? (shouldMerge ? 'Merged into' : 'Updated') : 'Created';
   success(`${action} AGENTS.md (${agentsContent.split('\n').length} lines)`);
 
   // Update .iderules

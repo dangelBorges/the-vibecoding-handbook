@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { getWorkspacePath, readVibeFile, detectStack, writeVibeFile } from '../utils/fileReader';
+import { findVibeCli, runVibe } from '../utils/cliRunner';
 import { t } from '../i18n';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,6 +11,36 @@ export async function contextCommand(): Promise<void> {
     vscode.window.showErrorMessage(t('errNoWorkspace'));
     return;
   }
+
+  const config = vscode.workspace.getConfiguration('the-vibecoding-handbook');
+  const useLLM = config.get('useLLM', true);
+  const cliPath = findVibeCli(wsPath);
+
+  if (cliPath) {
+    const args = ['context', '--auto'];
+    if (!useLLM) args.push('--no-llm');
+
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: t('contextRefreshing'),
+        cancellable: false,
+      },
+      async () => {
+        const result = await runVibe(cliPath, args, wsPath);
+        if (result.exitCode !== 0) {
+          const detail = result.stderr || result.stdout;
+          vscode.window.showErrorMessage(`${t('errCommandFailed')}${detail ? ': ' + detail : ''}`);
+        } else {
+          vscode.window.showInformationMessage(t('contextRefreshed'));
+        }
+      }
+    );
+    return;
+  }
+
+  // CLI not found: local fallback
+  vscode.window.showWarningMessage(t('msgCliNotFound'));
 
   await vscode.window.withProgress(
     {
@@ -61,4 +92,3 @@ export async function contextCommand(): Promise<void> {
     }
   );
 }
-

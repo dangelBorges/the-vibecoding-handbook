@@ -64,9 +64,11 @@ export const zh = {
 
   // Init Command
   errNoWorkspace: '未打开工作区文件夹。',
-  msgOverwriteAgents: 'AGENTS.md 已存在，是否覆盖？',
+  msgAgentsExists: 'AGENTS.md 已存在。合并以保留你的编辑、覆盖，还是中止？',
+  cmdMerge: '合并',
   cmdOverwrite: '覆盖',
-  cmdCancel: '取消',
+  cmdAbort: '中止',
+  msgCliNotFound: '未找到 CLI。使用内置启发式回退。',
   msgProjectName: '项目名称',
   typeSaaS: 'SaaS / Web 应用',
   typeEcommerce: '电子商务',

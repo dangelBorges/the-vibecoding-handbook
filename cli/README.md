@@ -22,6 +22,7 @@ Initialize project governance files:
 vibe init              # Interactive setup
 vibe init -y           # Skip prompts, use defaults
 vibe init -t saas      # Pre-configured for SaaS
+vibe init --name "My Project" # Override detected project name
 vibe init --describe "SaaS booking app with Stripe" # Generate AGENTS.md from natural language
 vibe init --merge      # Merge into existing AGENTS.md instead of overwriting
 vibe init --overwrite  # Replace an existing AGENTS.md completely
@@ -53,11 +54,12 @@ vibe context --auto    # Full auto-detection, no prompts
 vibe context --describe "SaaS booking app with Stripe" # LLM-generated AGENTS.md
 vibe context --dry-run # Preview changes without writing
 vibe context --merge   # Update only the managed block, keep your custom notes
+vibe context --overwrite # Replace AGENTS.md completely
 vibe context --no-llm  # Force local heuristics, skip LLM
 ```
 
 `--merge` uses the same `<!-- vibe:begin -->` / `<!-- vibe:end -->` markers as `vibe init --merge`,
-so refreshing AGENTS.md never destroys your manual edits. Add `--dry-run` to preview the merged result.
+so refreshing AGENTS.md never destroys your manual edits. `vibe context` merges by default when `AGENTS.md` exists; use `--overwrite` to replace it completely. Add `--dry-run` to preview the result.
 
 When an LLM API key is present and `--describe` is not used, `vibe context` automatically sends the detected stack summary to the model to generate a project-specific `AGENTS.md`. Use `--no-llm` to force local heuristics.
 

@@ -227,6 +227,11 @@
           "type": "boolean",
           "default": false,
           "description": "Run vibe check on file save"
+        },
+        "the-vibecoding-handbook.useLLM": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use OpenAI/Anthropic LLM for context generation when API keys are available"
         }
       }
     }
