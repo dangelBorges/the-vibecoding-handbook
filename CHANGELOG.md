@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `vibe review --strict` — exit code 1 when errors or warnings are found (CI gating)
 
 #### VS Code Extension (`vibecoding`)
+- Bumped version to `1.0.7` for Marketplace release
 - `Vibe: Initialize Project` and `Vibe: Refresh Context` now delegate to `@vibecoding/cli` when available, matching the CLI behavior: LLM-generated context when API keys are present, merge-by-default into existing `AGENTS.md`, and fallback to built-in heuristics when the CLI is not installed
 - Migrated generated governance directory from `.the-vibecoding-handbook/` to `.vibecoding/` to align with the CLI
 - Added `the-vibecoding-handbook.useLLM` setting to enable/disable LLM calls from the extension

@@ -57,6 +57,24 @@ Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/item
 
 Visit [the-vibecoding-handbook.com](https://www.the-vibecoding-handbook.com/) for the complete handbook.
 
+## Publishing
+
+The extension is published manually with `vsce`.
+
+```bash
+cd vscode-extension
+npm install -g @vscode/vsce
+vsce login TheVibecoder
+vsce publish
+```
+
+Requirements:
+- A [Personal Access Token](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token) with the `Marketplace` scope.
+- The token must be added to `vsce` via `vsce login` or passed with `--pat <token>`.
+- The version in `package.json` must be bumped before each publish.
+
+CI does not auto-publish the extension; only the CLI is published via `.github/workflows/release.yml`.
+
 ## Learn More
 
 Visit [The-vibecoding-handbook.com](https://www.the-vibecoding-handbook.com/) for the complete handbook.
